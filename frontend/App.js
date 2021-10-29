@@ -1,31 +1,35 @@
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {StatusBar, View} from 'react-native'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 
-import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import Colors from './globals/Colors';
 
 const Stack = createStackNavigator();
 const createStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="Login"
       screenOptions={{
         headerShown: false
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen}/>
+      <Stack.Screen name="Login" component={LoginScreen}/>
     </Stack.Navigator>
   )
 };
 
 export default function APP() {
   return (
-    <SafeAreaProvider>
+    <View style={{flex:1}}>
+      <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
+      <ExpoStatusBar style="light" />
       <NavigationContainer>
         {createStack()}
       </NavigationContainer>
-    </SafeAreaProvider>
+    </View>
   );
 };

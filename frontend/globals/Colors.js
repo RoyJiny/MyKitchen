@@ -1,3 +1,3 @@
 export default {
-    testColor: "#0B5DE9"
+    black: "#252626"
 };
