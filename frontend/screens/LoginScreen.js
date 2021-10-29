@@ -5,20 +5,14 @@ import LogoButton from '../components/LogoButton';
 import Backdrop from '../components/Backdrop';
 import BlankDivider from '../components/BlankDivider';
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({navigation, loginCB}) => {
     return (
         <View style={{flex:1}}>
             <Backdrop text='Google App' height={120}/>
             <View style={{flex:1, alignSelf: 'stretch', justifyContent: 'center'}}>
                 <LogoButton
                     imageLink='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png'
-                    onClick={async () => {
-                        function sleep(ms) {
-                            return new Promise(resolve => setTimeout(resolve, ms));
-                        }
-                        await sleep(1000)
-                        console.log('button1 pressed');
-                    }}
+                    onClick={loginCB}
                     borderColor='black'
                     fillColor='white'
                     text='Sign in with Google'
