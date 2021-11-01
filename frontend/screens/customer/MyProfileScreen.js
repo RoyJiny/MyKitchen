@@ -1,7 +1,7 @@
 import React from 'react'
 import {View,StyleSheet} from 'react-native'
 
-import Backdrop from '../components/Backdrop';
+import Backdrop from '../../components/Backdrop';
 
 const MyOrdersScreen = ({navigation}) => {
     return (

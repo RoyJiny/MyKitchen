@@ -6,13 +6,13 @@ const Button = ({onClick, borderColor, fillColor, text, textColor}) => {
     
     return (
         <TouchableOpacity
-            onPress={async () => {
+            onPress={() => {
                 setIsLoading(true);
-                await onClick();
+                onClick();
                 setIsLoading(false);
             }}
             style={{
-                borderRadius: 30,
+                borderRadius: 12,
                 borderWidth: 1.5,
                 borderColor: borderColor,
                 backgroundColor: fillColor,
