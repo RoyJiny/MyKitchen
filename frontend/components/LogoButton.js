@@ -6,7 +6,7 @@ const LogoButton = ({imageLink,onClick, borderColor, fillColor, text, textColor}
         <TouchableOpacity
             onPress={onClick}
             style={{
-                borderRadius: 30,
+                borderRadius: 12,
                 borderWidth: 1.5,
                 borderColor: borderColor,
                 backgroundColor: fillColor,
