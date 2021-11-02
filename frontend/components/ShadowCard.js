@@ -1,9 +1,9 @@
 import React from 'react';
 import {View,StyleSheet} from 'react-native';
 
-const ShadowCard = ({children}) => {
+const ShadowCard = ({children,width}) => {
     return(
-        <View style={styles.card}>
+        <View style={[styles.card,{width:width}]}>
             {children}
         </View>
     );
@@ -23,9 +23,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginVertical: 20,
         borderRadius: 6,
-        paddingHorizontal: 5,
-        paddingVertical: 20,
-        alignItems: 'stretch'
+        alignItems: 'stretch',
     }
 });
 
