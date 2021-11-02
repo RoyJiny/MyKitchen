@@ -1,3 +1,4 @@
 export default {
-    testColor: "#0B5DE9"
+    black: "#252626",
+    lightGray: "#D1D1D1"
 };
