@@ -1,21 +1,27 @@
 import React from 'react'
 import { Text, TouchableOpacity, Image } from 'react-native'
 
-const LogoButton = ({logoConf,onClick, borderColor, fillColor, text, textColor}) => {    
+const LogoButton = ({logoConf,onClick, fillColor, text, textColor}) => {    
     return (
         <TouchableOpacity
             onPress={onClick}
             style={{
-                borderRadius: 12,
-                borderWidth: 1.5,
-                borderColor: borderColor,
-                backgroundColor: fillColor,
-                alignItems: 'center',
-                height: 50,
-                width: 310,
-                alignSelf: 'center',
-                flexDirection: 'row',
-                paddingLeft: 20
+              shadowColor: "#000000",
+              shadowOffset: {
+                  width: 0,
+                  height: 4,
+              },
+              shadowOpacity: 0,
+              shadowRadius: 10,
+              borderRadius: 10,
+              elevation: 10,
+              backgroundColor: fillColor,
+              alignItems: 'center',
+              height: 50,
+              width: 310,
+              alignSelf: 'center',
+              flexDirection: 'row',
+              paddingLeft: 20
             }}
         >
             {
