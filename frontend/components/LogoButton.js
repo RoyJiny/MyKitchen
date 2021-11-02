@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, TouchableOpacity, Image } from 'react-native'
 
-const LogoButton = ({imageLink,onClick, borderColor, fillColor, text, textColor}) => {    
+const LogoButton = ({logoConf,onClick, borderColor, fillColor, text, textColor}) => {    
     return (
         <TouchableOpacity
             onPress={onClick}
@@ -18,14 +18,25 @@ const LogoButton = ({imageLink,onClick, borderColor, fillColor, text, textColor}
                 paddingLeft: 20
             }}
         >
-            <Image
-                style={{
-                    height: 20,
-                    width: 20,
-                    marginRight: 30
-                }}
-                source={{uri: imageLink}}
-            />
+            {
+              logoConf.isIcon  
+                ? (
+                <logoConf.iconComponent
+                  name={logoConf.iconName}
+                  size={logoConf.size}
+                  color={logoConf.iconColor}
+                  style={{marginRight: 30}}
+                />
+                )
+                : (<Image
+                    style={{
+                        height: logoConf.size,
+                        width: logoConf.size,
+                        marginRight: 30
+                    }}
+                    source={{uri: logoConf.imageLink}}
+                />)
+            }
             <Text 
                 style={{
                     textAlign:'center',
