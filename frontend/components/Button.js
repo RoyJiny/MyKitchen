@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
-const Button = ({onClick, borderColor, fillColor, text, textColor}) => {
+const Button = ({onClick, fillColor, text, textColor}) => {
     const [isLoading, setIsLoading] = useState(false);
     
     return (
@@ -12,9 +12,14 @@ const Button = ({onClick, borderColor, fillColor, text, textColor}) => {
                 setIsLoading(false);
             }}
             style={{
-                borderRadius: 12,
-                borderWidth: 1.5,
-                borderColor: borderColor,
+                shadowColor: "#000000",
+                shadowOffset: {
+                    width: 0,
+                    height: 4,
+                },
+                shadowOpacity: 0,
+                shadowRadius: 10,
+                borderRadius: 10,
                 backgroundColor: fillColor,
                 alignItems: 'center',
                 justifyContent: 'center',
