@@ -118,18 +118,9 @@ const CustomerTabsNavigator = () => {
         tabBarIcon: ({color}) => getTabIcon(route,color)
       })}
     >
-        <Tabs.Screen
-          name="Search"
-          component={CustomerSearchStack}
-        />
-        <Tabs.Screen
-          name="Explore"
-          component={CustomerExploreStack}
-        />
-        <Tabs.Screen
-          name="MyProfile"
-          component={MyProfileScreen}
-        />
+      <Tabs.Screen name="Search" component={CustomerSearchStack} />
+      <Tabs.Screen name="Explore" component={CustomerExploreStack} />
+      <Tabs.Screen name="MyProfile" component={MyProfileScreen} />
     </Tabs.Navigator>
   );
 };
@@ -184,14 +175,8 @@ const SellerTabsNavigator = () => {
         tabBarIcon: ({color}) => getTabIcon(route,color)
       })}
     >
-        <Tabs.Screen
-          name="My Kitchen"
-          component={SellerKitchenStack}
-        />
-        <Tabs.Screen
-          name="Orders"
-          component={SellerOrdersStack}
-        />
+      <Tabs.Screen name="My Kitchen" component={SellerKitchenStack} />
+      <Tabs.Screen name="Orders" component={SellerOrdersStack} />
     </Tabs.Navigator>
   );
 };
