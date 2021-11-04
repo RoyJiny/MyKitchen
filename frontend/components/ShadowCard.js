@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
         backgroundColor: '#ffffff',
-        marginHorizontal: 20,
-        marginVertical: 20,
+        marginHorizontal: 8,
+        marginBottom: 10,
         borderRadius: 6,
         alignItems: 'stretch',
     }
