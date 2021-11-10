@@ -1,19 +1,19 @@
 import React, {useState} from 'react'
-import { View, StyleSheet, TextInput} from 'react-native'
+import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Picker} from '@react-native-picker/picker';
 import ImChange from './ImChange';
 
 const Dish = ({text, price, imgLink, deleteFunc}) => {
-    const [inEdit, setInEdit] = useState(false);
-    const [desc, onChangeDesc] = useState(text);
+    const [inEdit, setInEdit] = useState(true);
+    const [name, onChangeName] = useState(text);
+    const [desc, onChangeDesc] = useState("");
     const [pricing, onChangePricing] = useState(price);
     const [selectedSym, setSelectedSym] = useState();
     
     return (
         <View
             style={{
-                flexDirection:'row',
                 width: 340,
                 borderRadius: 16,
                 borderColor: 'black',
@@ -25,6 +25,7 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                 justifyContent: 'space-between'
             }}
         >
+            <View style={{ flexDirection:'row'}}>
             {
                 <>
                 <View  style={{flexDirection:'row'}}>
@@ -39,13 +40,15 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                                 borderColor: 'transparent',
                                 borderBottomColor: inEdit ? 'black' : 'transparent', 
                             }}
-                            multiline={true}
+                            autoFocus={true}
+                            placeholder="Dish Name"
                             editable={inEdit}
-                            onChangeText={onChangeDesc}
-                            value= {desc}
+                            onChangeText={onChangeName}
+                            value= {name}
                         />
+                         
                         <View  style={{flexDirection:'row', alignItems: 'center'}}>
-                            <Picker
+                            {/*<Picker
                                 style={{ height:10, width: 75, borderWidth: 1, borderColor: 'black' }}
                                 selectedValue={selectedSym}
                                 onValueChange={(itemValue, itemIndex) => setSelectedSym(itemValue)}
@@ -56,7 +59,9 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                                 <Picker.Item label="$" value="$" style={{ fontSize: 14 }} />
                                 <Picker.Item label="€" value="€" style={{ fontSize: 14 }} />
                                 <Picker.Item label="£" value="£" style={{ fontSize: 14 }} />
-                            </Picker>
+                            </Picker>*/}
+
+                            <Text>₪ </Text>
 
                             <TextInput 
                                 style={{ 
@@ -67,17 +72,18 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                                     borderWidth: 1,
                                     borderColor: 'transparent',
                                     borderBottomColor: inEdit ? 'black' : 'transparent', 
+                                    marginBottom: 8
                                 }}
                                 editable={inEdit}
                                 onChangeText={onChangePricing}
-                                value={pricing} /* add symbol selection */
+                                value={pricing}
                                 keyboardType="numeric"
                             />
                             
                         </View>
                     </View>
                 </View>
-                <View style={{justifyContent: 'space-around', paddingVertical: 16, marginRight: inEdit ? 14 : 16}}>
+                <View style={{justifyContent: 'space-around', paddingVertical: 16, marginRight: inEdit ? 14 : 16, marginLeft: 20}}>
                     <Icon style={{}}
                         name={inEdit ? "check" : "pencil"}
                         size={15}
@@ -96,7 +102,21 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                 
                 </>
             }
-            
+            </View>
+            <TextInput 
+                style={{
+                    color: 'black', 
+                    fontSize: 16,
+                    height: 72,
+                    padding: 8,
+                    textAlignVertical: 'top'
+                }}
+                multiline={true}
+                placeholder="Desciption"
+                editable={inEdit}
+                onChangeText={onChangeDesc}
+                value= {desc}
+            />
         </View>
         
     )

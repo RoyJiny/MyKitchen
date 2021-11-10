@@ -8,7 +8,7 @@ const FormInput = ({onSubmit,updateOriginalValue,placeholder,isPassword=false,ad
     const [isActive,setIsActive] = useState(false);
    
     return (
-        <View style={[styles.wrapper, additionalStyle, {borderColor: isActive ? Colors.lightGray : "black"}]}>
+        <View style={[styles.wrapper, additionalStyle, {borderWidth: isActive ? 2 : 1}]}>
             <TextInput
                 style={styles.textInput}
                 onChangeText={txt => {
@@ -17,7 +17,7 @@ const FormInput = ({onSubmit,updateOriginalValue,placeholder,isPassword=false,ad
                 }}
                 value={text}
                 placeholder={placeholder}
-                placeholderTextColor={isActive ? "transparent" : Colors.lightGray}
+                placeholderTextColor={Colors.lightGray}
                 onFocus={() => {setIsActive(true)}}
                 onBlur={() => {setIsActive(false)}}
                 secureTextEntry={isPassword}
@@ -32,7 +32,6 @@ const FormInput = ({onSubmit,updateOriginalValue,placeholder,isPassword=false,ad
 
 const styles = StyleSheet.create({
     wrapper:{
-        borderWidth: 1,
         borderRadius: 20,
         marginTop: 15,
         flexDirection: 'row',

@@ -56,7 +56,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
             />
             <FormInput
-              placeholder="2nd payment link"
+              placeholder="2nd payment link (optional)"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 16, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}

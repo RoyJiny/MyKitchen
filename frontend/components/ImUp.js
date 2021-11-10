@@ -4,8 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function ImagePickerIcon() {
-  const [image, setImage] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGKHN5NTU3hNUpXyC0wGRaH9Ou07H30PKWTQ&usqp=CAU");
-
+  const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
