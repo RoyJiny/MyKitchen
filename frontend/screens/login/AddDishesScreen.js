@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView} from 'react-native';
+import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView, Dimensions} from 'react-native';
 import * as Icons from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -12,7 +12,7 @@ import Dish from '../../components/Dish';
 
 const AddDishesScreen = ({navigation}) => {
 
-  const [dishItems, setDishItems] = useState([1,2,3]);
+  const [dishItems, setDishItems] = useState([]);
 
   const handleAdd = () => {
     for (let i = 0; i <= dishItems.length; i++) {
@@ -28,9 +28,9 @@ const AddDishesScreen = ({navigation}) => {
 
   return (
     <View style={{flex:1}}>
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+        <ScrollView>
         <Icon style={{marginLeft: 16, marginRight: 350}}
               name="angle-left"
               size={40}
@@ -65,17 +65,15 @@ const AddDishesScreen = ({navigation}) => {
         </TouchableOpacity>
         <BlankDivider height={16}/>
         
-        <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={65}>
-        <ScrollView style={{maxHeight: 440}} contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView style={{maxHeight: Dimensions.get('window').height*0.7}} contentContainerStyle={{flexGrow: 1}}>
           {
             dishItems.map((item, index) => {
               return (
-                <Dish key={item} deleteFunc= {() => deleteDish(index)} text= "Cake" price= "43" imgLink= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkukWWWbaSKACbEcs1qDx3QIKDSWattUPSxw&usqp=CAU"/>
+                <Dish key={item} deleteFunc= {() => deleteDish(index)} imgLink= "https://icon-library.com/images/upload-image-icon/upload-image-icon-15.jpg"/>
               )
             })
           }
         </ScrollView>
-        </KeyboardAvoidingView>
 
         <BlankDivider height={16}/>
         <Button2
@@ -84,7 +82,7 @@ const AddDishesScreen = ({navigation}) => {
           text ="Next"
           textColor = "black"
         />
-        </View>
+        </ScrollView>
     </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
     </View>

@@ -34,7 +34,7 @@ const MyKitchenScreen = ({navigation}) => {
                     />
                     <View style={{marginRight:tableSpaces}}></View>
                     <KitchenCard
-                        onClick={() => navigation.navigate("KitchenPage")}
+                        onClick={() => navigation.navigate("KitchenPreview")}
                         logo = {<MaterialCommunityIcons name="chef-hat" size={logoSize} color="black" />}
                         description="Kitchen Preview"
                     />
