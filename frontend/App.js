@@ -115,12 +115,13 @@ const CustomerTabsNavigator = () => {
       }}
       screenOptions={({route}) => ({
         headerShown: false,
-        tabBarIcon: ({color}) => getTabIcon(route,color)
+        tabBarIcon: ({color}) => getTabIcon(route,color),
+        unmountOnBlur: true
       })}
     >
       <Tabs.Screen name="Search" component={CustomerSearchStack} />
       <Tabs.Screen name="Explore" component={CustomerExploreStack} />
-      <Tabs.Screen name="MyProfile" component={MyProfileScreen} />
+      <Tabs.Screen name="MyProfile" component={MyProfileScreen} options={{tabBarLabel: 'My Profile'}}/>
     </Tabs.Navigator>
   );
 };
