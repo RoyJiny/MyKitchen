@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
-const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
+const Button2 = ({onClick, fillColor, text, textColor}) => {
     const [isLoading, setIsLoading] = useState(false);
     
     return (
@@ -17,15 +17,15 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
                     width: 0,
                     height: 4,
                 },
+                borderColor: textColor,
+                borderWidth: 1,
                 shadowOpacity: 0,
                 shadowRadius: 10,
-                borderRadius: 10,
+                borderRadius: 6,
                 backgroundColor: fillColor,
                 alignItems: 'center',
                 justifyContent: 'center',
-                // marginTop: 20,
-                height: height,
-                width: width,
+                paddingHorizontal: 6,
                 alignSelf: 'center'
             }}
         >
@@ -35,8 +35,7 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
                     style={{
                         textAlign:'center',
                         color: textColor,
-                        fontSize: 18,
-                        fontWeight: 'bold'
+                        fontSize: 20,
                     }}
                 >
                         {text}
@@ -55,4 +54,4 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
     )
 }
 
-export default Button
+export default Button2

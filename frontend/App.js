@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StatusBar, View} from 'react-native'
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
@@ -115,12 +115,13 @@ const CustomerTabsNavigator = () => {
       }}
       screenOptions={({route}) => ({
         headerShown: false,
-        tabBarIcon: ({color}) => getTabIcon(route,color)
+        tabBarIcon: ({color}) => getTabIcon(route,color),
+        unmountOnBlur: true
       })}
     >
       <Tabs.Screen name="Search" component={CustomerSearchStack} />
       <Tabs.Screen name="Explore" component={CustomerExploreStack} />
-      <Tabs.Screen name="MyProfile" component={MyProfileScreen} />
+      <Tabs.Screen name="MyProfile" component={MyProfileScreen} options={{tabBarLabel: 'My Profile'}}/>
     </Tabs.Navigator>
   );
 };
@@ -194,11 +195,20 @@ export default APP = () => {
     setState({isLoggedIn: false, isCustomer: true});
   };
 
+  const AppTheme = {
+    ...DefaultTheme,
+    dark: false,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#FFFFFF'
+    }
+  };
+
   return (
     <View style={{flex:1}}>
       <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
       <ExpoStatusBar style="light" />
-      <NavigationContainer>
+      <NavigationContainer theme={AppTheme}>
         {state.isLoggedIn
           ? (state.isCustomer ? CustomerTabsNavigator() : SellerTabsNavigator())
           : LoginStack(customerLoginCB,sellerLoginCB)
