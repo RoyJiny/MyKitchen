@@ -95,14 +95,15 @@ const MyOrdersScreen = ({navigation}) => {
       <Backdrop text='My Profile' height={80}/>
       
       <Modal isVisible={showModal}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white'}}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
               height: 45,
               width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              fontSize: 16
+              fontSize: 16,
+              margin: 4
             }}
             onChangeText={txt => {
               setModalState({...modalState, addressName: txt});
@@ -116,7 +117,8 @@ const MyOrdersScreen = ({navigation}) => {
               width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              fontSize: 16
+              fontSize: 16,
+              margin: 4
             }}
             onChangeText={txt => {
               setModalState({...modalState, address: txt});
@@ -124,7 +126,14 @@ const MyOrdersScreen = ({navigation}) => {
             value={modalState.address}
             placeholder={"Address"}
           />
-          <TouchableOpacity onPress={modalOnSubmit} style={{alignItems: 'center', marginVertical: 4}}>
+          <TouchableOpacity
+            onPress={() => {
+              if (modalState.address !== "" && modalState.addressName !== "") {
+                modalOnSubmit();
+              }
+            }}
+            style={{alignItems: 'center', marginVertical: 8}}
+          >
             <Text>Done</Text>
           </TouchableOpacity>
         </View>
@@ -157,6 +166,9 @@ const MyOrdersScreen = ({navigation}) => {
           () => {setModalState(address); setShowModal(true)},
           () => setAddresses(addresses.filter(a => a.id != address.id))
         ))}
+        {
+          addresses.length == 0 ? <Text style={{alignSelf: 'center', color: Colors.lightGray}}>Click the '+' to add an address</Text> : null
+        }
 
         <BlankDivider height={32}/>
 
