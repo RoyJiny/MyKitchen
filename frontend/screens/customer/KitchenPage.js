@@ -51,10 +51,12 @@ const KitchenPageScreen = ({navigation}) => {
             )
             : null
           }
-          <View style={styles.rowView}>
-            <Icons.FontAwesome name="phone" size={16} color="black"/>
-            <Text style={styles.details}>03-123789</Text>
-          </View>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:${"03-1237890"}`)}>
+            <View style={styles.rowView}>
+              <Icons.FontAwesome name="phone" size={16} color="black"/>
+              <Text style={styles.details}>03-1237890</Text>
+            </View>
+          </TouchableOpacity>
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="home" size={16} color="black"/>
             <Text style={styles.details}>Rothschild 100, Tel Aviv</Text>
