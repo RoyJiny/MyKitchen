@@ -1,5 +1,6 @@
 import React,{useState,useRef} from 'react'
-import {View,StyleSheet,Text,Image,TouchableOpacity, ScrollView} from 'react-native'
+import {View,StyleSheet,TextInput,Text,Image,TouchableOpacity, ScrollView} from 'react-native'
+import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
@@ -9,9 +10,9 @@ import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
 
-const AddressCard = (name,address) => {
+const AddressCard = (address,onEdit,onDelete) => {
   return (
-    <ShadowCard>
+    <ShadowCard key={address.id}>
       <View style={{
         flexDirection:'row',
         justifyContent: 'space-between',
@@ -19,19 +20,19 @@ const AddressCard = (name,address) => {
         marginVertical: 8
       }}>
         <View>
-          <Text style={{fontWeight: 'bold', fontSize: 18}}>{name}</Text>
-          <Text style={{fontSize: 14}}>{address}</Text>
+          <Text style={{fontWeight: 'bold', fontSize: 18}}>{address.addressName}</Text>
+          <Text style={{fontSize: 14}}>{address.address}</Text>
         </View>
         <View style={{flexDirection:'row', alignSelf: 'center'}}>
           <TouchableOpacity
             style={{marginHorizontal: 8}}
-            onPress={() => console.log('pressed edit address')}
+            onPress={onEdit}
           >
             <Icons.FontAwesome5 name="edit" size={18} color="gray" />
           </TouchableOpacity>
           <TouchableOpacity
             style={{marginHorizontal: 8}}
-            onPress={() => console.log('pressed delete address')}
+            onPress={onDelete}
           >
             <Icons.FontAwesome5 name="trash" size={18} color="gray" />
           </TouchableOpacity>
@@ -70,13 +71,65 @@ const Order = (kitchen,contents,status,price,date,img) => {
 
 const MyOrdersScreen = ({navigation}) => {
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
+  
+  const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
+
   let scroll_position = 0;
   const ScrollViewRef = useRef();
+
+  const modalOnSubmit = () => {
+    if (addresses.filter(a => a.id == modalState.id).length >= 1) {
+      setAddresses([...addresses.filter(a => a.id != modalState.id), modalState]);
+    } else {
+      modalState.id = addresses.length + 1;
+      setAddresses([...addresses, modalState]);
+    }
+    setModalState({id: 0,addressName: "", address: ""});
+    setShowModal(false)
+  }
   
   return (
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
       
+      <Modal isVisible={showModal}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white'}}>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16
+            }}
+            onChangeText={txt => {
+              setModalState({...modalState, addressName: txt});
+            }}
+            value={modalState.addressName}
+            placeholder={"Address Name"}
+          />
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16
+            }}
+            onChangeText={txt => {
+              setModalState({...modalState, address: txt});
+            }}
+            value={modalState.address}
+            placeholder={"Address"}
+          />
+          <TouchableOpacity onPress={modalOnSubmit} style={{alignItems: 'center', marginVertical: 4}}>
+            <Text>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <ScrollView
         ref={ScrollViewRef}
         onScroll={event => scroll_position = event.nativeEvent.contentOffset.y}
@@ -93,14 +146,17 @@ const MyOrdersScreen = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
           <TouchableOpacity
-            onPress={() => console.log('pressed add new address')}
+            onPress={() => setShowModal(true)}
           >
             <Icons.Feather name='plus' size={30} color='black'/>
           </TouchableOpacity>
         </View>
         
-        {AddressCard('Home','Rothschild 100, Tel Aviv ')}
-        {AddressCard('Office','HaShalom 17, Tel Aviv ')}
+        {addresses.map(address => AddressCard(
+          address,
+          () => {setModalState(address); setShowModal(true)},
+          () => setAddresses(addresses.filter(a => a.id != address.id))
+        ))}
 
         <BlankDivider height={32}/>
 
