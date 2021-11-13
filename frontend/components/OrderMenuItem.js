@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   title: {
-    fontSize: 20
+    fontSize: 18
   },
   price: {
     fontSize: 16

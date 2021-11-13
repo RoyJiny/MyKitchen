@@ -173,8 +173,8 @@ const MyOrdersScreen = ({navigation}) => {
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('Test Kitchen',['chocolate cupcake','white cupcake','birhday cupcake'],'Pending',60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
-        {Order('Test Kitchen',['chocolate cupcake','white cupcake'],'Pending',60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Pending',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
 
         <BlankDivider height={32}/>
 
@@ -193,8 +193,7 @@ const MyOrdersScreen = ({navigation}) => {
         </View>
         {expandRecentOrders
           ? <View>
-            {Order('Test Kitchen',['chocolate cupcake','white cupcake','birhday cupcake'],null,60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
-            {Order('Test Kitchen',['chocolate cupcake','white cupcake'],null,60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+            {Order('Home Cookie',['White cupcake'],null,30,'10/4/2021',"https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg")}
           </View>
           : null
         }
