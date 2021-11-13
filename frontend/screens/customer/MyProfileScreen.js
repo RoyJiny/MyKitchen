@@ -9,6 +9,7 @@ import Backdrop from '../../components/Backdrop';
 import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
+import Button from '../../components/Button';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
@@ -69,7 +70,7 @@ const Order = (kitchen,contents,status,price,date,img) => {
   );
 };
 
-const MyOrdersScreen = ({navigation}) => {
+const MyProfileScreen = ({navigation,signoutCB}) => {
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
@@ -199,13 +200,23 @@ const MyOrdersScreen = ({navigation}) => {
         }
 
         <BlankDivider height={16}/>
+
+        <Button
+          onClick={signoutCB}
+          text="Sign Out"
+          fillColor="white"
+          textColor="black"
+          height={40}
+          width={150}
+        />
+        <BlankDivider height={16}/>
       </View>
       </ScrollView>
     </View>
   )
 };
 
-MyOrdersScreen.navigationOptions = (props) => {
+MyProfileScreen.navigationOptions = (props) => {
   return {};  
 };
 
@@ -228,4 +239,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyOrdersScreen;
+export default MyProfileScreen;
