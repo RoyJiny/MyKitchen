@@ -4,12 +4,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Picker} from '@react-native-picker/picker';
 import ImChange from './ImChange';
 
-const Dish = ({text, price, imgLink, deleteFunc}) => {
-    const [inEdit, setInEdit] = useState(true);
-    const [name, onChangeName] = useState(text);
-    const [desc, onChangeDesc] = useState("");
+const Dish = ({isRegistration, dishName, price, description, imgLink, deleteFunc, moveUp, moveDown}) => {
+    const [inEdit, setInEdit] = useState(isRegistration);
+    const [name, onChangeName] = useState(dishName);
+    const [desc, onChangeDesc] = useState(description);
     const [pricing, onChangePricing] = useState(price);
-    const [selectedSym, setSelectedSym] = useState();
     
     return (
         <View
@@ -25,7 +24,7 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                 justifyContent: 'space-between'
             }}
         >
-            <View style={{ flexDirection:'row'}}>
+            <View style={{ flexDirection:'row', justifyContent: 'space-between' }}>
             {
                 <>
                 <View  style={{flexDirection:'row'}}>
@@ -47,7 +46,7 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                             value= {name}
                         />
                          
-                        <View  style={{flexDirection:'row', alignItems: 'center'}}>
+                        <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
                             {/*<Picker
                                 style={{ height:10, width: 75, borderWidth: 1, borderColor: 'black' }}
                                 selectedValue={selectedSym}
@@ -72,7 +71,6 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                                     borderWidth: 1,
                                     borderColor: 'transparent',
                                     borderBottomColor: inEdit ? 'black' : 'transparent', 
-                                    marginBottom: 8
                                 }}
                                 editable={inEdit}
                                 onChangeText={onChangePricing}
@@ -103,20 +101,41 @@ const Dish = ({text, price, imgLink, deleteFunc}) => {
                 </>
             }
             </View>
-            <TextInput 
-                style={{
-                    color: 'black', 
-                    fontSize: 16,
-                    height: 72,
-                    padding: 8,
-                    textAlignVertical: 'top'
-                }}
-                multiline={true}
-                placeholder="Desciption"
-                editable={inEdit}
-                onChangeText={onChangeDesc}
-                value= {desc}
-            />
+            <View style={{ flexDirection:'row', justifyContent: 'space-between' }}>
+                <>
+                <TextInput 
+                    style={{
+                        color: 'black', 
+                        fontSize: 16,
+                        height: 72,
+                        width: 294,
+                        padding: 8,
+                        textAlignVertical: 'top'
+                    }}
+                    multiline={true}
+                    placeholder="Desciption"
+                    editable={inEdit}
+                    onChangeText={onChangeDesc}
+                    value= {desc}
+                />
+                <View style={{justifyContent: 'space-around', paddingVertical: 16, marginRight: 16}}>
+                    <Icon style={{}}
+                        name="angle-up"
+                        size={20}
+                        color="black"
+                        underlayColor="blue"
+                        onPress={moveUp}>
+                    </Icon>
+                    <Icon style={{}}
+                        name="angle-down"
+                        size={20}
+                        color="black"
+                        underlayColor="blue"
+                        onPress={moveDown}>
+                    </Icon>
+                </View>
+                </>
+            </View>
         </View>
         
     )

@@ -9,6 +9,7 @@ import Backdrop from '../../components/Backdrop';
 import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
+import Button from '../../components/Button';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
@@ -69,7 +70,7 @@ const Order = (kitchen,contents,status,price,date,img) => {
   );
 };
 
-const MyOrdersScreen = ({navigation}) => {
+const MyProfileScreen = ({navigation,signoutCB}) => {
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
@@ -95,14 +96,15 @@ const MyOrdersScreen = ({navigation}) => {
       <Backdrop text='My Profile' height={80}/>
       
       <Modal isVisible={showModal}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white'}}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
               height: 45,
               width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              fontSize: 16
+              fontSize: 16,
+              margin: 4
             }}
             onChangeText={txt => {
               setModalState({...modalState, addressName: txt});
@@ -116,7 +118,8 @@ const MyOrdersScreen = ({navigation}) => {
               width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              fontSize: 16
+              fontSize: 16,
+              margin: 4
             }}
             onChangeText={txt => {
               setModalState({...modalState, address: txt});
@@ -124,7 +127,14 @@ const MyOrdersScreen = ({navigation}) => {
             value={modalState.address}
             placeholder={"Address"}
           />
-          <TouchableOpacity onPress={modalOnSubmit} style={{alignItems: 'center', marginVertical: 4}}>
+          <TouchableOpacity
+            onPress={() => {
+              if (modalState.address !== "" && modalState.addressName !== "") {
+                modalOnSubmit();
+              }
+            }}
+            style={{alignItems: 'center', marginVertical: 8}}
+          >
             <Text>Done</Text>
           </TouchableOpacity>
         </View>
@@ -157,12 +167,15 @@ const MyOrdersScreen = ({navigation}) => {
           () => {setModalState(address); setShowModal(true)},
           () => setAddresses(addresses.filter(a => a.id != address.id))
         ))}
+        {
+          addresses.length == 0 ? <Text style={{alignSelf: 'center', color: Colors.lightGray}}>Click the '+' to add an address</Text> : null
+        }
 
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('Test Kitchen',['chocolate cupcake','white cupcake','birhday cupcake'],'Pending',60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
-        {Order('Test Kitchen',['chocolate cupcake','white cupcake'],'Pending',60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Pending',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
 
         <BlankDivider height={32}/>
 
@@ -181,12 +194,21 @@ const MyOrdersScreen = ({navigation}) => {
         </View>
         {expandRecentOrders
           ? <View>
-            {Order('Test Kitchen',['chocolate cupcake','white cupcake','birhday cupcake'],null,60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
-            {Order('Test Kitchen',['chocolate cupcake','white cupcake'],null,60,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+            {Order('Home Cookie',['White cupcake'],null,30,'10/4/2021',"https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg")}
           </View>
           : null
         }
 
+        <BlankDivider height={16}/>
+
+        <Button
+          onClick={signoutCB}
+          text="Sign Out"
+          fillColor="white"
+          textColor="black"
+          height={40}
+          width={150}
+        />
         <BlankDivider height={16}/>
       </View>
       </ScrollView>
@@ -194,7 +216,7 @@ const MyOrdersScreen = ({navigation}) => {
   )
 };
 
-MyOrdersScreen.navigationOptions = (props) => {
+MyProfileScreen.navigationOptions = (props) => {
   return {};  
 };
 
@@ -217,4 +239,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyOrdersScreen;
+export default MyProfileScreen;

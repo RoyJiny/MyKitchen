@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity } from 'react-native'
 
-const Tag = ({text, textColor}) => {
-    const [isSelected, setIsSelected] = useState(false);
-    const [bordColor,setBordColor] = useState(textColor);
+const Tag = ({text, textColor, stateInit}) => {
+    const [isSelected, setIsSelected] = useState(stateInit==true);
+    const [bordColor,setBordColor] = useState(stateInit ? "dodgerblue" : textColor);
     
     return (
         <TouchableOpacity
