@@ -3,11 +3,11 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 import Colors from '../globals/Colors';
 
-const YesNoChoice = ({category, units, Ycomment, Ncomment}) => {
-    const [isSelected, setIsSelected] = useState(false);
-    const [YColor,setYColor] = useState(Colors.lightGray);
-    const [NColor,setNColor] = useState('black');
-    const [number, onChangeNumber] = React.useState(null);
+const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) => {
+    const [isSelected, setIsSelected] = useState(stateInit==true);
+    const [YColor,setYColor] = useState(stateInit ? "black" : Colors.lightGray);
+    const [NColor,setNColor] = useState(stateInit ? Colors.lightGray : "black");
+    const [number, onChangeNumber] = useState(value);
     
     return (
         <View style={{marginLeft: 16, marginTop: 5,}}>
