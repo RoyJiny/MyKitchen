@@ -23,6 +23,9 @@ import MyKitchenScreen from './screens/seller/MyKitchenScreen';
 import SellerOrdersScreen from './screens/seller/SellerOrdersScreen';
 import KitchenPreviewScreen from './screens/seller/KitchenPreviewScreen';
 import OrderPreviewScreen from './screens/seller/OrderPreviewScreen';
+import EditBioScreen from './screens/seller/EditBioScreen';
+import EditMenuScreen from './screens/seller/EditMenuScreen';
+import EditLogisticsScreen from './screens/seller/EditLogisticsScreen';
 
 const Stack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
@@ -140,6 +143,9 @@ const SellerKitchenStack = ({signoutCB}) => {
         {props => <MyKitchenScreen signoutCB={signoutCB} {...props}/>}
       </Stack.Screen>
       <Stack.Screen name="KitchenPreview" component={KitchenPreviewScreen}/>
+      <Stack.Screen name="EditBio" component={EditBioScreen}/>
+      <Stack.Screen name="EditMenu" component={EditMenuScreen}/>
+      <Stack.Screen name="EditLogistics" component={EditLogisticsScreen}/>
     </Stack.Navigator>
   );
 };

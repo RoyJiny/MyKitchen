@@ -1,23 +1,16 @@
 import React from 'react';
 import {View,StyleSheet,Text,Image} from 'react-native';
-import * as Icons from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Colors from '../../globals/Colors';
-
+import BackButton from '../../components/BackButton';
 import LogoButton from '../../components/LogoButton';
 import BlankDivider from '../../components/BlankDivider';
 
 const SellerSigninScreen = ({navigation, loginCB}) => {
   return (
     <View style={{flex:1}}>
-        <Icon style={{marginLeft: 16, marginRight: 350}}
-              name="angle-left"
-              size={40}
-              color="black"
-              underlayColor="blue"
-              onPress={() => navigation.navigate("Login")}>
-        </Icon>
+        <View style={{ flexDirection:'row'}}>
+          <BackButton onClick={navigation.goBack}/>
+        </View>
 
         <BlankDivider height={32}/>
 

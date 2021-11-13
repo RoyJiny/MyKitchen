@@ -17,20 +17,20 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
                 <View style={{alignItems:"center", marginTop: widthPhone*0.1}}>
                     <View style={{flexDirection:"row", justifyContent:"space-evenly", marginBottom:tableSpaces}}>
                         <KitchenCard
-                            onClick={() => navigation.navigate("KitchenPage")}
+                            onClick={() => navigation.navigate("EditMenu")}
                             logo = {<MaterialIcons name="restaurant-menu" size={logoSize} color="black" />}
                             description="Edit Menu"
                         />
                         <View style={{marginRight:tableSpaces}}></View>
                         <KitchenCard
-                            onClick={() => navigation.navigate("KitchenPage")}
+                            onClick={() => navigation.navigate("EditBio")}
                             logo = {<Ionicons name="information-circle-sharp" size={logoSize} color="black" />}
                             description="Edit Bio"
                         />
                     </View>
                     <View style={{flexDirection:"row", justifyContent:"space-evenly"}}>
                         <KitchenCard
-                            onClick={() => navigation.navigate("KitchenPage")}
+                            onClick={() => navigation.navigate("EditLogistics")}
                             logo = {<FontAwesome5 name="user-clock" size={logoSize} color="black" />}
                             description="Edit Logistics"
                         />
