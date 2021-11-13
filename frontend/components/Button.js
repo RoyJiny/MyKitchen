@@ -20,6 +20,7 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
                 shadowOpacity: 0,
                 shadowRadius: 10,
                 borderRadius: 10,
+                elevation: 10,
                 backgroundColor: fillColor,
                 alignItems: 'center',
                 justifyContent: 'center',

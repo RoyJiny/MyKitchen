@@ -99,14 +99,14 @@ const CustomerExploreStack = () => {
   );
 };
 
-const CustomerTabsNavigator = () => {
+const CustomerTabsNavigator = (signoutCB) => {
   return (
     <Tabs.Navigator
       initialRouteName="Explore"
-      activeColor={Colors.black}
+      activeColor={"white"}
       inactiveColor={Colors.lightGray}
       barStyle={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.black,
         shadowColor: 'transparent',
           shadowOpacity: 0,
           shadowRadius: 0,
@@ -124,12 +124,14 @@ const CustomerTabsNavigator = () => {
     >
       <Tabs.Screen name="Search" component={CustomerSearchStack} />
       <Tabs.Screen name="Explore" component={CustomerExploreStack} />
-      <Tabs.Screen name="MyProfile" component={MyProfileScreen} options={{tabBarLabel: 'My Profile'}}/>
+      <Tabs.Screen name="MyProfile" options={{tabBarLabel: 'My Profile'}}>
+        {props => <MyProfileScreen signoutCB={signoutCB} {...props}/>}
+      </Tabs.Screen>
     </Tabs.Navigator>
   );
 };
 
-const SellerKitchenStack = () => {
+const SellerKitchenStack = ({signoutCB}) => {
   return (
     <Stack.Navigator
       initialRouteName="MyKitchenInternal"
@@ -137,7 +139,9 @@ const SellerKitchenStack = () => {
         headerShown: false
       }}
     >
-      <Stack.Screen name="MyKitchenInternal" component={MyKitchenScreen}/>
+      <Stack.Screen name="MyKitchenInternal" options={{tabBarLabel: 'My Profile'}}>
+        {props => <MyKitchenScreen signoutCB={signoutCB} {...props}/>}
+      </Stack.Screen>
       <Stack.Screen name="KitchenPreview" component={KitchenPreviewScreen}/>
       <Stack.Screen name="EditBio" component={EditBioScreen}/>
       <Stack.Screen name="EditMenu" component={EditMenuScreen}/>
@@ -160,14 +164,14 @@ const SellerOrdersStack = () => {
   );
 };
 
-const SellerTabsNavigator = () => {
+const SellerTabsNavigator = (signoutCB) => {
   return (
     <Tabs.Navigator
       initialRouteName="Orders"
-      activeColor={Colors.black}
+      activeColor={"white"}
       inactiveColor={Colors.lightGray}
       barStyle={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.black,
         shadowColor: 'transparent',
           shadowOpacity: 0,
           shadowRadius: 0,
@@ -182,7 +186,9 @@ const SellerTabsNavigator = () => {
         tabBarIcon: ({color}) => getTabIcon(route,color)
       })}
     >
-      <Tabs.Screen name="My Kitchen" component={SellerKitchenStack} />
+      <Tabs.Screen name="My Kitchen">
+        {props => <SellerKitchenStack signoutCB={signoutCB} {...props}/>}
+      </Tabs.Screen>
       <Tabs.Screen name="Orders" component={SellerOrdersStack} />
     </Tabs.Navigator>
   );
@@ -216,7 +222,7 @@ export default APP = () => {
       <ExpoStatusBar style="light" />
       <NavigationContainer theme={AppTheme}>
         {state.isLoggedIn
-          ? (state.isCustomer ? CustomerTabsNavigator() : SellerTabsNavigator())
+          ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
           : LoginStack(customerLoginCB,sellerLoginCB)
         }
       </NavigationContainer>
