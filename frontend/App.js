@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StatusBar, View} from 'react-native'
+import {StatusBar, View, I18nManager} from 'react-native'
 
 import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -27,6 +27,8 @@ import EditBioScreen from './screens/seller/EditBioScreen';
 import EditMenuScreen from './screens/seller/EditMenuScreen';
 import EditLogisticsScreen from './screens/seller/EditLogisticsScreen';
 
+I18nManager.allowRTL(false);
+I18nManager.forceRTL(false);
 const Stack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
 
