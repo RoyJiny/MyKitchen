@@ -100,10 +100,10 @@ const CustomerTabsNavigator = () => {
   return (
     <Tabs.Navigator
       initialRouteName="Explore"
-      activeColor={Colors.black}
+      activeColor={"white"}
       inactiveColor={Colors.lightGray}
       barStyle={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.black,
         shadowColor: 'transparent',
           shadowOpacity: 0,
           shadowRadius: 0,
@@ -158,10 +158,10 @@ const SellerTabsNavigator = () => {
   return (
     <Tabs.Navigator
       initialRouteName="Orders"
-      activeColor={Colors.black}
+      activeColor={"white"}
       inactiveColor={Colors.lightGray}
       barStyle={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.black,
         shadowColor: 'transparent',
           shadowOpacity: 0,
           shadowRadius: 0,
