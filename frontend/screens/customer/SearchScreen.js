@@ -8,7 +8,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import SearchCard from '../../components/SearchCard';
 
-const SearchScreen = ({navigation}) => {
+const SearchScreen = ({ route, navigation }) => {
   return (
     <View style={{flex:1}}>
       <View style={{flex:1}}>
@@ -23,7 +23,14 @@ const SearchScreen = ({navigation}) => {
           />
         </View>
         <View style={{
-            height: 30,
+            height: 15,
+            backgroundColor: 'transparent'
+        }}/>
+        <View>
+          { (route.params!==undefined && route.params.category!==undefined) ? <Text style={styles.results}>Showing results for: {route.params.category}</Text> : null}
+        </View>
+        <View style={{
+            height: 15,
             backgroundColor: 'transparent'
         }}/>
         <View style={{flex:1}}>
@@ -58,7 +65,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.black,
     height: 80,
   },
-  kitchen: {
+  results: {
+    fontSize: 14,
+    color: Colors.black,
+    fontWeight: 'bold',
+    marginLeft:20,
   }
 });
 
