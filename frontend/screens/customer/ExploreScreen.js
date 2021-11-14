@@ -43,17 +43,17 @@ const ExploreScreen = ({navigation}) => {
                 >
                     <KitchenExploreCard
                         kitchenName="Cakes"
-                        onClick={() => console.log('press category')}
+                        onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Cakes"}})}
                         imgLink="https://img.taste.com.au/9isesBer/taste/2016/11/caramello-cake-105070-1.jpeg"
                     />
                     <KitchenExploreCard
                         kitchenName="Bread"
-                        onClick={() => console.log('press category')}
+                        onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Bread"}})}
                         imgLink="https://www.kingarthurbaking.com/sites/default/files/2020-02/the-easiest-loaf-of-bread-youll-ever-bake.jpg"
                     />
                     <KitchenExploreCard
                         kitchenName="Burekas"
-                        onClick={() => console.log('press category')}
+                        onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Burekas"}})}
                         imgLink="https://shimrit.co.il/wp-content/uploads/2020/06/%D7%91%D7%95%D7%A8%D7%A7%D7%A1-%D7%92%D7%91%D7%99%D7%A0%D7%95%D7%AA-410x308.png"
                     />
                 </ScrollView>
