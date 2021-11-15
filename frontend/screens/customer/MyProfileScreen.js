@@ -22,7 +22,7 @@ const AddressCard = (address,onEdit,onDelete) => {
       }}>
         <View>
           <Text style={{fontWeight: 'bold', fontSize: 18}}>{address.addressName}</Text>
-          <Text style={{fontSize: 14}}>{address.address}</Text>
+          <Text numberOfLines={1} style={{width: 225,fontSize: 14}}>{address.address}</Text>
         </View>
         <View style={{flexDirection:'row', alignSelf: 'center'}}>
           <TouchableOpacity
@@ -52,9 +52,9 @@ const Order = (kitchen,contents,status,price,date,img) => {
         
         <View>
           <Text style={{fontSize: 18}}>{kitchen}</Text>
-          {contents.length > 0 ? <Text style={{fontSize: 14, color: Colors.lightGray}}>{contents[0]}</Text> : null}
-          {contents.length > 1 ? <Text style={{fontSize: 14, color: Colors.lightGray}}>{contents[1]}</Text> : null}
-          {contents.length > 2 ? <Text style={{fontSize: 14, color: Colors.lightGray}}>...</Text> : null}
+          {contents.length > 0 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[0]}</Text> : null}
+          {contents.length > 1 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[1]}</Text> : null}
+          {contents.length > 2 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>...</Text> : null}
         </View>
       </View>
 
