@@ -16,7 +16,7 @@ const KitchenPageScreen = ({navigation}) => {
     {
       id: 1,
       name: "Signature Cake",
-      description: "Great Chocolate Cake",
+      description: "Great Chocolate Cake, tasty and wonderfull price",
       price: 40,
       img: "https://img.taste.com.au/9isesBer/taste/2016/11/caramello-cake-105070-1.jpeg" 
     },

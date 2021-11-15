@@ -17,7 +17,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
       
       <View>
         <Text style={styles.title}>{itemName}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
       </View>
 
       <Text style={styles.price}>${price}</Text>
