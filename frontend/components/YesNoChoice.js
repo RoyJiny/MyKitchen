@@ -12,6 +12,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
     return (
         <View style={{marginLeft: 16, marginTop: 5,}}>
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
+            <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 <TouchableOpacity
                     onPress={() => {
                         setIsSelected(true);
@@ -98,6 +99,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                 >
                         {units}
                 </Text>
+            </View>
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center',}}>

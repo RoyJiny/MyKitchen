@@ -39,7 +39,7 @@ const AddDishesScreen = ({navigation}) => {
   }
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView>
@@ -67,7 +67,7 @@ const AddDishesScreen = ({navigation}) => {
         >
             {
               <Text style={{ textAlign:'center',color: 'black', fontSize: 20, }} >
-                      {"Add +"}
+                {"Add +"}
               </Text>
             }
         </TouchableOpacity>
@@ -99,6 +99,7 @@ const AddDishesScreen = ({navigation}) => {
           text ="Next"
           textColor = "black"
         />
+        <BlankDivider height={16}/>
         </ScrollView>
     </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

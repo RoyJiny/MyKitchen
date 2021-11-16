@@ -41,7 +41,7 @@ const EditMenuScreen = ({navigation}) => {
   }
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView>

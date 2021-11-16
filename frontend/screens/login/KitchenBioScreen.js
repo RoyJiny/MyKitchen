@@ -11,7 +11,7 @@ import ImagePickerIcon from '../../components/ImUp';
 
 const KitchenBioScreen = ({navigation, loginCB}) => {
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>

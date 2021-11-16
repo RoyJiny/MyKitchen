@@ -10,7 +10,7 @@ const BackButton = ({onClick}) => {
         alignSelf: 'center'
       }}
   >
-    <Icons.Ionicons name="ios-arrow-back" size={30} color="black" />
+    <Icons.FontAwesome5 name="angle-left" size={30} color="black" />
   </TouchableOpacity>
   )
 }
