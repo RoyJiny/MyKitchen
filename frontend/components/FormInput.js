@@ -3,8 +3,8 @@ import {StyleSheet,TextInput,View} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const FormInput = ({onSubmit,updateOriginalValue,placeholder,isPassword=false,additionalStyle}) => {
-    const [text,setText] = useState("");
+const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,isPassword=false,additionalStyle}) => {
+    const [text,setText] = useState(textInit);
     const [isActive,setIsActive] = useState(false);
    
     return (

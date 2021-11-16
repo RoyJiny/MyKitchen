@@ -17,7 +17,7 @@ const SellerMenuItem = ({itemName,price,description,imgLink}) => {
             <Image style={styles.image} source={{uri:imgLink}}/>
             <View>
                 <Text style={styles.title}>{itemName}</Text>
-                <Text style={styles.description}>{description}</Text>
+                <Text numberOfLines={2} style={styles.description}>{description}</Text>
             </View>
         </View>
         <View style={{alignSelf: 'center'}}>
@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: Colors.lightGray
+    color: Colors.lightGray,
+    width: 200
   }
 });
 

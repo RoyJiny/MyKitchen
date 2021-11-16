@@ -9,18 +9,25 @@ import ShadowCard2 from '../../components/ShadowCard2';
 import BlankDivider from '../../components/BlankDivider';
 import ImagePickerIcon from '../../components/ImUp';
 
-const KitchenBioScreen = ({navigation, loginCB}) => {
+const EditBioScreen = ({navigation, loginCB}) => {
   return (
     <View style={{flex:1}}>
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
-        <View style={{ flexDirection:'row'}}>
+        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 24 }}>
           <BackButton onClick={navigation.goBack}/>
+          <Button2
+            onClick={() => navigation.navigate("MyKitchenInternal")}
+            borderColor = "black"
+            fillColor = "white"
+            text ="Done"
+            textColor = "black"
+          />
         </View>
 
         <BlankDivider height={8}/>
-        <Text style={{fontSize: 20, marginLeft: 24}}>Tell Us About Your Kitchen</Text>
+        <Text style={{fontSize: 20, marginLeft: 24}}>Edit Your Kitchen's Bio</Text>
         <BlankDivider height={8}/>
 
         <ShadowCard2>
@@ -30,30 +37,35 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit="Cakes"
             />
           <FormInput
               placeholder="Street"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit="Hertzel 8"
             />
           <FormInput
               placeholder="City"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit="Tel Aviv"
             />
           <FormInput
               placeholder="Phone"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit="058-1234567"
             />
           <FormInput
               placeholder="Description"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit="I bake cakes for any occasions"
             />
         </ShadowCard2>
 
@@ -69,6 +81,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
             <Tag
               text ="Cakes"
               textColor = "black"
+              stateInit = {true}
             />
             <Tag
               text ="Special Events"
@@ -83,6 +96,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
             <Tag
               text ="Delivery"
               textColor = "black"
+              stateInit = {true}
             />
             <Tag
               text ="Home Food"
@@ -104,14 +118,6 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
           </View>
         </ShadowCard2>
 
-        <BlankDivider height={16}/>
-        <Button2
-          onClick={() => navigation.navigate("AddDishes")} //here use global args from all forms
-          borderColor = "black"
-          fillColor = "white"
-          text ="Next"
-          textColor = "black"
-        />
         </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -119,7 +125,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   )
 };
 
-KitchenBioScreen.navigationOptions = (props) => {
+EditBioScreen.navigationOptions = (props) => {
     return {};  
 };
 
@@ -127,4 +133,4 @@ const styles = StyleSheet.create({
 
   })
 
-export default KitchenBioScreen;
+export default EditBioScreen;

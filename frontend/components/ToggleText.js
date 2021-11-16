@@ -4,9 +4,9 @@ import PickerT from './PickerT';
 
 import Colors from '../globals/Colors';
 
-const ToggleText = ({text}) => {
-    const [isSelected, setIsSelected] = useState(false);
-    const [bordColor,setBordColor] = useState(Colors.lightGray);
+const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => {
+    const [isSelected, setIsSelected] = useState(stateInit==true);
+    const [bordColor,setBordColor] = useState(stateInit ? "black" : Colors.lightGray);
     
     
     return (
@@ -52,7 +52,7 @@ const ToggleText = ({text}) => {
                 </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <PickerT hourDef= {8} minuteDef= {30} textColor={bordColor} isActive={isSelected}/>
+            <PickerT hourDef= {startHour} minuteDef= {startMin} textColor={bordColor} isActive={isSelected}/>
                 <Text 
                     style={{
                         textAlign:'center',
@@ -64,7 +64,7 @@ const ToggleText = ({text}) => {
                 >
                         {"-"}
                 </Text>
-                <PickerT hourDef= {16} minuteDef= {0} textColor={bordColor} isActive={isSelected}/>
+                <PickerT hourDef= {endHour} minuteDef= {endMin} textColor={bordColor} isActive={isSelected}/>
             </View>
         </View>
         

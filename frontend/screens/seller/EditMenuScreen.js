@@ -1,16 +1,18 @@
 import React, {useState} from 'react';
-import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView, Dimensions} from 'react-native';
+import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView} from 'react-native';
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
 import BlankDivider from '../../components/BlankDivider';
 import Dish from '../../components/Dish';
 
-const AddDishesScreen = ({navigation}) => {
+const EditMenuScreen = ({navigation}) => {
 
-  const [dishItems, setDishItems] = useState([]);
+  const [dishItems, setDishItems] = useState([{key: 0, name: 'Chocolate Cake', description: 'Made with love and chcolate!', price: '60', imgLink: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU'}]);
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleAdd = () => {
+    setIsAdded(true)
     for (let i = 0; i <= dishItems.length; i++) {
         let isIn = false;
         for (let j = 0; j < dishItems.length; j++) {
@@ -43,12 +45,19 @@ const AddDishesScreen = ({navigation}) => {
       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView>
-        <View style={{ flexDirection:'row'}}>
-          <BackButton onClick={navigation.goBack}/>
-        </View>
+        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignItems: 'center', paddingRight: 24 }}>
+            <BackButton onClick={navigation.goBack}/>
+            <Button2
+              onClick={() => navigation.navigate("MyKitchenInternal")}
+              borderColor = "black"
+              fillColor = "white"
+              text ="Done"
+              textColor = "black"
+            />
+          </View>
 
         <BlankDivider height={8}/>
-        <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
+        <Text style={{fontSize: 20, marginLeft: 24}}>Edit Your Kitchen's Menu</Text>
         <BlankDivider height={8}/>
 
         <TouchableOpacity
@@ -73,32 +82,23 @@ const AddDishesScreen = ({navigation}) => {
         </TouchableOpacity>
         <BlankDivider height={16}/>
         
-        <ScrollView style={{maxHeight: Dimensions.get('window').height*0.7}} contentContainerStyle={{flexGrow: 1}}>
-          {
-            dishItems.map((item, index) => {
-              return (
-                <Dish key={item.key}
-                  isRegistration= {true}
-                  deleteFunc= {() => deleteDish(index)} 
-                  moveUp= {() => moveUp(index)} 
-                  moveDown= {() => moveDown(index)} 
-                  imgLink= "https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png"
-                  dishName= {item.name}
-                  description= {item.description}
-                  price= {item.price}
-                />
+        {
+        dishItems.map((item, index) => {
+            return (
+            <Dish key={item.key}
+                isRegistration= {index==0? isAdded:false}
+                deleteFunc= {() => deleteDish(index)} 
+                moveUp= {() => moveUp(index)} 
+                moveDown= {() => moveDown(index)} 
+                imgLink= {item.imgLink}
+                dishName= {item.name}
+                description= {item.description}
+                price= {item.price}
+            />
             )
-            })
-          }
-        </ScrollView>
+        })
+        }
 
-        <BlankDivider height={16}/>
-        <Button2
-          onClick={() => navigation.navigate("Logistics")} //here use global args from all forms
-          fillColor = "white"
-          text ="Next"
-          textColor = "black"
-        />
         </ScrollView>
     </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -107,7 +107,7 @@ const AddDishesScreen = ({navigation}) => {
   )
 };
 
-AddDishesScreen.navigationOptions = (props) => {
+EditMenuScreen.navigationOptions = (props) => {
     return {};  
 };
 
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default AddDishesScreen;
+export default EditMenuScreen;
