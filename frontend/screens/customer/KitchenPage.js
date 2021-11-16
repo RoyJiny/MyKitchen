@@ -103,7 +103,7 @@ const KitchenPageScreen = ({navigation}) => {
             fillColor="white"
             text="Order Now"
             textColor="#7CC0FA"
-            height={25}
+            height={30}
             width={100}
           />
       </View>
