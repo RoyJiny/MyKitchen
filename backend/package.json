@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Google Workshop Project - TAU 2021-2022",
+  "main": "app.js",
+  "scripts": {
+    "start": "env-cmd -f ./config/server.env node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoyJiny/GoogleWorkshop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RoyJiny/GoogleWorkshop/issues"
+  },
+  "homepage": "https://github.com/RoyJiny/GoogleWorkshop#readme",
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1"
+  }
+}
