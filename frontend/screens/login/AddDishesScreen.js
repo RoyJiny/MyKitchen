@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView, Dimensions} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -39,10 +40,9 @@ const AddDishesScreen = ({navigation}) => {
   }
 
   return (
-    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
-      <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
+      <KeyboardAwareScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView>
+        <View>
         <View style={{ flexDirection:'row'}}>
           <BackButton onClick={navigation.goBack}/>
         </View>
@@ -55,25 +55,26 @@ const AddDishesScreen = ({navigation}) => {
             onPress={() => handleAdd()}
             style={{
                 borderRadius: 24,
-                borderColor: 'black',
+                borderColor: (dishItems.length >= 20) ? 'grey' : 'black',
                 backgroundColor: 'white',
                 borderWidth: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
-                width: 120,
+                width: (dishItems.length >= 20) ? 240 : 120,
                 alignSelf: 'center'
             }}
+            disabled={dishItems.length >= 20}
         >
             {
-              <Text style={{ textAlign:'center',color: 'black', fontSize: 20, }} >
-                {"Add +"}
+              <Text style={{ textAlign:'center',color: (dishItems.length >= 20) ? 'grey' : 'black', fontSize: 20, }} >
+                {(dishItems.length >= 20) ? 'max amount reached' : 'Add +'}
               </Text>
             }
         </TouchableOpacity>
         <BlankDivider height={16}/>
         
-        <ScrollView style={{maxHeight: Dimensions.get('window').height*0.7}} contentContainerStyle={{flexGrow: 1}}>
+
           {
             dishItems.map((item, index) => {
               return (
@@ -90,7 +91,7 @@ const AddDishesScreen = ({navigation}) => {
             )
             })
           }
-        </ScrollView>
+
 
         <BlankDivider height={16}/>
         <Button2
@@ -100,11 +101,9 @@ const AddDishesScreen = ({navigation}) => {
           textColor = "black"
         />
         <BlankDivider height={16}/>
-        </ScrollView>
+        </View>
     </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-    </View>
-    
+    </KeyboardAwareScrollView>
   )
 };
 

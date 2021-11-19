@@ -1,5 +1,6 @@
 import React from 'react';
 import {View,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard,ScrollView} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -11,8 +12,7 @@ import FormInput from '../../components/FormInput';
 
 const LogisticsScreen = ({navigation,loginCB}) => {
   return (
-    <View style={{flex:1,marginTop: 16, marginHorizontal: 8}}>
-        <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
+    <KeyboardAwareScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView>
           <View style={{ flexDirection:'row'}}>
@@ -89,9 +89,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
           <BlankDivider height={16}/>
           </ScrollView>
         </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-        
-    </View>
+      </KeyboardAwareScrollView>
   )
 };
 

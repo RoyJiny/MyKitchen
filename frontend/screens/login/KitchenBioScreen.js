@@ -30,30 +30,35 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit=""
             />
           <FormInput
               placeholder="Street"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit=""
             />
           <FormInput
               placeholder="City"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit=""
             />
           <FormInput
               placeholder="Phone"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit=""
             />
           <FormInput
               placeholder="Description"
               updateOriginalValue={txt => console.log(txt)}
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+              textInit=""
             />
         </ShadowCard2>
 
