@@ -1,7 +1,7 @@
 import React from 'react'
-import { Text, TouchableOpacity, Image } from 'react-native'
+import { Text, TouchableOpacity, Image, ActivityIndicator, View } from 'react-native'
 
-const LogoButton = ({logoConf,onClick, fillColor, text, textColor}) => {    
+const LogoButton = ({logoConf,onClick, fillColor, text, textColor, isLoading=false}) => {    
     return (
         <TouchableOpacity
             onPress={onClick}
@@ -21,38 +21,50 @@ const LogoButton = ({logoConf,onClick, fillColor, text, textColor}) => {
               width: 310,
               alignSelf: 'center',
               flexDirection: 'row',
-              paddingLeft: 20
+              paddingHorizontal: 20,
+              justifyContent: 'center'
             }}
         >
-            {
-              logoConf.isIcon  
-                ? (
-                <logoConf.iconComponent
-                  name={logoConf.iconName}
-                  size={logoConf.size}
-                  color={logoConf.iconColor}
-                  style={{marginRight: 30}}
+            {isLoading
+                ?<ActivityIndicator
+                    size={30}
+                    color="black"
                 />
-                )
-                : (<Image
-                    style={{
-                        height: logoConf.size,
-                        width: logoConf.size,
-                        marginRight: 30
-                    }}
-                    source={{uri: logoConf.imageLink}}
-                />)
+                :<>
+                    {
+                    logoConf.isIcon  
+                        ? (
+                        <logoConf.iconComponent
+                        name={logoConf.iconName}
+                        size={logoConf.size}
+                        color={logoConf.iconColor}
+                        style={{marginRight: 30}}
+                        />
+                        )
+                        : (<Image
+                            style={{
+                                height: logoConf.size,
+                                width: logoConf.size,
+                                marginRight: 30
+                            }}
+                            source={{uri: logoConf.imageLink}}
+                        />)
+                    }
+                    <View style={{justifyContent: 'center', flex:1}}>
+                        <Text 
+                            style={{
+                                textAlign:'center',
+                                color: textColor,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                            }}
+                        >
+                                {text}
+                        </Text>
+                    </View>
+                </>
             }
-            <Text 
-                style={{
-                    textAlign:'center',
-                    color: textColor,
-                    fontSize: 20,
-                    fontWeight: 'bold'
-                }}
-            >
-                    {text}
-            </Text>
+            
         </TouchableOpacity>
     )
 }

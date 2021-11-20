@@ -1,7 +1,7 @@
 import * as Google from 'expo-google-app-auth';
 import { saveAuthToken } from './async_storage';
 
-const signin = (successCB,isSeller) => {
+const signin = (successCB,stopLoadingCB,isSeller) => {
   const config = {
     androidClientId: '225045444277-o7k85cn5613jru2vm2qnlgfa74gpbe8a.apps.googleusercontent.coma',
     scopes: ['profile','email']
@@ -25,10 +25,10 @@ const signin = (successCB,isSeller) => {
 
         successCB();
       } else {
-        console.log('no success');
+        stopLoadingCB();
       }
     })
-    .catch(err => console.log(err));
+    .catch(err => {console.log(err); stopLoadingCB();});
 };
 
 export {signin};
