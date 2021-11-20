@@ -1,24 +1,23 @@
-
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const ENV = require('../../config/env');
 
 const auth = async (req, res, next) => {
     try {
         const token = req.header("Authorization").replace("Bearer ", "");
-        
-        /* verify with firebase */
-        
+        const decoded = jwt.verify(token, ENV.JWT_SECRET);
 
-        /* verify find that the user exists inside the data base */
-        // const user = await User.findOne({
-        //     _id: decoded._id,
-        //     "tokens.token": token
-        // });
+        const user = await User.findOne({
+            _id: decoded._id,
+            "tokens.token": token
+        });
 
-        // if (!user) {
-        //     throw new Error();
-        // }
+        if (!user) {
+            throw new Error();
+        }
 
-        // req.token = token;
-        // req.user = user;
+        req.token = token;
+        req.user = user;
         next();
     } catch (e) {
         res.status(401).send({ error: "Unauthorized" });
