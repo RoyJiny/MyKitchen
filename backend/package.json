@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Google Workshop Project - TAU 2021-2022",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoyJiny/GoogleWorkshop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RoyJiny/GoogleWorkshop/issues"
+  },
+  "homepage": "https://github.com/RoyJiny/GoogleWorkshop#readme",
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.13"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
