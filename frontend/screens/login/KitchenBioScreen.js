@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {View,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { UserContext } from "../../UserContext";
 
 import BackButton from '../../components/BackButton';
 import Tag from '../../components/Tag';
@@ -10,6 +11,8 @@ import BlankDivider from '../../components/BlankDivider';
 import ImagePickerIcon from '../../components/ImUp';
 
 const KitchenBioScreen = ({navigation, loginCB}) => {
+  const { user, setUser } = useContext(UserContext);
+
   return (
     <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
       <KeyboardAvoidingView>
@@ -20,7 +23,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         </View>
 
         <BlankDivider height={8}/>
-        <Text style={{fontSize: 20, marginLeft: 24}}>Tell Us About Your Kitchen</Text>
+        <Text style={{fontSize: 20, marginLeft: 24}}>Tell Us About Your Kitchen,{user==null? 'hi':'hello'/* sanity check on initial state (can be object) */}</Text>
         <BlankDivider height={8}/>
 
         <ShadowCard2>

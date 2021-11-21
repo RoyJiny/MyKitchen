@@ -1,5 +1,6 @@
 import React from 'react';
 import {View,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard,ScrollView} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -11,11 +12,10 @@ import FormInput from '../../components/FormInput';
 
 const EditLogisticsScreen = ({navigation,loginCB}) => {
   return (
-    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
-        <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} keyboardVerticalOffset={-180}>
+    <KeyboardAwareScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
-          <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 24 }}>
+          <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
+          <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
             <BackButton onClick={navigation.goBack}/>
             <Button2
               onClick={() => navigation.navigate("MyKitchenInternal")}
@@ -87,11 +87,9 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
               
           <BlankDivider height={16}/>
           
-          </ScrollView>
-        </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-        
-    </View>
+          </View>
+        </TouchableWithoutFeedback>        
+    </KeyboardAwareScrollView>
   )
 };
 

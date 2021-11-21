@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View,StyleSheet,Text,KeyboardAvoidingView,Keyboard,TouchableWithoutFeedback,TouchableOpacity, ScrollView, Dimensions} from 'react-native';
+import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import BackButton from '../../components/BackButton';
@@ -10,6 +10,7 @@ import Dish from '../../components/Dish';
 const AddDishesScreen = ({navigation}) => {
 
   const [dishItems, setDishItems] = useState([]);
+  const [alerted, setAlerted] = useState(false);
 
   const handleAdd = () => {
     for (let i = 0; i <= dishItems.length; i++) {
@@ -19,6 +20,7 @@ const AddDishesScreen = ({navigation}) => {
         }
         if(!isIn) {setDishItems([{key: i, name: '', description: '', price: '', imgLink: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}, ...dishItems]); break;}
     }
+    if(dishItems.length >= 19 && !alerted) { Alert.alert(`Max amount of dishes reached, please delete older ones to add`); setAlerted(true);}
   }
 
   const deleteDish = (index) => {
@@ -40,46 +42,53 @@ const AddDishesScreen = ({navigation}) => {
   }
 
   return (
-      <KeyboardAwareScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
+      <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+        <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
         <View style={{ flexDirection:'row'}}>
           <BackButton onClick={navigation.goBack}/>
         </View>
 
-        <BlankDivider height={8}/>
-        <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
-        <BlankDivider height={8}/>
-
-        <TouchableOpacity
+        <BlankDivider height={16}/>
+        <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+          <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
+          <TouchableOpacity
             onPress={() => handleAdd()}
             style={{
                 borderRadius: 24,
-                borderColor: (dishItems.length >= 20) ? 'grey' : 'black',
-                backgroundColor: 'white',
-                borderWidth: 1,
+                borderColor: (dishItems.length >= 20) ? 'black' : 'black',
+                backgroundColor: (dishItems.length >= 20) ? 'lightgrey' : 'lightgreen',
+                borderWidth: 0,
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
-                width: (dishItems.length >= 20) ? 240 : 120,
-                alignSelf: 'center'
+                width: (dishItems.length >= 20) ? 40 : 40,
+                alignSelf: 'center',
+                marginRight: 24,
+                shadowColor: "#000000",
+                shadowOffset: {
+                    width: 0,
+                    height: 4,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 5,
+                elevation: 10,
             }}
             disabled={dishItems.length >= 20}
-        >
-            {
-              <Text style={{ textAlign:'center',color: (dishItems.length >= 20) ? 'grey' : 'black', fontSize: 20, }} >
-                {(dishItems.length >= 20) ? 'max amount reached' : 'Add +'}
-              </Text>
-            }
-        </TouchableOpacity>
+          >
+              {
+                <Text style={{ textAlign:'center',color: 'black', fontSize: 24}} >
+                  {'+'}
+                </Text>
+              }
+          </TouchableOpacity>
+        </View>
         <BlankDivider height={16}/>
-        
 
           {
             dishItems.map((item, index) => {
               return (
                 <Dish key={item.key}
-                  isRegistration= {true}
                   deleteFunc= {() => deleteDish(index)} 
                   moveUp= {() => moveUp(index)} 
                   moveDown= {() => moveDown(index)} 
@@ -100,7 +109,7 @@ const AddDishesScreen = ({navigation}) => {
           text ="Next"
           textColor = "black"
         />
-        <BlankDivider height={16}/>
+        <BlankDivider height={32}/>
         </View>
     </TouchableWithoutFeedback>
     </KeyboardAwareScrollView>

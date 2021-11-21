@@ -15,7 +15,7 @@ const EditBioScreen = ({navigation, loginCB}) => {
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
-        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 24 }}>
+        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
           <BackButton onClick={navigation.goBack}/>
           <Button2
             onClick={() => navigation.navigate("MyKitchenInternal")}

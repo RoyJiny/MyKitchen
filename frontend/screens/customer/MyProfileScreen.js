@@ -1,5 +1,5 @@
-import React,{useState,useRef} from 'react'
-import {View,StyleSheet,TextInput,Text,Image,TouchableOpacity, ScrollView} from 'react-native'
+import React,{useState,useRef,useCallback } from 'react'
+import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
 
@@ -43,7 +43,7 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img) => {
+const Order = (kitchen,contents,status,price,date,img,payLink) => {
   return (
     <View>
     <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
@@ -59,15 +59,35 @@ const Order = (kitchen,contents,status,price,date,img) => {
       </View>
 
       <View style={{alignSelf: 'center'}}>
-        {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>Status: {status}</Text> : null}
+        {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{status}</Text> : null}
         <Text style={{textAlign: 'center', fontSize: 14}}>${price}</Text>
         <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
+        {status == 'Waiting payment'? <OpenURLButton url={payLink} text='payment link'></OpenURLButton> : null}
       </View>
     </View>
 
     <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
     </View>
   );
+};
+
+const OpenURLButton = ({ url, text }) => {
+  const handlePress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+  }, [url]);
+
+  return <TouchableOpacity onPress={handlePress}>
+            <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>{text}</Text>
+          </TouchableOpacity>;
 };
 
 const MyProfileScreen = ({navigation,signoutCB}) => {
@@ -174,7 +194,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Pending',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg")}
+        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg","https://google.com")}
         {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
 
         <BlankDivider height={32}/>
