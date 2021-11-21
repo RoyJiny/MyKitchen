@@ -16,7 +16,6 @@ const Dish = ({dishName, price, description, imgLink, deleteFunc, moveUp, moveDo
                 borderRadius: 16,
                 borderColor: 'black',
                 backgroundColor: 'white',
-                borderWidth: 0,
                 marginBottom: 16,
                 marginHorizontal: 16,
                 alignSelf: 'center',
