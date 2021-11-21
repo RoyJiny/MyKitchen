@@ -11,7 +11,7 @@ const SellerSigninScreen = ({navigation}) => {
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
         <View style={{ flexDirection:'row'}}>
           <BackButton onClick={navigation.goBack}/>
         </View>

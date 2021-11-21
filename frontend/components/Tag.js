@@ -28,8 +28,7 @@ const Tag = ({text, textColor, stateInit}) => {
                     style={{
                         textAlign:'center',
                         color: bordColor,
-                        fontSize: 14,
-                        fontWeight: 'bold'
+                        fontSize: 14
                     }}
                 >
                         {text}

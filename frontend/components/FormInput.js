@@ -3,7 +3,7 @@ import {StyleSheet,TextInput,View} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,isPassword=false,additionalStyle}) => {
+const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,additionalStyle}) => {
     const [text,setText] = useState(textInit);
     const [isActive,setIsActive] = useState(false);
    
@@ -20,8 +20,6 @@ const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,isPassword
                 placeholderTextColor={Colors.lightGray}
                 onFocus={() => {setIsActive(true)}}
                 onBlur={() => {setIsActive(false)}}
-                secureTextEntry={isPassword}
-                autoCapitalize={"none"}
                 autoCorrect={false}
                 color={"black"}
                 onSubmitEditing={onSubmit} // maybe not needed

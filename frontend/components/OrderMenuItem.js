@@ -1,10 +1,11 @@
-import React from 'react';
-import {View,Text,TouchableOpacity,Image,StyleSheet, Dimensions} from 'react-native';
+import React, {useState} from 'react';
+import {View,Text,TouchableOpacity,Image,StyleSheet, ActivityIndicator} from 'react-native';
 
 import Colors from '../globals/Colors';
 import ShadowCard from './ShadowCard';
 
 const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
+  const [isLoading, setIsLoading] = useState(true);
   return (
     <View style={{justifyContent: 'center'}}>
     <View style={{
@@ -13,8 +14,12 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
       marginHorizontal:16,
       alignItems: 'center'
     }}>
-      <Image style={styles.image} source={{uri:imgLink}}/>
-      
+
+      <View style={{width: 70, height: 70, borderRadius: 10, alignContent:'center'}}>
+        <Image style={{width: 70, height: (isLoading ? 0 : 70), borderRadius: 10}} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);/*setTimeout(() => {  setIsLoading(false); }, 3000);*/}}}/>
+        <ActivityIndicator style={{ marginTop:20 ,alignSelf: 'center', display: (isLoading ? 'flex' : 'none') }} size={30} color="black" />
+      </View>
+
       <View>
         <Text style={styles.title}>{itemName}</Text>
         <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
