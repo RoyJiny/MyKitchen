@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import * as Icons from '@expo/vector-icons'
+import { UserContext } from "./UserContext";
 
 import Colors from './globals/Colors';
 
@@ -198,6 +199,7 @@ const SellerTabsNavigator = (signoutCB) => {
 
 export default APP = () => {
   const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
+  const [user, setUser] = useState(null);
 
   const customerLoginCB = () => {
     setState({isLoggedIn: true, isCustomer: true});
@@ -222,12 +224,14 @@ export default APP = () => {
     <View style={{flex:1}}>
       <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
       <ExpoStatusBar style="light" />
+      <UserContext.Provider value={{user, setUser}}>
       <NavigationContainer theme={AppTheme}>
         {state.isLoggedIn
           ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
           : LoginStack(customerLoginCB,sellerLoginCB)
         }
       </NavigationContainer>
+      </UserContext.Provider>
     </View>
   );
 };
