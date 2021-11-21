@@ -63,13 +63,10 @@ const EditMenuScreen = ({navigation}) => {
             onPress={() => handleAdd()}
             style={{
                 borderRadius: 24,
-                borderColor: (dishItems.length >= 20) ? 'black' : 'black',
                 backgroundColor: (dishItems.length >= 20) ? 'lightgrey' : 'lightgreen',
-                borderWidth: 0,
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
-                width: (dishItems.length >= 20) ? 40 : 40,
                 alignSelf: 'center',
                 marginRight: 24,
                 shadowColor: "#000000",
