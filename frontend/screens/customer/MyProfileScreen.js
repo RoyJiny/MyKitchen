@@ -175,16 +175,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
-          {
-              addresses.length <= 2 ? (
-              <TouchableOpacity onPress={() => setShowModal(true)}>
-                <Icons.Feather name='plus' size={30} color='black'/>
-              </TouchableOpacity> ) : (
-                <TouchableOpacity disabled={true} onPress={() => setShowModal(true)}>
-                  <Icons.Feather name='plus' size={30} color='gray'/>
-                </TouchableOpacity> 
-              )
-          }
+          <TouchableOpacity disabled={addresses.length > 2} onPress={() => setShowModal(true)}>
+            <Icons.Feather name='plus' size={30} color={addresses.length <= 2 ? 'black' : 'gray'}/>
+          </TouchableOpacity>
           
         </View>
         
