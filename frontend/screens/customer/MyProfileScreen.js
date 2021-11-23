@@ -157,6 +157,12 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           >
             <Text>Done</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowModal(false)}
+            style={{alignItems: 'center', marginVertical: 8}}
+          >
+            <Text>Cancel</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -175,11 +181,10 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
-          <TouchableOpacity
-            onPress={() => setShowModal(true)}
-          >
-            <Icons.Feather name='plus' size={30} color='black'/>
+          <TouchableOpacity disabled={addresses.length > 2} onPress={() => setShowModal(true)}>
+            <Icons.Feather name='plus' size={30} color={addresses.length <= 2 ? 'black' : 'gray'}/>
           </TouchableOpacity>
+          
         </View>
         
         {addresses.map(address => AddressCard(

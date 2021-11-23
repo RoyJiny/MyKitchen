@@ -10,6 +10,7 @@ import MultilineInput from '../../components/MultilineInput';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import Button from '../../components/Button';
 import BlankDivider from '../../components/BlankDivider';
+import PickerDate from '../../components/PickerDate';
 
 const SingleOrder = (name,amount,price) => {  
   return (
@@ -40,9 +41,15 @@ const OrderScreen = ({navigation}) => {
   const [comments, setComments] = useState("");
 
   const deliveryOptions = ["Home","Office", "Pickup"];
+  const dateOptions = ["ASAP","Future Delivery"];
   const [selectedDelivery, setSelectedDelivery] = useState("Home");
+  const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [showDelivery, setShowDelivery] = useState(false);
+  const [showDate, setShowDate] = useState(false);
+
+  const [date, setDate] = useState(new Date());
 
   return (
     <View style={{flex:1}}>
@@ -97,6 +104,34 @@ const OrderScreen = ({navigation}) => {
 
       <BlankDivider height={32}/>
 
+      <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
+        <Text style={styles.deliveryTitle}>Delivery Date</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={styles.deliveryTitle}>{selectedDateOption}</Text>
+          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDate(!showDate)}/>
+        </View>
+      </View>
+
+      {showDate
+        ? dateOptions.map(opt =>
+          <View key={opt} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+            <RadioButton
+              status={ selectedDateOption == opt ? 'checked' : 'unchecked' }
+              color="black"
+              onPress= {() => setSelectedDateOption(opt)}
+            />
+            <Text style={{marginRight : 10}}>{opt}</Text>
+            <View>
+              {
+                opt == "Future Delivery" ? <PickerDate date={date} setDate={setDate} textColor="black" isActive={true}/> : null
+              }
+            </View>
+          </View>
+        )
+        : null
+      }
+
+      <BlankDivider height={32}/>
       <Button
         onClick={() => console.log('sending order...')}
         borderColor="black"
