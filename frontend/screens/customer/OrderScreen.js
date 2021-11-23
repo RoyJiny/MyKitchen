@@ -10,7 +10,6 @@ import MultilineInput from '../../components/MultilineInput';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import Button from '../../components/Button';
 import BlankDivider from '../../components/BlankDivider';
-import DatePicker from 'react-datepicker'
 import PickerDate from '../../components/PickerDate';
 
 const SingleOrder = (name,amount,price) => {  
