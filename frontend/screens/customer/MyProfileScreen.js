@@ -175,10 +175,10 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
-          <TouchableOpacity
-            onPress={() => setShowModal(true)}
-          >
-            <Icons.Feather name='plus' size={30} color='black'/>
+          <TouchableOpacity onPress={() => setShowModal(true)}>
+            {
+              addresses.length <= 2 ? <Icons.Feather name='plus' size={30} color='black'/> : null
+            }
           </TouchableOpacity>
         </View>
         
