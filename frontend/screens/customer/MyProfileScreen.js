@@ -157,6 +157,12 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           >
             <Text>Done</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowModal(false)}
+            style={{alignItems: 'center', marginVertical: 8}}
+          >
+            <Text>Cancel</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
