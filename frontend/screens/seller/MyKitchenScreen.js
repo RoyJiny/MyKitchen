@@ -1,12 +1,14 @@
-import React from 'react'
+import React,{useState, useContext} from 'react';
 import {View,StyleSheet,Dimensions} from 'react-native'
 import {MaterialIcons, Ionicons, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons'
+import { UserContext } from "../../contexts/UserContext";
 
 import Backdrop from '../../components/Backdrop';
 import KitchenCard from '../../components/KitchenCard';
 import Button from '../../components/Button';
  
 const MyKitchenScreen = ({navigation,signoutCB}) => {
+    const {user, setUser} = useContext(UserContext);
     const widthPhone = Dimensions.get('window').width
     const tableSpaces = widthPhone*0.03
     const logoSize = widthPhone*0.2
@@ -44,7 +46,7 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
                 </View>
 
                 <Button
-                    onClick={signoutCB}
+                    onClick={() => {console.log(user); setUser({}); signoutCB();}}
                     text="Sign Out"
                     fillColor="white"
                     textColor="black"

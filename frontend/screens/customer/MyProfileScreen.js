@@ -1,7 +1,8 @@
-import React,{useState,useRef,useCallback } from 'react'
+import React,{useState,useRef,useCallback, useContext } from 'react'
 import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
+import { UserContext } from "../../contexts/UserContext";
 
 import Colors from '../../globals/Colors';
 
@@ -91,6 +92,7 @@ const OpenURLButton = ({ url, text }) => {
 };
 
 const MyProfileScreen = ({navigation,signoutCB}) => {
+  const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
@@ -167,8 +169,8 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       >
       <View style={styles.contentContainer}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Text style={styles.title}>Hello John</Text>
-          <Image style={styles.profileImage} source={{uri:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/John_Cena_July_2018.jpg/1200px-John_Cena_July_2018.jpg"}}/>
+          <Text style={styles.title}>Hello, {user.name}</Text>
+          <Image style={styles.profileImage} source={{uri: user.imgUrl}}/>
         </View>
         
         <BlankDivider height={32}/>
@@ -222,7 +224,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={16}/>
 
         <Button
-          onClick={signoutCB}
+          onClick={() => {setUser({}); signoutCB();}}
           text="Sign Out"
           fillColor="white"
           textColor="black"

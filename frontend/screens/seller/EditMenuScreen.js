@@ -67,6 +67,7 @@ const EditMenuScreen = ({navigation}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
+                width: 40,
                 alignSelf: 'center',
                 marginRight: 24,
                 shadowColor: "#000000",

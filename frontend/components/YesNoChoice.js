@@ -3,11 +3,7 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 import Colors from '../globals/Colors';
 
-const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) => {
-    const [isSelected, setIsSelected] = useState(stateInit==true);
-    const [YColor,setYColor] = useState(stateInit ? "black" : Colors.lightGray);
-    const [NColor,setNColor] = useState(stateInit ? Colors.lightGray : "black");
-    const [number, onChangeNumber] = useState(value);
+const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumber, isSelected, setIsSelected}) => {
     
     return (
         <View style={{marginLeft: 16, marginTop: 5,}}>
@@ -16,14 +12,12 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                 <TouchableOpacity
                     onPress={() => {
                         setIsSelected(true);
-                        setYColor("black")
-                        setNColor(Colors.lightGray)
                     }}
                     style={{
                         height: 15,
                         width: 15,
                         borderRadius: 15,
-                        borderColor: YColor,
+                        borderColor: isSelected ? "black" : Colors.lightGray,
                         borderWidth: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -36,8 +30,8 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                             height: 10,
                             width: 10,
                             borderRadius: 10,
-                            backgroundColor: YColor,
-                            opacity: Number(isSelected)
+                            backgroundColor: isSelected ? "black" : Colors.lightGray,
+                            opacity: isSelected ? 1 : 0
                         }} >
                         </View>
                     }
@@ -46,7 +40,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                 <Text 
                     style={{
                         textAlign:'center',
-                        color: YColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14,
                     }}
                 >
@@ -56,7 +50,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                     style={{
                         marginLeft: 8,
                         textAlign:'center',
-                        color: YColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14,
                     }}
                 >
@@ -69,7 +63,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                     style={{
                         marginLeft: 32,
                         textAlign:'center',
-                        color: YColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14,
                     }}
                 >
@@ -79,10 +73,10 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                     style={{height: 24,
                         margin: 12,
                         borderWidth: 1,
-                        borderColor: YColor,
+                        borderColor: isSelected ? "black" : Colors.lightGray,
                         borderRadius: 8,
                         paddingHorizontal: 10,
-                        color: YColor
+                        color: isSelected ? "black" : Colors.lightGray
                     }}
                     editable={isSelected}
                     onChangeText={onChangeNumber}
@@ -93,7 +87,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                     style={{
                         marginLeft: 2,
                         textAlign:'center',
-                        color: YColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14
                     }}
                 >
@@ -106,14 +100,12 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                 <TouchableOpacity
                     onPress={() => {
                         setIsSelected(false);
-                        setNColor("black")
-                        setYColor(Colors.lightGray)
                     }}
                     style={{
                         height: 15,
                         width: 15,
                         borderRadius: 15,
-                        borderColor: NColor,
+                        borderColor: isSelected ? Colors.lightGray : "black",
                         borderWidth: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -126,7 +118,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                             height: 10,
                             width: 10,
                             borderRadius: 10,
-                            backgroundColor: NColor,
+                            backgroundColor: isSelected ? Colors.lightGray : "black",
                             opacity: Number(!isSelected)
                         }} >
                         </View>
@@ -136,7 +128,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                 <Text 
                     style={{
                         textAlign:'center',
-                        color: NColor,
+                        color: isSelected ? Colors.lightGray : "black",
                         fontSize: 14,
                     }}
                 >
@@ -146,7 +138,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, stateInit, value}) =>
                     style={{
                         marginLeft: 8,
                         textAlign:'center',
-                        color: NColor,
+                        color: isSelected ? Colors.lightGray : "black",
                         fontSize: 14,
                     }}
                 >
