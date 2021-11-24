@@ -87,7 +87,7 @@ const EditMenuScreen = ({navigation}) => {
             onPress={() => handleAdd()}
             style={{
                 borderRadius: 24,
-                backgroundColor: (dishItems.length >= 20) ? 'lightgrey' : 'lightgreen',
+                backgroundColor: 'white',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
@@ -106,7 +106,7 @@ const EditMenuScreen = ({navigation}) => {
             disabled={dishItems.length >= 20}
           >
               {
-                <Text style={{ textAlign:'center',color: 'black', fontSize: 24}} >
+                <Text style={{ textAlign:'center',color: (dishItems.length >= 20) ? 'gray' : '#7CC0FA', fontSize: 24}} >
                   {'+'}
                 </Text>
               }
@@ -134,15 +134,7 @@ const EditMenuScreen = ({navigation}) => {
             })
           }
 
-
         <BlankDivider height={16}/>
-        <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
-          fillColor = "white"
-          text ="Done"
-          textColor = "black"
-        />
-        <BlankDivider height={32}/>
         </View>
     </TouchableWithoutFeedback>
     </KeyboardAwareScrollView>

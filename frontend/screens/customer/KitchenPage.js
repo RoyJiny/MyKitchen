@@ -9,7 +9,6 @@ import BackButton from '../../components/BackButton';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import OrderMenuItem from '../../components/OrderMenuItem';
-import PopUpMenuItem from '../../components/PopUpMenuItem';
 import BlankDivider from '../../components/BlankDivider';
 
 const KitchenPageScreen = ({navigation}) => {
@@ -48,7 +47,7 @@ const KitchenPageScreen = ({navigation}) => {
   
   return (
     <View style={{flex:1}}>
-      <Modal isVisible={showModal}>
+      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 40, backgroundColor: 'white', borderRadius: 10}}>
         <View style={{justifyContent: 'center'}}>
         <View style={{

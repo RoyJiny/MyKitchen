@@ -81,7 +81,7 @@ const AddDishesScreen = ({navigation}) => {
             onPress={() => handleAdd()}
             style={{
                 borderRadius: 24,
-                backgroundColor: (dishItems.length >= 20) ? 'lightgrey' : 'lightgreen',
+                backgroundColor: 'white',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
@@ -100,7 +100,7 @@ const AddDishesScreen = ({navigation}) => {
             disabled={dishItems.length >= 20}
           >
               {
-                <Text style={{ textAlign:'center',color: 'black', fontSize: 24}} >
+                <Text style={{ textAlignVertical:'center', textAlign:'center',color: (dishItems.length >= 20) ? 'gray' : '#7CC0FA', fontSize: 24}} >
                   {'+'}
                 </Text>
               }
