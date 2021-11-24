@@ -44,9 +44,24 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img,payLink) => {
+const Order = (kitchen,contents,status,price,date,img,payLinks) => {
+  const [showModal, setShowModal] = useState(false);
   return (
     <View>
+    {status == 'Waiting payment'?   
+    <Modal isVisible={showModal}>
+      <TouchableOpacity style={{flex:1, justifyContent:'center'}} onPress={() => setShowModal(false)}>
+      <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+        {payLinks.map((item, index) => {
+            return (
+              <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(payLinks.length - 1)}/>
+            )
+        })}
+      </View>
+      </TouchableOpacity>
+    </Modal>
+    : null}
+
     <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
       <View style={{flexDirection: 'row'}}>
         <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: img}}/>
@@ -63,7 +78,10 @@ const Order = (kitchen,contents,status,price,date,img,payLink) => {
         {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{status}</Text> : null}
         <Text style={{textAlign: 'center', fontSize: 14}}>${price}</Text>
         <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
-        {status == 'Waiting payment'? <OpenURLButton url={payLink} text='payment link'></OpenURLButton> : null}
+        {status == 'Waiting payment'? 
+        <TouchableOpacity onPress={() => setShowModal(true)} >
+          <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>payment links</Text>
+        </TouchableOpacity> : null}
       </View>
     </View>
 
@@ -72,7 +90,7 @@ const Order = (kitchen,contents,status,price,date,img,payLink) => {
   );
 };
 
-const OpenURLButton = ({ url, text }) => {
+const OpenURLButton = ({ url, text, addLine }) => {
   const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(url);
@@ -86,9 +104,14 @@ const OpenURLButton = ({ url, text }) => {
     }
   }, [url]);
 
-  return <TouchableOpacity onPress={handlePress}>
+  return (
+          <>
+          <TouchableOpacity style={{paddingVertical: 8}} onPress={handlePress}>
             <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>{text}</Text>
-          </TouchableOpacity>;
+          </TouchableOpacity>
+          {addLine == true? <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/> : null}
+          </>
+          )
 };
 
 const MyProfileScreen = ({navigation,signoutCB}) => {
@@ -118,6 +141,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       <Backdrop text='My Profile' height={80}/>
       
       <Modal isVisible={showModal}>
+        <TouchableOpacity style={{flex:1, justifyContent:'center'}} onPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
@@ -166,6 +190,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
             <Text>Cancel</Text>
           </TouchableOpacity>
         </View>
+        </TouchableOpacity>
       </Modal>
 
       <ScrollView
@@ -201,7 +226,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg","https://google.com")}
+        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",["https://google.com","https://google.com"])}
         {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
 
         <BlankDivider height={32}/>
