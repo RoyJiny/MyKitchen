@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {View,StyleSheet,Text} from 'react-native'
+import {View,StyleSheet,Text, ScrollView} from 'react-native'
 import { RadioButton } from 'react-native-paper';
 
 import Colors from '../../globals/Colors';
@@ -57,8 +57,9 @@ const OrderScreen = ({navigation}) => {
         <BackButton onClick={navigation.goBack}/>
         <Text style={styles.title}>Order Summary</Text>
       </View>
-
+      <ScrollView style={{marginBottom:20}}>
       <View style={{marginHorizontal: 20}}>
+      <BlankDivider height={8}/>
       <ShadowCard>
         <View style={{paddingHorizontal: 8}}>
           {
@@ -141,6 +142,8 @@ const OrderScreen = ({navigation}) => {
         height={30}
         width={100}
       />
+      <BlankDivider height={8}/>
+      </ScrollView>
     </View>
   )
 };
