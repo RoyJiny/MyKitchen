@@ -4,10 +4,7 @@ import PickerT from './PickerT';
 
 import Colors from '../globals/Colors';
 
-const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => {
-    const [isSelected, setIsSelected] = useState(stateInit==true);
-    const [bordColor,setBordColor] = useState(stateInit ? "black" : Colors.lightGray);
-    
+const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, endTime, setEndTime}) => {
     
     return (
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 5,}}>
@@ -15,13 +12,12 @@ const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => 
                 <TouchableOpacity
                     onPress={() => {
                         setIsSelected(!isSelected);
-                        isSelected ? setBordColor(Colors.lightGray) : setBordColor("black")
                     }}
                     style={{
                         height: 15,
                         width: 15,
                         borderRadius: 15,
-                        borderColor: bordColor,
+                        borderColor: isSelected ? "black" : Colors.lightGray,
                         borderWidth: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -34,8 +30,8 @@ const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => 
                             height: 10,
                             width: 10,
                             borderRadius: 10,
-                            backgroundColor: bordColor,
-                            opacity: Number(isSelected)
+                            backgroundColor: isSelected ? "black" : 'transparent',
+                            opacity: isSelected ? 1 : 0
                         }} >
                         </View>
                     }
@@ -44,7 +40,7 @@ const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => 
                 <Text 
                     style={{
                         textAlign:'center',
-                        color: bordColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14,
                     }}
                 >
@@ -52,11 +48,11 @@ const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => 
                 </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <PickerT hourDef= {startHour} minuteDef= {startMin} textColor={bordColor} isActive={isSelected}/>
+                <PickerT textColor={isSelected ? "black" : Colors.lightGray} isActive={isSelected} time={startTime} setTime={setStartTime}/>
                 <Text 
                     style={{
                         textAlign:'center',
-                        color: bordColor,
+                        color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 18,
                         fontWeight: 'bold',
                         marginHorizontal: 5
@@ -64,7 +60,7 @@ const ToggleText = ({text, stateInit, startHour, startMin, endHour, endMin}) => 
                 >
                         {"-"}
                 </Text>
-                <PickerT hourDef= {endHour} minuteDef= {endMin} textColor={bordColor} isActive={isSelected}/>
+                <PickerT textColor={isSelected ? "black" : Colors.lightGray} isActive={isSelected} time={endTime} setTime={setEndTime}/>
             </View>
         </View>
         

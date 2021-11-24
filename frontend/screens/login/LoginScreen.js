@@ -1,6 +1,7 @@
-import React,{useState} from 'react'
+import React,{useState, useContext} from 'react';
 import {View,StyleSheet} from 'react-native'
 import * as Icons from '@expo/vector-icons'
+import { UserContext } from "../../contexts/UserContext";
 
 import {signin} from '../../api/google_signin';
 
@@ -9,6 +10,7 @@ import Backdrop from '../../components/Backdrop';
 import BlankDivider from '../../components/BlankDivider';
 
 const LoginScreen = ({navigation, loginCB}) => {
+  const {user, setUser} = useContext(UserContext);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
 
   return (
@@ -24,7 +26,7 @@ const LoginScreen = ({navigation, loginCB}) => {
           }}
           onClick={() => {
             setIsLoadingGoogle(true);
-            signin(loginCB,() => setIsLoadingGoogle(false),false);
+            signin(loginCB,() => setIsLoadingGoogle(false),false,(newData) => setUser({...user, ...newData}));
           }}
           borderColor='black'
           fillColor='white'

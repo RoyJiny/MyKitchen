@@ -1,7 +1,8 @@
-import React,{useState,useRef,useCallback } from 'react'
+import React,{useState,useRef,useCallback, useContext } from 'react'
 import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
+import { UserContext } from "../../contexts/UserContext";
 
 import Colors from '../../globals/Colors';
 
@@ -43,9 +44,22 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img,payLink) => {
+const Order = (kitchen,contents,status,price,date,img,payLinks) => {
+  const [showModal, setShowModal] = status == 'Waiting payment' ? useState(false) : [false, (value) => {}]
   return (
     <View>
+    {status == 'Waiting payment'?   
+    <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
+      <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+        {payLinks.map((item, index) => {
+            return (
+              <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(payLinks.length - 1)}/>
+            )
+        })}
+      </View>
+    </Modal>
+    : null}
+
     <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
       <View style={{flexDirection: 'row'}}>
         <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: img}}/>
@@ -62,7 +76,10 @@ const Order = (kitchen,contents,status,price,date,img,payLink) => {
         {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{status}</Text> : null}
         <Text style={{textAlign: 'center', fontSize: 14}}>${price}</Text>
         <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
-        {status == 'Waiting payment'? <OpenURLButton url={payLink} text='payment link'></OpenURLButton> : null}
+        {status == 'Waiting payment'? 
+        <TouchableOpacity onPress={() => setShowModal(true)} >
+          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
+        </TouchableOpacity> : null}
       </View>
     </View>
 
@@ -71,7 +88,7 @@ const Order = (kitchen,contents,status,price,date,img,payLink) => {
   );
 };
 
-const OpenURLButton = ({ url, text }) => {
+const OpenURLButton = ({ url, text, addLine }) => {
   const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(url);
@@ -85,12 +102,18 @@ const OpenURLButton = ({ url, text }) => {
     }
   }, [url]);
 
-  return <TouchableOpacity onPress={handlePress}>
-            <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>{text}</Text>
-          </TouchableOpacity>;
+  return (
+          <>
+          <TouchableOpacity style={{paddingVertical: 8}} onPress={handlePress}>
+            <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC'}}>{text}</Text>
+          </TouchableOpacity>
+          {addLine == true? <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/> : null}
+          </>
+          )
 };
 
 const MyProfileScreen = ({navigation,signoutCB}) => {
+  const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
@@ -115,7 +138,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
       
-      <Modal isVisible={showModal}>
+      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
@@ -173,8 +196,8 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       >
       <View style={styles.contentContainer}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Text style={styles.title}>Hello John</Text>
-          <Image style={styles.profileImage} source={{uri:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/John_Cena_July_2018.jpg/1200px-John_Cena_July_2018.jpg"}}/>
+          <Text style={styles.title}>Hello, {user.name}</Text>
+          <Image style={styles.profileImage} source={{uri: user.imgUrl}}/>
         </View>
         
         <BlankDivider height={32}/>
@@ -199,8 +222,8 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg","https://google.com")}
-        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
+        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",["https://google.com","https://google.com"])}
+        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",[])}
 
         <BlankDivider height={32}/>
 
@@ -227,7 +250,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={16}/>
 
         <Button
-          onClick={signoutCB}
+          onClick={() => {setUser({}); signoutCB();}}
           text="Sign Out"
           fillColor="white"
           textColor="black"

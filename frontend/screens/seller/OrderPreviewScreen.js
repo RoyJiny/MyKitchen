@@ -43,7 +43,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           </ScrollView>
           
           <Text style={styles.title}>Notes:</Text>
-          <View style={{borderWidth:1, borderColor:Colors.black,borderRadius:5, height:80}}>
+          <View>
             <Text style={{padding:4, }}>{order.customer.notes}</Text>
           </View>
           <View style={{height:1, borderWidth:0.5, borderColor:Colors.lightGray, marginVertical:16}}/>

@@ -3,10 +3,7 @@ import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImChange from './ImChange';
 
-const Dish = ({dishName, price, description, imgLink, deleteFunc, moveUp, moveDown}) => {
-    const [name, onChangeName] = useState(dishName);
-    const [desc, onChangeDesc] = useState(description);
-    const [pricing, onChangePricing] = useState(price);
+const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown}) => {
     
     return (
         
@@ -34,7 +31,7 @@ const Dish = ({dishName, price, description, imgLink, deleteFunc, moveUp, moveDo
             {
                 <>
                 <View  style={{flexDirection:'row'}}>
-                    <ImChange isActive={true} imLink={imgLink}/>
+                    <ImChange isActive={true} image={imgLink} setImage={onChangeImage}/>
                     <View style={{}}>
                         <TextInput 
                             style={{
@@ -52,7 +49,7 @@ const Dish = ({dishName, price, description, imgLink, deleteFunc, moveUp, moveDo
                          
                         <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
 
-                            {pricing == '' ? null : <Text>₪ </Text>}
+                        <Text>₪ </Text>{/*pricing == '' ? null : <Text>₪ </Text>*/}
 
                             <TextInput 
                                 style={{ 
@@ -66,7 +63,7 @@ const Dish = ({dishName, price, description, imgLink, deleteFunc, moveUp, moveDo
                                 onChangeText={onChangePricing}
                                 value={pricing}
                                 keyboardType="numeric"
-                                placeholder="₪"
+                                placeholder="price"
                             />
                             
                         </View>
