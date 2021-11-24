@@ -151,13 +151,6 @@ const EditBioScreen = ({navigation, loginCB}) => {
         </ShadowCard2>
 
         <BlankDivider height={16}/>
-        <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms and send to DB
-          borderColor = "black"
-          fillColor = "white"
-          text ="Done"
-          textColor = "black"
-        />
         </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

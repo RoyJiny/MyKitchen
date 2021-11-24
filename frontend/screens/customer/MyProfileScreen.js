@@ -45,12 +45,11 @@ const AddressCard = (address,onEdit,onDelete) => {
 };
 
 const Order = (kitchen,contents,status,price,date,img,payLinks) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = status == 'Waiting payment' ? useState(false) : [false, (value) => {}]
   return (
     <View>
     {status == 'Waiting payment'?   
-    <Modal isVisible={showModal}>
-      <TouchableOpacity style={{flex:1, justifyContent:'center'}} onPress={() => setShowModal(false)}>
+    <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
       <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
         {payLinks.map((item, index) => {
             return (
@@ -58,7 +57,6 @@ const Order = (kitchen,contents,status,price,date,img,payLinks) => {
             )
         })}
       </View>
-      </TouchableOpacity>
     </Modal>
     : null}
 
@@ -80,7 +78,7 @@ const Order = (kitchen,contents,status,price,date,img,payLinks) => {
         <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
         {status == 'Waiting payment'? 
         <TouchableOpacity onPress={() => setShowModal(true)} >
-          <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>payment links</Text>
+          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
         </TouchableOpacity> : null}
       </View>
     </View>
@@ -107,7 +105,7 @@ const OpenURLButton = ({ url, text, addLine }) => {
   return (
           <>
           <TouchableOpacity style={{paddingVertical: 8}} onPress={handlePress}>
-            <Text style={{textAlign: 'center', fontSize: 14, color:'blue'}}>{text}</Text>
+            <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC'}}>{text}</Text>
           </TouchableOpacity>
           {addLine == true? <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/> : null}
           </>
@@ -140,8 +138,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
       
-      <Modal isVisible={showModal}>
-        <TouchableOpacity style={{flex:1, justifyContent:'center'}} onPress={() => setShowModal(false)}>
+      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
@@ -190,7 +187,6 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
             <Text>Cancel</Text>
           </TouchableOpacity>
         </View>
-        </TouchableOpacity>
       </Modal>
 
       <ScrollView
@@ -227,7 +223,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
 
         <Text style={styles.subtitle}>Active Orders</Text>
         {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",["https://google.com","https://google.com"])}
-        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg")}
+        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",[])}
 
         <BlankDivider height={32}/>
 
