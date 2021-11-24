@@ -3,7 +3,7 @@ import {StyleSheet,TextInput,View} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const FormInput = ({textInit,placeholder,additionalStyle,setState}) => {
+const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false}) => {
     const [isActive,setIsActive] = useState(false);
    
     return (
@@ -20,6 +20,7 @@ const FormInput = ({textInit,placeholder,additionalStyle,setState}) => {
                 onBlur={() => {setIsActive(false)}}
                 autoCorrect={false}
                 color={"black"}
+                multiline={multi}
             />
         </View>
     );
@@ -33,9 +34,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textInput: {
-        height: 32,
-        width: 272,
-        paddingVertical: 5,
+         // remove? todo
+        width: 256,
+        paddingVertical: 2,
         paddingHorizontal: 10,
         fontSize: 16,
     }

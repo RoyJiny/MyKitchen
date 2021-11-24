@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {View,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
+import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { UserContext } from "../../contexts/UserContext";
 
 import BackButton from '../../components/BackButton';
@@ -29,7 +29,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   }
 
   return (
-    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
+    <ScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
@@ -72,6 +72,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={description}
               setState={setDescription}
+              multi={true}
             />
         </ShadowCard2>
 
@@ -151,10 +152,11 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
           text ="Next"
           textColor = "black"
         />
+        <BlankDivider height={32}/>
         </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-    </View>
+    </ScrollView>
   )
 };
 
