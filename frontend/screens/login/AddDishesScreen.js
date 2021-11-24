@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { UserContext } from "../../contexts/UserContext";
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -8,7 +9,7 @@ import BlankDivider from '../../components/BlankDivider';
 import Dish from '../../components/Dish';
 
 const AddDishesScreen = ({navigation}) => {
-
+  const {user, setUser} = useContext(UserContext);
   const [dishItems, setDishItems] = useState([]);
   const [alerted, setAlerted] = useState(false);
 
@@ -41,6 +42,30 @@ const AddDishesScreen = ({navigation}) => {
     setDishItems(itemsCopy)
   }
 
+  const changeDishName = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].name=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishDesc = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].description=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishPrice = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].price=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishImage = (index,url) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].imgLink=url;
+    setDishItems(itemsCopy)
+  }
+
   return (
       <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -60,6 +85,7 @@ const AddDishesScreen = ({navigation}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: 40,
+                width: 40,
                 alignSelf: 'center',
                 marginRight: 24,
                 shadowColor: "#000000",
@@ -89,10 +115,14 @@ const AddDishesScreen = ({navigation}) => {
                   deleteFunc= {() => deleteDish(index)} 
                   moveUp= {() => moveUp(index)} 
                   moveDown= {() => moveDown(index)} 
-                  imgLink= "https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png"
-                  dishName= {item.name}
-                  description= {item.description}
-                  price= {item.price}
+                  imgLink= {item.imgLink}
+                  onChangeImage= {(url) => changeDishImage(index,url)}
+                  name= {item.name}
+                  onChangeName= {(text) => changeDishName(index,text)}
+                  desc= {item.description}
+                  onChangeDesc= {(text) => changeDishDesc(index,text)}
+                  pricing= {item.price}
+                  onChangePricing= {(text) => changeDishPrice(index,text)}
                 />
             )
             })
@@ -101,7 +131,7 @@ const AddDishesScreen = ({navigation}) => {
 
         <BlankDivider height={16}/>
         <Button2
-          onClick={() => navigation.navigate("Logistics")} //here use global args from all forms
+          onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{menu: dishItems}}}});navigation.navigate("Logistics");}} //here use global args from all forms
           fillColor = "white"
           text ="Next"
           textColor = "black"

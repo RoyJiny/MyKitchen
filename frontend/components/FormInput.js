@@ -3,8 +3,7 @@ import {StyleSheet,TextInput,View} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,additionalStyle}) => {
-    const [text,setText] = useState(textInit);
+const FormInput = ({textInit,placeholder,additionalStyle,setState}) => {
     const [isActive,setIsActive] = useState(false);
    
     return (
@@ -12,17 +11,15 @@ const FormInput = ({textInit,onSubmit,updateOriginalValue,placeholder,additional
             <TextInput
                 style={styles.textInput}
                 onChangeText={txt => {
-                    setText(txt);
-                    updateOriginalValue(txt)
+                    setState(txt);
                 }}
-                value={text}
+                value={textInit}
                 placeholder={placeholder}
                 placeholderTextColor={Colors.lightGray}
                 onFocus={() => {setIsActive(true)}}
                 onBlur={() => {setIsActive(false)}}
                 autoCorrect={false}
                 color={"black"}
-                onSubmitEditing={onSubmit} // maybe not needed
             />
         </View>
     );

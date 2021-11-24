@@ -1,7 +1,7 @@
 import * as Google from 'expo-google-app-auth';
 import { saveAuthToken } from './async_storage';
 
-const signin = (successCB,stopLoadingCB,isSeller) => {
+const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
   const config = {
     androidClientId: '225045444277-o7k85cn5613jru2vm2qnlgfa74gpbe8a.apps.googleusercontent.coma',
     scopes: ['profile','email']
@@ -19,7 +19,7 @@ const signin = (successCB,stopLoadingCB,isSeller) => {
         };
   
         console.log('details to send:',userDetails);
-
+        setUser(userDetails)
         /* send to server and get a token back */
         // saveAuthToken(token);
 

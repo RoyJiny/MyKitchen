@@ -2,14 +2,15 @@ import React, {useState} from 'react';
 import {View, TouchableOpacity, Platform, Text} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const PickerT = ({hourDef, minuteDef, textColor, isActive}) => {
-  const [date, setDate] = useState(new Date(2000,1,1,hourDef,minuteDef));
+const PickerT = ({textColor, isActive, time, setTime}) => {
+  const [date, setDate] = useState(new Date(2000,1,1,Number(time.slice(0,2)),Number(time.slice(3,5))));
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
+    setTime(("0"+currentDate.getHours().toString()).slice(-2)+":"+("0"+currentDate.getMinutes().toString()).slice(-2));
   };
 
   const showTimepicker = () => {
@@ -29,7 +30,7 @@ const PickerT = ({hourDef, minuteDef, textColor, isActive}) => {
             alignItems: 'center'
           }}
         >
-          <Text style={{fontSize: 16, color: textColor}}>{("0" + date.getHours()).slice(-2)}:{("0" + date.getMinutes()).slice(-2)}</Text>
+          <Text style={{fontSize: 16, color: textColor}}>{time}</Text>
         </TouchableOpacity>
 
       {show && (

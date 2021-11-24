@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function ImChange({isActive, imLink}) {
-  const [image, setImage] = useState(imLink);
+export default function ImChange({isActive, image, setImage}) {
 
   useEffect(() => {
     (async () => {

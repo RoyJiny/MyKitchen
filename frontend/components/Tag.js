@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity } from 'react-native'
 
-const Tag = ({text, textColor, stateInit}) => {
+const Tag = ({text, textColor, stateInit, add, remove}) => {
     const [isSelected, setIsSelected] = useState(stateInit==true);
     const [bordColor,setBordColor] = useState(stateInit ? "dodgerblue" : textColor);
     
@@ -9,7 +9,8 @@ const Tag = ({text, textColor, stateInit}) => {
         <TouchableOpacity
             onPress={() => {
                 setIsSelected(!isSelected);
-                isSelected ? setBordColor(textColor) : setBordColor("dodgerblue")
+                if (isSelected){setBordColor(textColor);remove(text);}
+                else {setBordColor("dodgerblue");add(text);}
             }}
             style={{
                 borderRadius: 16,
