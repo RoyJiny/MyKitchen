@@ -117,11 +117,11 @@ const AddDishesScreen = ({navigation}) => {
                   moveDown= {() => moveDown(index)} 
                   imgLink= {item.imgLink}
                   onChangeImage= {(url) => changeDishImage(index,url)}
-                  dishName= {item.name}
+                  name= {item.name}
                   onChangeName= {(text) => changeDishName(index,text)}
-                  description= {item.description}
+                  desc= {item.description}
                   onChangeDesc= {(text) => changeDishDesc(index,text)}
-                  price= {item.price}
+                  pricing= {item.price}
                   onChangePricing= {(text) => changeDishPrice(index,text)}
                 />
             )

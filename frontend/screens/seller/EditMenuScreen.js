@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
-import {Alert,View,StyleSheet,Text,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { UserContext } from "../../contexts/UserContext";
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -8,8 +9,8 @@ import BlankDivider from '../../components/BlankDivider';
 import Dish from '../../components/Dish';
 
 const EditMenuScreen = ({navigation}) => {
-
-  const [dishItems, setDishItems] = useState([{key: 0, name: 'Chocolate Cake', description: 'Made with love and chcolate!', price: '60', imgLink: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU'}]);
+  const {user, setUser} = useContext(UserContext);
+  const [dishItems, setDishItems] = useState(user.kitchen.menu);
   const [alerted, setAlerted] = useState(false);
 
   const handleAdd = () => {
@@ -41,24 +42,47 @@ const EditMenuScreen = ({navigation}) => {
     setDishItems(itemsCopy)
   }
 
+  const changeDishName = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].name=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishDesc = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].description=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishPrice = (index,text) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].price=text;
+    setDishItems(itemsCopy)
+  }
+
+  const changeDishImage = (index,url) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].imgLink=url;
+    setDishItems(itemsCopy)
+  }
+
   return (
-    <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
-        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignItems: 'center', paddingRight: 16 }}>
-            <BackButton onClick={navigation.goBack}/>
-            <Button2
-              onClick={() => navigation.navigate("MyKitchenInternal")}
-              borderColor = "black"
-              fillColor = "white"
-              text ="Done"
-              textColor = "black"
-            />
-          </View>
+        <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
+          <BackButton onClick={navigation.goBack}/>
+          <Button2
+            onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
+            fillColor = "white"
+            text ="Done"
+            textColor = "black"
+          />
+        </View>
 
         <BlankDivider height={16}/>
         <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <Text style={{fontSize: 20, marginLeft: 24}}>Edit Your Kitchen's Menu</Text>
+          <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
           <TouchableOpacity
             onPress={() => handleAdd()}
             style={{
@@ -89,27 +113,39 @@ const EditMenuScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <BlankDivider height={16}/>
-        
-        {
-        dishItems.map((item, index) => {
-            return (
-            <Dish key={item.key}
-                deleteFunc= {() => deleteDish(index)} 
-                moveUp= {() => moveUp(index)} 
-                moveDown= {() => moveDown(index)} 
-                imgLink= {item.imgLink}
-                dishName= {item.name}
-                description= {item.description}
-                price= {item.price}
-            />
-            )
-        })
-        }
 
+          {
+            dishItems.map((item, index) => {
+              return (
+                <Dish key={item.key}
+                  deleteFunc= {() => deleteDish(index)} 
+                  moveUp= {() => moveUp(index)} 
+                  moveDown= {() => moveDown(index)} 
+                  imgLink= {item.imgLink}
+                  onChangeImage= {(url) => changeDishImage(index,url)}
+                  name= {item.name}
+                  onChangeName= {(text) => changeDishName(index,text)}
+                  desc= {item.description}
+                  onChangeDesc= {(text) => changeDishDesc(index,text)}
+                  pricing= {item.price}
+                  onChangePricing= {(text) => changeDishPrice(index,text)}
+                />
+            )
+            })
+          }
+
+
+        <BlankDivider height={16}/>
+        <Button2
+          onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
+          fillColor = "white"
+          text ="Done"
+          textColor = "black"
+        />
+        <BlankDivider height={32}/>
         </View>
     </TouchableWithoutFeedback>
     </KeyboardAwareScrollView>
-    
   )
 };
 

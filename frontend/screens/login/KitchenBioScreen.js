@@ -125,7 +125,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               remove = {removeTag}
             />
             <Tag
-              text ="Special Events"
+              text ="Vegan"
               textColor = "black"
               stateInit = {false}
               add = {addTag}
