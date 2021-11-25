@@ -2,6 +2,7 @@ import React,{useState, useContext} from 'react';
 import {View,StyleSheet,Text,TouchableWithoutFeedback,Keyboard,ScrollView} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { UserContext } from "../../contexts/UserContext";
+import ToggleSwitch from 'toggle-switch-react-native'
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -17,7 +18,12 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
   const [delivery, setDelivery] = useState(user.kitchen.logistics.delivery);
   const [payLinks, setPayLinks] = useState(user.kitchen.logistics.payLinks);
 
+  const setPreorderOnly = (value) => {
+    setOperatingDays({...operatingDays, preorderOnly: value})
+  }
+  
   const setDayState = (day,value) => {
+    if (operatingDays.preorderOnly) {return}
     let copy = {...operatingDays}
     copy[day] = {...copy[day], active: value}
     setOperatingDays(copy)
@@ -50,9 +56,9 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
   }
 
   return (
-    <KeyboardAwareScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
+    <KeyboardAwareScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
+          <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
           <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
             <BackButton onClick={navigation.goBack}/>
             <Button2
@@ -69,13 +75,23 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
 
           <ShadowCard2>
             <Text style={{fontSize: 18, marginLeft: 8}}>Operating days:</Text>
-            <ToggleText text ="Sunday" isSelected={operatingDays.sunday.active} setIsSelected={(value) => setDayState('sunday',value)} startTime ={operatingDays.sunday.startTime} setStartTime={(value) => setDayStartTime('sunday',value)} endTime ={operatingDays.sunday.endTime} setEndTime={(value) => setDayEndTime('sunday',value)}/>
-            <ToggleText text ="Monday" isSelected={operatingDays.monday.active} setIsSelected={(value) => setDayState('monday',value)} startTime ={operatingDays.monday.startTime} setStartTime={(value) => setDayStartTime('monday',value)} endTime ={operatingDays.monday.endTime} setEndTime={(value) => setDayEndTime('monday',value)}/>
-            <ToggleText text ="Thuesday" isSelected={operatingDays.thuesday.active} setIsSelected={(value) => setDayState('thuesday',value)} startTime ={operatingDays.thuesday.startTime} setStartTime={(value) => setDayStartTime('thuesday',value)} endTime ={operatingDays.thuesday.endTime} setEndTime={(value) => setDayEndTime('thuesday',value)}/>
-            <ToggleText text ="Wednesday" isSelected={operatingDays.wednesday.active} setIsSelected={(value) => setDayState('wednesday',value)} startTime ={operatingDays.wednesday.startTime} setStartTime={(value) => setDayStartTime('wednesday',value)} endTime ={operatingDays.wednesday.endTime} setEndTime={(value) => setDayEndTime('wednesday',value)}/>
-            <ToggleText text ="Thursday" isSelected={operatingDays.thursday.active} setIsSelected={(value) => setDayState('thursday',value)} startTime ={operatingDays.thursday.startTime} setStartTime={(value) => setDayStartTime('thursday',value)} endTime ={operatingDays.thursday.endTime} setEndTime={(value) => setDayEndTime('thursday',value)}/>
-            <ToggleText text ="Friday" isSelected={operatingDays.friday.active} setIsSelected={(value) => setDayState('friday',value)} startTime ={operatingDays.friday.startTime} setStartTime={(value) => setDayStartTime('friday',value)} endTime ={operatingDays.friday.endTime} setEndTime={(value) => setDayEndTime('friday',value)}/>
-            <ToggleText text ="Saturday" isSelected={operatingDays.saturday.active} setIsSelected={(value) => setDayState('saturday',value)} startTime ={operatingDays.saturday.startTime} setStartTime={(value) => setDayStartTime('saturday',value)} endTime ={operatingDays.saturday.endTime} setEndTime={(value) => setDayEndTime('saturday',value)}/>
+            <View style={{flexDirection:'row', justifyContent: 'space-between', alignItems:'center', marginVertical:4}}>
+              <Text style={{fontSize: 16, marginLeft: 16}}>Preorders only:</Text>
+              <ToggleSwitch style={{marginRight: 16}}
+                isOn={operatingDays.preorderOnly}
+                onColor='#7CC0FA'
+                offColor="lightgray"
+                size="small"
+                onToggle={(isOn) => setPreorderOnly(isOn)}
+              />
+            </View>
+            <ToggleText text ="Sunday" isSelected={operatingDays.sunday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('sunday',value)} startTime ={operatingDays.sunday.startTime} setStartTime={(value) => setDayStartTime('sunday',value)} endTime ={operatingDays.sunday.endTime} setEndTime={(value) => setDayEndTime('sunday',value)}/>
+            <ToggleText text ="Monday" isSelected={operatingDays.monday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('monday',value)} startTime ={operatingDays.monday.startTime} setStartTime={(value) => setDayStartTime('monday',value)} endTime ={operatingDays.monday.endTime} setEndTime={(value) => setDayEndTime('monday',value)}/>
+            <ToggleText text ="Thuesday" isSelected={operatingDays.thuesday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('thuesday',value)} startTime ={operatingDays.thuesday.startTime} setStartTime={(value) => setDayStartTime('thuesday',value)} endTime ={operatingDays.thuesday.endTime} setEndTime={(value) => setDayEndTime('thuesday',value)}/>
+            <ToggleText text ="Wednesday" isSelected={operatingDays.wednesday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('wednesday',value)} startTime ={operatingDays.wednesday.startTime} setStartTime={(value) => setDayStartTime('wednesday',value)} endTime ={operatingDays.wednesday.endTime} setEndTime={(value) => setDayEndTime('wednesday',value)}/>
+            <ToggleText text ="Thursday" isSelected={operatingDays.thursday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('thursday',value)} startTime ={operatingDays.thursday.startTime} setStartTime={(value) => setDayStartTime('thursday',value)} endTime ={operatingDays.thursday.endTime} setEndTime={(value) => setDayEndTime('thursday',value)}/>
+            <ToggleText text ="Friday" isSelected={operatingDays.friday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('friday',value)} startTime ={operatingDays.friday.startTime} setStartTime={(value) => setDayStartTime('friday',value)} endTime ={operatingDays.friday.endTime} setEndTime={(value) => setDayEndTime('friday',value)}/>
+            <ToggleText text ="Saturday" isSelected={operatingDays.saturday.active && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('saturday',value)} startTime ={operatingDays.saturday.startTime} setStartTime={(value) => setDayStartTime('saturday',value)} endTime ={operatingDays.saturday.endTime} setEndTime={(value) => setDayEndTime('saturday',value)}/>
             <BlankDivider height={8}/>
           </ShadowCard2>
           <BlankDivider height={16}/>
@@ -123,7 +139,7 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
           </ShadowCard2>
           
           <BlankDivider height={16}/>
-          </ScrollView>
+          </View>
         </TouchableWithoutFeedback>
       </KeyboardAwareScrollView>
   )

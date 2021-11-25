@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {View,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
+import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { UserContext } from "../../contexts/UserContext";
 
 import BackButton from '../../components/BackButton';
@@ -29,10 +29,10 @@ const EditBioScreen = ({navigation, loginCB}) => {
   }
 
   return (
-    <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
+    <ScrollView>
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+        <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
         <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
           <BackButton onClick={navigation.goBack}/>
           <Button2
@@ -79,6 +79,7 @@ const EditBioScreen = ({navigation, loginCB}) => {
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={description}
               setState={setDescription}
+              multi={true}
             />
         </ShadowCard2>
 
@@ -150,11 +151,11 @@ const EditBioScreen = ({navigation, loginCB}) => {
           </View>
         </ShadowCard2>
 
-        <BlankDivider height={16}/>
+        <BlankDivider height={32}/>
         </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-    </View>
+    </ScrollView>
   )
 };
 
