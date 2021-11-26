@@ -18,8 +18,7 @@ const dishSchema = new mongoose.Schema(
       required: true
     },
     img: {
-      type: imageSchema,
-      required: true
+      type: imageSchema
     },
     description: {
       type: String,
@@ -72,10 +71,8 @@ const kitchenSchema = new mongoose.Schema(
         }
       ],
       coverImg: {
-        type: imageSchema,
-        required: true
-      },
-      required: true
+        type: imageSchema
+      }
     },
     menu: [
       {
@@ -100,12 +97,10 @@ const kitchenSchema = new mongoose.Schema(
           },
           startTime: {
             type: String,
-            required: true,
             default: ''
           },
           endTime: {
             type: String,
-            required: true,
             default: ''
           }
         }
