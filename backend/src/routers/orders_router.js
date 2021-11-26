@@ -24,7 +24,7 @@ router.post("/order/submit", auth, async (req,res) => {
   } catch (err) {
     console.log(err);
     res.status(500).send('Server Error');
-}
+  }
 });
 
 module.exports = router;
