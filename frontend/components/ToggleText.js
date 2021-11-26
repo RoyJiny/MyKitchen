@@ -14,9 +14,9 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                         setIsSelected(!isSelected);
                     }}
                     style={{
-                        height: 15,
-                        width: 15,
-                        borderRadius: 15,
+                        height: 18,
+                        width: 18,
+                        borderRadius: 18,
                         borderColor: isSelected ? "black" : Colors.lightGray,
                         borderWidth: 1,
                         alignItems: 'center',
@@ -27,9 +27,9 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                     {
                         <View
                             style={{
-                            height: 10,
-                            width: 10,
-                            borderRadius: 10,
+                            height: 13,
+                            width: 13,
+                            borderRadius: 13,
                             backgroundColor: isSelected ? "black" : 'transparent',
                             opacity: isSelected ? 1 : 0
                         }} >
@@ -41,7 +41,7 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                     style={{
                         textAlign:'center',
                         color: isSelected ? "black" : Colors.lightGray,
-                        fontSize: 14,
+                        fontSize: 16,
                     }}
                 >
                         {text}

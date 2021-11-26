@@ -28,7 +28,27 @@ const userSchema = new mongoose.Schema(
           required: true
         }
       }
-  ],
+    ],
+    addresses: [
+      {
+        name: {
+          type: String,
+          required: true
+        },
+        address: {
+          type: String,
+          required: true
+        },
+        longitude: {
+          type: Number,
+          required: true
+        },
+        latitude: {
+          type: Number,
+          required: true
+        }
+      }
+    ],
   }
 );
 
