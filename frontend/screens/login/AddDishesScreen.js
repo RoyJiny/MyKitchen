@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { UserContext } from "../../contexts/UserContext";
+import * as Animatable from 'react-native-animatable';
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -12,6 +13,9 @@ const AddDishesScreen = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const [dishItems, setDishItems] = useState([]);
   const [alerted, setAlerted] = useState(false);
+  const [firstTime, setfirstTime] = useState(true);
+  const [firstDish, setfirstDish] = useState(true);
+  const [valid, setValid] = useState(true);
 
   const handleAdd = () => {
     for (let i = 0; i <= dishItems.length; i++) {
@@ -78,7 +82,7 @@ const AddDishesScreen = ({navigation}) => {
         <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
           <TouchableOpacity
-            onPress={() => handleAdd()}
+            onPress={() => {handleAdd(),setfirstDish(true),setValid(false)}}
             style={{
                 borderRadius: 24,
                 backgroundColor: 'white',
@@ -123,19 +127,29 @@ const AddDishesScreen = ({navigation}) => {
                   onChangeDesc= {(text) => changeDishDesc(index,text)}
                   pricing= {item.price}
                   onChangePricing= {(text) => changeDishPrice(index,text)}
+                  validation={true}
+                  firstTime = {firstDish}
+                  setValidation = {setValid}
                 />
             )
             })
           }
 
-
+        { firstTime==true || dishItems.length > 0 ? null :
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.validation}>Please add dishes to your kitchen</Text>
+          </Animatable.View>
+        }
         <BlankDivider height={16}/>
+        <TouchableOpacity onPress={()=>{setfirstTime(false),dishItems.length > 0 ? setfirstDish(false) : null}}>
         <Button2
           onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{menu: dishItems}}}});navigation.navigate("Logistics");}} //here use global args from all forms
           fillColor = "white"
           text ="Next"
           textColor = "black"
+          disable = { valid==true && dishItems.length > 0 ? false : true }
         />
+        </TouchableOpacity>
         <BlankDivider height={32}/>
         </View>
     </TouchableWithoutFeedback>
@@ -148,7 +162,14 @@ AddDishesScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginTop: 2,
+  },
 });
 
 export default AddDishesScreen;

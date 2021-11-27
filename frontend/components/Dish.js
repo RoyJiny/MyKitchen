@@ -2,8 +2,9 @@ import React, {useState} from 'react'
 import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImChange from './ImChange';
+import * as Animatable from 'react-native-animatable';
 
-const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown}) => {
+const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown, validation=false, firstTime=true, setValidation = null}) => {
     
     return (
         
@@ -46,6 +47,13 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                             onChangeText={onChangeName}
                             value= {name}
                         />
+                        {  validation==true ? (name.length == 0 ? setValidation(false) : setValidation(true)) : null
+                        }
+                        { validation==false || (firstTime==true || name.length > 0) ? null :
+                            <Animatable.View animation="fadeInLeft" duration={500}>
+                                <Text style={styles.validate}>Please enter the dish's name</Text>
+                            </Animatable.View>
+                        }
                          
                         <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
 
@@ -65,8 +73,14 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                                 keyboardType="numeric"
                                 placeholder="price"
                             />
-                            
                         </View>
+                        {  validation==true ? (pricing.length == 0 ? setValidation(false) : null) : null
+                        }
+                        {  validation==false || (firstTime==true || pricing.length > 0) ? null :
+                            <Animatable.View animation="fadeInLeft" duration={500}>
+                                <Text style={styles.validate}>Please enter the dish's price</Text>
+                            </Animatable.View>
+                        }
                     </View>
                 </View>
                 <View style={{paddingVertical: 16, marginRight: 16, marginLeft: 20}}>
@@ -122,6 +136,12 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
 }
 
 const styles = StyleSheet.create({
+    validate: {
+        color: "red",
+        textAlign: 'left',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
     image: {
         height: 84,
         width: 84,

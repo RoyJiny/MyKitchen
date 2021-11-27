@@ -5,7 +5,7 @@ import Colors from '../globals/Colors';
 
 const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false}) => {
     const [isActive,setIsActive] = useState(false);
-   
+
     return (
         <View style={[styles.wrapper, additionalStyle, {borderWidth: isActive ? 2 : 1}]}>
             <TextInput

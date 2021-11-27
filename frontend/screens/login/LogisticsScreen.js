@@ -1,8 +1,9 @@
 import React,{useState, useContext} from 'react';
-import {View,StyleSheet,Text,TouchableWithoutFeedback,Keyboard,ScrollView} from 'react-native';
+import {View,StyleSheet,Text,TouchableWithoutFeedback,Keyboard,ScrollView, TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { UserContext } from "../../contexts/UserContext";
 import ToggleSwitch from 'toggle-switch-react-native'
+import * as Animatable from 'react-native-animatable';
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -17,6 +18,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
   const [operatingDays, setOperatingDays] = useState({preorderOnly: false, sunday:{active:false, startTime:'08:00', endTime:'16:00'},monday:{active:true, startTime:'08:00', endTime:'16:00'},thuesday:{active:true, startTime:'08:00', endTime:'16:00'},wednesday:{active:false, startTime:'08:00', endTime:'16:00'},thursday:{active:false, startTime:'08:00', endTime:'16:00'},friday:{active:false, startTime:'08:00', endTime:'16:00'},saturday:{active:false, startTime:'08:00', endTime:'16:00'}});
   const [delivery, setDelivery] = useState({support: false, distance: ''});
   const [payLinks, setPayLinks] = useState(['','']);
+  const [firstTime, setfirstTime] = useState(true);
 
   const setPreorderOnly = (value) => {
     setOperatingDays({...operatingDays, preorderOnly: value})
@@ -129,17 +131,24 @@ const LogisticsScreen = ({navigation,loginCB}) => {
                   </Text>
                 }
               </TouchableOpacity>*/}
+            { firstTime==true || payLinks[0].length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please add at least one payment method</Text>
+              </Animatable.View>
+            }
           </ShadowCard2>
-              
+          
           <BlankDivider height={16}/>
+          <TouchableOpacity onPress={()=>{console.log(payLinks), setfirstTime(false)}}>
           <Button2
             onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{logistics: {operatingDays: operatingDays,delivery: delivery,payLinks: payLinks}}}}});console.log(user); loginCB();}}
             borderColor = "black"
             fillColor = "white"
             text ="Finish"
             textColor = "black"
+            disable = { payLinks[0].length > 0 ? false : true }
           />
-          
+          </TouchableOpacity>
           <BlankDivider height={16}/>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -152,7 +161,14 @@ LogisticsScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginTop: 2,
+  },
 });
 
 export default LogisticsScreen;
