@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Kitchen = require("../models/Kitchen");
 
 const auth = require('../middleware/auth');
+const {get_coordinates} = require('../external_api/geocoding');
 
 // Users Registration and info - START
 router.post("/users/customer/register", async (req,res) => {
@@ -27,6 +28,9 @@ router.post("/users/seller/register", async (req,res) => {
     try {
         user_data = req.body.user;
         kitchen_data = req.body.kitchen;
+
+        const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
+        kitchen_data.bio = { ...kitchen_data.bio, coordinates };
 
         const user = new User(user_data);
         
@@ -81,8 +85,8 @@ router.post("/users/customer/addresses", auth, async (req,res) => {
         new_address = req.body.address;
         if (!new_address.name || !new_address.address) throw new Error();
 
-        new_address.longitude = 0;
-        new_address.latitude = 0;
+        const coordinates = await get_coordinates(new_address.address);
+        new_address = {...new_address, ...coordinates};
 
         // if an address with that name exists, remove it and write the new one
         user.addresses = user.addresses.filter(a => a.name !== new_address.name);
