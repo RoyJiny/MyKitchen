@@ -5,9 +5,11 @@ const User = require('../models/User');
 const Kitchen = require("../models/Kitchen");
 
 const auth = require('../middleware/auth');
+const matchUserKitchen = require('../middleware/matchUser');
+const matchUserOrder = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
 
-// Users Registration and info - START
+// Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
     try {
         user_data = req.body;
@@ -41,7 +43,49 @@ router.post("/users/seller/register", async (req,res) => {
         await kitchen.save();
 
         const token = await user.generateAuthToken();
-        res.status(201).send({token});
+        res.status(201).send({token: token, kitchen_id: kitchen._id});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/seller/edit/bio", auth, matchUserKitchen,  async (req,res) => {
+    try {
+        kitchen_data = req.body.kitchen; // TBD: maybe send bio only? 
+
+        const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
+        kitchen_data.bio = { ...kitchen_data.bio, coordinates };
+
+        await Kitchen.findByIdAndUpdate(kitchen_data.id, {bio: kitchen_data.bio})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/seller/edit/menu", auth, matchUserKitchen,  async (req,res) => {
+    try {
+        kitchen_data = req.body.kitchen;
+
+        await Kitchen.findByIdAndUpdate(kitchen_data.id, {menu: kitchen_data.menu})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/seller/edit/logistics", auth, matchUserKitchen,  async (req,res) => {
+    try {
+        kitchen_data = req.body.kitchen;
+
+        await Kitchen.findByIdAndUpdate(kitchen_data.id, {logistics: kitchen_data.logistics})
+
+        res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
         res.status(500).send('Server Error');
@@ -66,7 +110,7 @@ router.get("/users/logout", auth, async (req, res) => {
         res.status(500).send();
     }
 });
-// Users Registration and info - END
+// Users Registration, info and editing - END
 
 // Customer Addresses - START
 router.get("/users/customer/addresses", auth, async (req,res) => {
@@ -116,5 +160,23 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
     }
 });
 // Customer Addresses - END
+
+router.post("/users/customer/rate_kitchen", auth, matchUserOrder, async (req,res) => {
+    try {
+        rating = req.body.rating;
+        order_data = req.body.order;
+        
+        const kitchen = await Kitchen.findById(order_data.kitchen);
+
+        new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}
+
+        await Kitchen.findByIdAndUpdate(order_data.kitchen, {rating: new_rating})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
 
 module.exports = router;

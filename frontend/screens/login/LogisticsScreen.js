@@ -133,7 +133,8 @@ const LogisticsScreen = ({navigation,loginCB}) => {
               
           <BlankDivider height={16}/>
           <Button2
-            onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{logistics: {operatingDays: operatingDays,delivery: delivery,payLinks: payLinks}}}}});console.log(user); loginCB();}}
+            // send to DB and get kitchen_id + token to save
+            onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{id: 8, logistics: {operatingDays: operatingDays,delivery: delivery,payLinks: payLinks}}}}});console.log(user); loginCB();}}
             borderColor = "black"
             fillColor = "white"
             text ="Finish"

@@ -3,6 +3,7 @@ import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, Sc
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
 import { UserContext } from "../../contexts/UserContext";
+import { Rating } from 'react-native-ratings';
 
 import Colors from '../../globals/Colors';
 
@@ -44,7 +45,7 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img,payLinks) => {
+const Order = (kitchen,contents,status,price,date,img,payLinks,setRatingState,setShowRating,key) => {
   const [showModal, setShowModal] = status == 'Waiting payment' ? useState(false) : [false, (value) => {}]
   return (
     <View>
@@ -79,6 +80,10 @@ const Order = (kitchen,contents,status,price,date,img,payLinks) => {
         {status == 'Waiting payment'? 
         <TouchableOpacity onPress={() => setShowModal(true)} >
           <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
+        </TouchableOpacity> : null}
+        {status == null? 
+        <TouchableOpacity onPress={() => {setRatingState({id: 0, rating: 0});setShowRating(true);}} >
+          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>rate seller</Text>
         </TouchableOpacity> : null}
       </View>
     </View>
@@ -117,8 +122,14 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
+
+  const [showRating, setShowRating] = useState(false);
+  const [ratingState, setRatingState] = useState({id: 0,rating: 0})
   
   const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
+  const [orderList, setOrderList] = useState([{kitchenName: 'The Desert',items: ['Chocolate Cupcake','Birthday Cake'],status: 'Waiting payment',price: 45,dueDate: '30/11/2021',imgLink: "http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",paymentLinks: ["https://google.com","https://google.com"]},
+        {kitchenName: 'My Pastry',items: ['Special Cupcake'],status: 'Pending',price: 60,dueDate: '27/10/2021',imgLink: "https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",paymentLinks: []},
+        {kitchenName: 'Home Cookie',items: ['White cupcake'],status: null,price: 30,dueDate: '10/4/2021',imgLink: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg",paymentLinks: []}])
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
@@ -132,6 +143,11 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     }
     setModalState({id: 0,addressName: "", address: ""});
     setShowModal(false)
+  }
+
+  const sendRating = () => {
+    console.log(ratingState);
+    // post rating state to DB 
   }
   
   return (
@@ -189,6 +205,19 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
       </Modal>
 
+      <Modal isVisible={showRating} onBackdropPress={() => setShowRating(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10, paddingTop: 10}}>
+          <Rating showRating jumpValue={0.5} fractions={1} onFinishRating={(rating) => {setRatingState({id: 0,rating: rating});}}/>
+          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
+          <TouchableOpacity
+              onPress={sendRating}
+              style={{alignItems: 'center', marginBottom: 8}}
+          >
+            <Text>Send Rating</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <ScrollView
         ref={ScrollViewRef}
         onScroll={event => scroll_position = event.nativeEvent.contentOffset.y}
@@ -222,9 +251,14 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={32}/>
 
         <Text style={styles.subtitle}>Active Orders</Text>
-        {Order('The Desert',['Chocolate Cupcake','Birthday Cake'],'Waiting payment',45,'30/11/2021',"http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",["https://google.com","https://google.com"])}
-        {Order('My Pastry',['Special Cupcake'],'Pending',60,'27/10/2021',"https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",[])}
-
+        
+        {
+          orderList.filter(t => t.status !== null).map((item, index) => {
+            return (
+              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+          )})
+        }
+        
         <BlankDivider height={32}/>
 
         <View style={{flexDirection:'row',justifyContent:'space-between'}}>
@@ -240,11 +274,12 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
             isInitaialyExpanded={true}
           />
         </View>
-        {expandRecentOrders
-          ? <View>
-            {Order('Home Cookie',['White cupcake'],null,30,'10/4/2021',"https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg")}
-          </View>
-          : null
+        
+        {
+          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
+            return (
+              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+          )})
         }
 
         <BlankDivider height={16}/>
