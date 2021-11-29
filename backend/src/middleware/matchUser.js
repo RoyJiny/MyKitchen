@@ -1,0 +1,38 @@
+const Kitchen = require('../models/Kitchen');
+const Order = require('../models/Order');
+
+const matchUserKitchen = async (req, res, next) => {
+    try {
+        kitchen_data = req.body.kitchen;
+
+        const kitchen = await Kitchen.findById(kitchen_data.id);
+
+        if (!kitchen.seller.equals(req.user._id)) {
+            throw new Error();
+        }
+
+        next();
+    } catch (e) {
+        res.status(401).send({ error: "User auth not matching Kitchen" });
+    }
+};
+
+module.exports = matchUserKitchen;
+
+const matchUserOrder = async (req, res, next) => {
+    try {
+        order_data = req.body.order;
+
+        const order = await Order.findById(order_data.id);
+
+        if (!order.customer.equals(req.user._id)) {
+            throw new Error();
+        }
+
+        next();
+    } catch (e) {
+        res.status(401).send({ error: "User auth not matching Order" });
+    }
+};
+
+module.exports = matchUserOrder;
