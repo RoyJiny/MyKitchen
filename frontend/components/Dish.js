@@ -49,7 +49,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                          
                         <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
 
-                        <Text>₪ </Text>{/*pricing == '' ? null : <Text>₪ </Text>*/}
+                        <Text>₪ </Text>
 
                             <TextInput 
                                 style={{ 
@@ -121,20 +121,6 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
 }
 
 const styles = StyleSheet.create({
-    validate: {
-        color: "red",
-        textAlign: 'left',
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    image: {
-        height: 84,
-        width: 84,
-        borderRadius: 16,
-        borderColor: 'black',
-        borderWidth: 0.5,
-        marginRight: 16
-    }
 });
 
 export default Dish
