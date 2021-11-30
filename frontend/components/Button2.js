@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
-const Button2 = ({onClick, fillColor, text, textColor}) => {
+const Button2 = ({onClick, fillColor, text, textColor, disable=false}) => {
     const [isLoading, setIsLoading] = useState(false);
     
     return (
@@ -11,6 +11,7 @@ const Button2 = ({onClick, fillColor, text, textColor}) => {
                 onClick();
                 setIsLoading(false);
             }}
+            disabled={disable}
             style={{
                 shadowColor: "#000000",
                 shadowOffset: {

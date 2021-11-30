@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
-import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
+import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity} from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import { UserContext } from "../../contexts/UserContext";
 
 import BackButton from '../../components/BackButton';
@@ -19,6 +20,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   const [description, setDescription] = useState('');
   const [tagList, setTagList] = useState([]);
   const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
+  const [firstTime, setfirstTime] = useState(true);
 
   const addTag = (text) => {
     setTagList([...tagList, text])
@@ -49,24 +51,45 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               textInit={name}
               setState={setName}
             />
+            { firstTime==true || name.length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please enter a Name for the kitchen</Text>
+              </Animatable.View>
+            }
+            
           <FormInput
               placeholder="Street"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={street}
               setState={setStreet}
             />
+            { firstTime==true || street.length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please enter a Street for the kitchen</Text>
+              </Animatable.View>
+            }
           <FormInput
               placeholder="City"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={city}
               setState={setCity}
             />
+            { firstTime==true || city.length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please enter a City for the kitchen</Text>
+              </Animatable.View>
+            }
           <FormInput
               placeholder="Phone"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={phone}
               setState={(text) => setPhone(text)}
             />
+            { firstTime==true || phone.length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please enter a Phone for the kitchen</Text>
+              </Animatable.View>
+            }
           <FormInput
               placeholder="Description"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
@@ -74,6 +97,11 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               setState={setDescription}
               multi={true}
             />
+            { firstTime==true || description.length > 0 ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please enter a Description for the kitchen</Text>
+              </Animatable.View>
+            }
         </ShadowCard2>
 
         <BlankDivider height={16}/>
@@ -143,15 +171,20 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
             <ImUp image= {image} setImage= {setImage}/>
           </View>
         </ShadowCard2>
+        
 
         <BlankDivider height={16}/>
+        <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}});navigation.navigate("AddDishes");}} //here use global args from all forms and send to DB
+          onClick={() => {setUser({...user, ...{kitchen: {bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}}); navigation.navigate("AddDishes");}} //here use global args from all forms and send to DB
           borderColor = "black"
           fillColor = "white"
           text ="Next"
           textColor = "black"
+          disable = { name.length > 0 && street.length > 0 && city.length > 0 && phone.length > 0 && description.length > 0 ? false : true }
         />
+        </TouchableOpacity>
+        
         <BlankDivider height={32}/>
         </View>
         </TouchableWithoutFeedback>
@@ -165,7 +198,14 @@ KitchenBioScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginTop: 2,
+  },
   })
 
 export default KitchenBioScreen;
