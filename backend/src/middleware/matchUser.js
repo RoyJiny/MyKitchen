@@ -21,14 +21,15 @@ module.exports = matchUserKitchen;
 
 const matchUserOrder = async (req, res, next) => {
     try {
-        order_data = req.body.order;
+        orderID = req.body.id;
 
-        const order = await Order.findById(order_data.id);
+        const order = await Order.findById(orderID);
 
         if (!order.customer.equals(req.user._id)) {
             throw new Error();
         }
 
+        req.order = order;
         next();
     } catch (e) {
         res.status(401).send({ error: "User auth not matching Order" });

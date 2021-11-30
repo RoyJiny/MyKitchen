@@ -164,9 +164,8 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
 router.post("/users/customer/rate_kitchen", auth, matchUserOrder, async (req,res) => {
     try {
         rating = req.body.rating;
-        order_data = req.body.order;
         
-        const kitchen = await Kitchen.findById(order_data.kitchen);
+        const kitchen = await Kitchen.findById(req.order.kitchen);
 
         new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}
 
