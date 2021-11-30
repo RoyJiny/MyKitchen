@@ -12,6 +12,7 @@ import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import Button from '../../components/Button';
+import OrderC from '../../components/OrderC';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
@@ -45,54 +46,6 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img,payLinks,setRatingState,setShowRating,key) => {
-  const [showModal, setShowModal] = status == 'Waiting payment' ? useState(false) : [false, (value) => {}]
-  return (
-    <View>
-    {status == 'Waiting payment'?   
-    <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
-      <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
-        {payLinks.map((item, index) => {
-            return (
-              <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(payLinks.length - 1)}/>
-            )
-        })}
-      </View>
-    </Modal>
-    : null}
-
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
-      <View style={{flexDirection: 'row'}}>
-        <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: img}}/>
-        
-        <View>
-          <Text style={{fontSize: 18}}>{kitchen}</Text>
-          {contents.length > 0 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[0]}</Text> : null}
-          {contents.length > 1 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[1]}</Text> : null}
-          {contents.length > 2 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>...</Text> : null}
-        </View>
-      </View>
-
-      <View style={{alignSelf: 'center'}}>
-        {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{status}</Text> : null}
-        <Text style={{textAlign: 'center', fontSize: 14}}>${price}</Text>
-        <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
-        {status == 'Waiting payment'? 
-        <TouchableOpacity onPress={() => setShowModal(true)} >
-          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
-        </TouchableOpacity> : null}
-        {status == null? 
-        <TouchableOpacity onPress={() => {setRatingState({id: 0, rating: 0});setShowRating(true);}} >
-          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>rate seller</Text>
-        </TouchableOpacity> : null}
-      </View>
-    </View>
-
-    <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
-    </View>
-  );
-};
-
 const OpenURLButton = ({ url, text, addLine }) => {
   const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
@@ -123,13 +76,15 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
 
+  const [showLinks, setShowLinks] = useState(false);
+  const [linksState, setLinksState] = useState([])
   const [showRating, setShowRating] = useState(false);
   const [ratingState, setRatingState] = useState({id: 0,rating: 0})
   
   const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
-  const [orderList, setOrderList] = useState([{kitchenName: 'The Desert',items: ['Chocolate Cupcake','Birthday Cake'],status: 'Waiting payment',price: 45,dueDate: '30/11/2021',imgLink: "http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",paymentLinks: ["https://google.com","https://google.com"]},
-        {kitchenName: 'My Pastry',items: ['Special Cupcake'],status: 'Pending',price: 60,dueDate: '27/10/2021',imgLink: "https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",paymentLinks: []},
-        {kitchenName: 'Home Cookie',items: ['White cupcake'],status: null,price: 30,dueDate: '10/4/2021',imgLink: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg",paymentLinks: []}])
+  const [orderList, setOrderList] = useState([{order: {id: 1,items: [{name: 'Chocolate Cupcake', amount: 1},{name: 'Birthday Cake', amount: 1}],status: 'Waiting payment',price: 45,dueDate: '30/11/2021'}, kitchenName: 'The Desert', imgLink: "http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg", paymentLinks: ["https://google.com","https://google.com"]},
+        {order:{id: 2,items: [{name: 'Special Cupcake', amount: 1}],status: 'Pending',price: 60,dueDate: '27/10/2021'},kitchenName: 'My Pastry',imgLink: "https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",paymentLinks: []},
+        {order:{id: 3,items: [{name: 'White cupcake', amount: 1}],status: null,price: 30,dueDate: '10/4/2021'},kitchenName: 'Home Cookie',imgLink: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg",paymentLinks: []}])
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
@@ -205,9 +160,19 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
       </Modal>
 
+      <Modal isVisible={showLinks} onBackdropPress={() => setShowLinks(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          {linksState.map((item, index) => {
+              return (
+                <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(linksState.length - 1)}/>
+              )
+          })}
+        </View>
+      </Modal>
+
       <Modal isVisible={showRating} onBackdropPress={() => setShowRating(false)}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10, paddingTop: 10}}>
-          <Rating showRating jumpValue={0.5} fractions={1} onFinishRating={(rating) => {setRatingState({id: 0,rating: rating});}}/>
+          <Rating startingValue={3} onFinishRating={(rating) => {setRatingState({...ratingState ,rating: rating});}}/>
           <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
           <TouchableOpacity
               onPress={sendRating}
@@ -253,9 +218,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.filter(t => t.status !== null).map((item, index) => {
+          orderList.filter(t => t.order.status !== null).map((item, index) => {
             return (
-              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+              <OrderC key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
         
@@ -276,9 +241,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         {
-          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
+          orderList.filter(t => ((t.order.status == null) && expandRecentOrders)).map((item, index) => {
             return (
-              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+              <OrderC key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
 
