@@ -52,6 +52,11 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
       default: 'ASAP'
+    },
+    date: {
+      type: String,
+      required: true,
+      default: 'ASAP'
     }
   }
 );
