@@ -12,7 +12,7 @@ import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import Button from '../../components/Button';
-import OrderC from '../../components/OrderC';
+import OrderCustomer from '../../components/OrderCustomer';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
@@ -220,7 +220,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         {
           orderList.filter(t => t.order.status !== null).map((item, index) => {
             return (
-              <OrderC key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
         
@@ -243,7 +243,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         {
           orderList.filter(t => ((t.order.status == null) && expandRecentOrders)).map((item, index) => {
             return (
-              <OrderC key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
 

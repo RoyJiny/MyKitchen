@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const OrderC = ({order,kitchen,img,payLinks,setRatingState,setShowRating,setLinksState,setShowLinks}) => {
+const OrderCustomer = ({order,kitchen,img,payLinks,setRatingState,setShowRating,setLinksState,setShowLinks}) => {
     return (
       <View>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
@@ -38,4 +38,4 @@ const OrderC = ({order,kitchen,img,payLinks,setRatingState,setShowRating,setLink
     );
   };
 
-  export default OrderC;
+  export default OrderCustomer;
