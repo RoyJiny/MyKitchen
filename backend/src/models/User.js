@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false
     },
+    googleId: {
+      type: String,
+      required: true
+    },
     tokens: [
       {
         token: {
