@@ -17,8 +17,6 @@ const matchUserKitchen = async (req, res, next) => {
     }
 };
 
-module.exports = matchUserKitchen;
-
 const matchUserOrder = async (req, res, next) => {
     try {
         orderID = req.body.id;
@@ -35,8 +33,6 @@ const matchUserOrder = async (req, res, next) => {
         res.status(401).send({ error: "User auth not matching Order" });
     }
 };
-
-module.exports = matchUserOrder;
 
 const matchKitchenOrder = async (req, res, next) => {
     try {
@@ -56,4 +52,8 @@ const matchKitchenOrder = async (req, res, next) => {
     }
 };
 
-module.exports = matchKitchenOrder;
+module.exports = {
+    matchUserKitchen,
+    matchUserOrder,
+    matchKitchenOrder
+};
