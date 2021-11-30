@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImChange from './ImChange';
-import * as Animatable from 'react-native-animatable';
 
 const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown}) => {
     
@@ -47,15 +46,6 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                             onChangeText={onChangeName}
                             value= {name}
                         />
-                        {/* {  name.length == 0 ? setValidation()
-                        } */}
-                        {/* {  validation==true ? (name.length == 0 ? useEffect(()=>{setValidation(false)}) : useEffect(()=>{})) : null
-                        }
-                        { validation==false || (firstTime==true || name.length > 0) ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.validate}>Please enter the dish's name</Text>
-                            </Animatable.View>
-                        } */}
                          
                         <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
 
@@ -76,13 +66,6 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                                 placeholder="price"
                             />
                         </View>
-                        {/* {  validation==true ? (pricing.length == 0 ? useEffect(()=>{setValidation(false)}) : useEffect(()=>{})) : null
-                        }
-                        {  validation==false || (firstTime==true || pricing.length > 0) ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.validate}>Please enter the dish's price</Text>
-                            </Animatable.View>
-                        } */}
                     </View>
                 </View>
                 <View style={{paddingVertical: 16, marginRight: 16, marginLeft: 20}}>
