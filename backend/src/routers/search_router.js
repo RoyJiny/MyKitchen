@@ -10,19 +10,15 @@ const calculate_distance = require('../utils/distance');
 router.post("/search/kitchen/location", auth, async (req,res) => {
     try {
         const DISTANCE_LIMIT = 20;
-        const user_location = req.body.coordinates;
+        const user_location = req.body.location;
 
-        const distance_filter = (kitchen) => {
-            return calculate_distance(user_location,kitchen.bio.coordinates) < DISTANCE_LIMIT;
-        };
-        const sort_function = (kitchen1,kitchen2) => {
-            return calculate_distance(user_location,kitchen1.bio.coordinates) - calculate_distance(user_location,kitchen2.bio.coordinates);
-        };
+        var kitchens = await Kitchen.find();
+        kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
+        
+        kitchens.filter(kitchen => kitchen.distance < DISTANCE_LIMIT);
+        kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
 
-        const kitchens = (await Kitchen.find({})).filter(distance_filter);
-        kitchens.sort(sort_function);
-
-        res.send(kitchens);        
+        res.send(kitchens);
     } catch (err) {
         console.log(err);
         res.status(500).send('Server Error');
