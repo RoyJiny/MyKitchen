@@ -15,7 +15,8 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
           email: user.email,
           name: user.givenName,
           imgUrl: user.photoUrl,
-          isSeller: isSeller
+          isSeller: isSeller,
+          googleId: idToken
         };
   
         console.log('details to send:',userDetails);
