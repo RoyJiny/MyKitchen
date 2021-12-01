@@ -82,9 +82,117 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [ratingState, setRatingState] = useState({id: 0,rating: 0})
   
   const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
-  const [orderList, setOrderList] = useState([{order: {id: 1,items: [{name: 'Chocolate Cupcake', amount: 1},{name: 'Birthday Cake', amount: 1}],status: 'Waiting payment',price: 45,dueDate: '30/11/2021'}, kitchenName: 'The Desert', imgLink: "http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg", paymentLinks: ["https://google.com","https://google.com"]},
-        {order:{id: 2,items: [{name: 'Special Cupcake', amount: 1}],status: 'Pending',price: 60,dueDate: '27/10/2021'},kitchenName: 'My Pastry',imgLink: "https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",paymentLinks: []},
-        {order:{id: 3,items: [{name: 'White cupcake', amount: 1}],status: null,price: 30,dueDate: '10/4/2021'},kitchenName: 'Home Cookie',imgLink: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg",paymentLinks: []}])
+  const [orderList, setOrderList] = useState([{
+    _id: "61a0b59b0cce3e7dc7586631",
+    kitchen: {
+        bio: {
+            coordinates: {
+                longitude: 34.8163735,
+                latitude: 32.0666868
+            },
+            name: "test kitchen",
+            street: "100 Ben Gurion",
+            city: "Ramat Gan",
+            phone: "03123123",
+            description: "best kitchen ever!",
+            tags: [
+                "bakery",
+                "deserts"
+            ]
+        },
+        logistics: {
+            isOnlyFutureDelivery: false,
+            operationDays: [
+                {
+                    day: "sunday",
+                    isActive: false,
+                    startTime: "",
+                    endTime: "",
+                    _id: "61a2398f81bb968b5c850f05"
+                },
+                {
+                    day: "monday",
+                    isActive: true,
+                    startTime: "8:00",
+                    endTime: "16:00",
+                    _id: "61a2398f81bb968b5c850f06"
+                }
+            ],
+            isSupportDelivery: true,
+            maxDeliveryDistance: 5,
+            paymentLinks: [
+                "link1",
+                "link2"
+            ]
+        },
+        rating: {
+            value: 4.7,
+            count: 83
+        },
+        _id: "61a2398f81bb968b5c850f00",
+        seller: "61a2398f81bb968b5c850eff",
+        menu: [
+            {
+                name: "dish1",
+                price: 30,
+                img: {
+                    data: {
+                        type: "Buffer",
+                        data: [
+                            52,
+                            53,
+                            54,
+                            52
+                        ]
+                    },
+                    _id: "61a2398f81bb968b5c850f02"
+                },
+                description: "good dish 1",
+                _id: "61a2398f81bb968b5c850f01"
+            },
+            {
+                name: "dish2",
+                price: 30,
+                img: {
+                    data: {
+                        type: "Buffer",
+                        data: [
+                            52,
+                            53,
+                            54,
+                            52
+                        ]
+                    },
+                    _id: "61a2398f81bb968b5c850f04"
+                },
+                description: "good dish 2",
+                _id: "61a2398f81bb968b5c850f03"
+            }
+        ],
+        __v: 0
+    },
+    customer: "619e91c9566e39756ef6290b",
+    price: 30,
+    comments: "make it good",
+    isPickup: false,
+    deliveryAddress: "hashalom 1",
+    status: "Pending Approval",
+    items: [
+        {
+            name: "dish 1",
+            quantity: 1,
+            _id: "61a0b59b0cce3e7dc7586632"
+        },
+        {
+            name: "dish 2",
+            quantity: 3,
+            _id: "61a0b59b0cce3e7dc7586633"
+        }
+    ],
+    dueDate: "ASAP",
+    __v: 0,
+    date: "ASAP"
+}])
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
@@ -218,9 +326,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.filter(t => t.order.status !== null).map((item, index) => {
+          orderList.filter(t => t.status !== null).map((item, index) => {
             return (
-              <OrderCustomer key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item} kitchen={item.kitchen.bio.name} img={item.kitchen.bio.imgLink} payLinks={item.kitchen.logistics.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
         
@@ -241,9 +349,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         {
-          orderList.filter(t => ((t.order.status == null) && expandRecentOrders)).map((item, index) => {
+          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
             return (
-              <OrderCustomer key={index} order={item.order} kitchen={item.kitchenName} img={item.imgLink} payLinks={item.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item} kitchen={item.kitchen.bio.name} img={item.kitchen.bio.imgLink} payLinks={item.kitchen.logistics.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
           )})
         }
 
