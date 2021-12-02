@@ -11,13 +11,22 @@ const saveAuthToken = async (token) => {
 // will return null if there is no token saved
 const getAuthToken = async () => {
   try {
-    return await AsyncStorage.getItem('@auth_token', token);
+    return await AsyncStorage.getItem('@auth_token');
   } catch (e) {
-    console.log('failed to save token');
+    console.log('failed to get token');
   }
 };
 
+const deleteAuthToken = async () => {
+  try {
+    return await AsyncStorage.removeItem('@auth_token');
+  } catch (e) {
+    console.log('failed to delete token');
+  }
+}
+
 export {
   saveAuthToken,
-  getAuthToken
+  getAuthToken,
+  deleteAuthToken
 };

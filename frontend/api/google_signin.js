@@ -20,11 +20,11 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
         };
   
         console.log('details to send:',userDetails);
-        setUser(userDetails)
+        setUser(userDetails); // later get that from the server response or request from /users/me 
+        
         /* send to server and get a token back */
-        // saveAuthToken(token);
-
-        successCB();
+        
+        saveAuthToken('thisisatmptoken').then(successCB).catch(err => console.log(err));
       } else {
         stopLoadingCB();
       }
