@@ -137,17 +137,8 @@ const KitchenPageScreen = ({navigation}) => {
             </View>
           </TouchableOpacity>
           <View style={styles.rowView}>
-            <Icons.FontAwesome5 name="home" size={16} color="black"/>
-            <Text style={styles.details}>Rothschild 100, Tel Aviv</Text>
-          </View>
-          <View style={styles.rowView}>
             <Icons.Entypo name="map" size={16} color="black"/>
-            <Text style={styles.details}>5.1km</Text>
-            <TouchableOpacity
-              onPress={() => Linking.openURL('https://waze.com/ul?q=Rothschild%20100%20Tel%20Aviv')}
-            >
-              <Text style={styles.navigateText}>Navigate</Text>
-            </TouchableOpacity>
+            <Text style={styles.details}>Tel Aviv    5 km</Text>
           </View>
         </ShadowCard>
       </View>

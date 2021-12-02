@@ -80,6 +80,8 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [linksState, setLinksState] = useState([])
   const [showRating, setShowRating] = useState(false);
   const [ratingState, setRatingState] = useState({id: 0,rating: 0})
+  const [showNavigation, setShowNavigation] = useState(false);
+  const [navigationState, setNavigationState] = useState('')
   
   const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
   const [orderList, setOrderList] = useState([{
@@ -91,14 +93,15 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
                 latitude: 32.0666868
             },
             name: "test kitchen",
-            street: "100 Ben Gurion",
+            street: "Ben Gurion 100",
             city: "Ramat Gan",
             phone: "03123123",
             description: "best kitchen ever!",
             tags: [
                 "bakery",
                 "deserts"
-            ]
+            ],
+            coverImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpd2o2M9OaVj4KTy6iqtHbJeSlvTAHhUuHaA&usqp=CAU'
         },
         logistics: {
             isOnlyFutureDelivery: false,
@@ -176,7 +179,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     comments: "make it good",
     isPickup: false,
     deliveryAddress: "hashalom 1",
-    status: "Pending Approval",
+    status: 'Waiting Payment',
     items: [
         {
             name: "dish 1",
@@ -291,6 +294,20 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
       </Modal>
 
+      <Modal isVisible={showNavigation} onBackdropPress={() => setShowNavigation(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          <Text style={{alignSelf: 'center', marginVertical: 8}}>{navigationState}</Text>
+          <OpenURLButton url={'https://waze.com/ul?q='+navigationState} text={'Navigate'} addLine={false}/>
+          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
+          <TouchableOpacity
+              onPress={() => setShowNavigation(false)}
+              style={{alignItems: 'center', marginVertical: 8}}
+          >
+            <Text>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <ScrollView
         ref={ScrollViewRef}
         onScroll={event => scroll_position = event.nativeEvent.contentOffset.y}
@@ -328,7 +345,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         {
           orderList.filter(t => t.status !== null).map((item, index) => {
             return (
-              <OrderCustomer key={index} order={item} kitchen={item.kitchen.bio.name} img={item.kitchen.bio.imgLink} payLinks={item.kitchen.logistics.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
         }
         
@@ -351,7 +368,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         {
           orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
             return (
-              <OrderCustomer key={index} order={item} kitchen={item.kitchen.bio.name} img={item.kitchen.bio.imgLink} payLinks={item.kitchen.logistics.paymentLinks} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks}/>
+              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
         }
 
