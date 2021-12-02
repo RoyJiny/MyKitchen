@@ -5,8 +5,7 @@ const User = require('../models/User');
 const Kitchen = require("../models/Kitchen");
 
 const auth = require('../middleware/auth');
-const matchUserKitchen = require('../middleware/matchUser');
-const matchUserOrder = require('../middleware/matchUser');
+const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
 
 // Users Registration, info and editing - START
@@ -50,7 +49,44 @@ router.post("/users/seller/register", async (req,res) => {
     }
 });
 
-router.post("/users/seller/edit/bio", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/signin", async (req,res) => {
+    try {
+        const user = await User.findOne({ googleId: req.body.googleId });
+        if (!user) {
+            return res.status(401).send('The user does not exist');
+        }
+
+        const token = await user.generateAuthToken();
+        const data = {token: token};
+
+        if (!user.isSeller) {
+            return res.send(data);
+        } else {
+            const kitchen = await Kitchen.findOne({ seller: user._id });
+            data.kitchen_id = kitchen._id || '-1';
+            res.send(data);
+        }
+    }  catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get("/users/signout", auth, async (req,res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(
+            token => token.token !== req.token
+        );
+        await req.user.save();
+
+        res.send();
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen; // TBD: maybe send bio only? 
 
@@ -66,7 +102,7 @@ router.post("/users/seller/edit/bio", auth, matchUserKitchen,  async (req,res) =
     }
 });
 
-router.post("/users/seller/edit/menu", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen;
 
@@ -79,7 +115,7 @@ router.post("/users/seller/edit/menu", auth, matchUserKitchen,  async (req,res) 
     }
 });
 
-router.post("/users/seller/edit/logistics", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen;
 
@@ -97,19 +133,6 @@ router.get("/users/me", auth, async (req,res) => {
     res.send(JSON.stringify(user));
 });
 
-router.get("/users/logout", auth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter(
-            token => token.token !== req.token
-        );
-        await req.user.save();
-
-        res.sendStatus(200);
-    } catch (err) {
-        console.log(err);
-        res.status(500).send();
-    }
-});
 // Users Registration, info and editing - END
 
 // Customer Addresses - START
@@ -161,7 +184,7 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
 });
 // Customer Addresses - END
 
-router.post("/users/customer/rate_kitchen", auth, matchUserOrder, async (req,res) => {
+router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,res) => {
     try {
         rating = req.body.rating;
         

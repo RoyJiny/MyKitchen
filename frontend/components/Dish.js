@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImChange from './ImChange';
@@ -49,7 +49,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                          
                         <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
 
-                        <Text>₪ </Text>{/*pricing == '' ? null : <Text>₪ </Text>*/}
+                        <Text>₪ </Text>
 
                             <TextInput 
                                 style={{ 
@@ -65,7 +65,6 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                                 keyboardType="numeric"
                                 placeholder="price"
                             />
-                            
                         </View>
                     </View>
                 </View>
@@ -122,14 +121,6 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
 }
 
 const styles = StyleSheet.create({
-    image: {
-        height: 84,
-        width: 84,
-        borderRadius: 16,
-        borderColor: 'black',
-        borderWidth: 0.5,
-        marginRight: 16
-    }
 });
 
 export default Dish
