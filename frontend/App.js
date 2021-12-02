@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StatusBar, View, I18nManager} from 'react-native'
+import {StatusBar, View, I18nManager, ActivityIndicator} from 'react-native'
 
 import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,6 +9,8 @@ import * as Icons from '@expo/vector-icons'
 import { UserContext } from "./contexts/UserContext";
 
 import Colors from './globals/Colors';
+
+import { getAuthToken, deleteAuthToken } from './api/async_storage';
 
 import LoginScreen from './screens/login/LoginScreen';
 import SellerSigninScreen from './screens/login/SellerSigninScreen'
@@ -200,6 +202,7 @@ const SellerTabsNavigator = (signoutCB) => {
 export default APP = () => {
   const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const customerLoginCB = () => {
     setState({isLoggedIn: true, isCustomer: true});
@@ -208,6 +211,7 @@ export default APP = () => {
     setState({isLoggedIn: true, isCustomer: false});
   };
   const signoutCB = () => {
+    deleteAuthToken();
     setState({isLoggedIn: false, isCustomer: true});
   };
 
@@ -220,17 +224,48 @@ export default APP = () => {
     }
   };
 
+  if (isLoading) {
+    // try to sign in with existing token
+    getAuthToken()
+      .then(auth_token => {
+        if (auth_token) {
+          // send request to /users/me with the token to verify
+
+          // test if returned a user back
+          // if yes, test if seller or customer
+
+          isSeller = false; // tmp
+          if(true) { // if res status == 200
+            if (!isSeller) { // user.isSeller
+              customerLoginCB();
+            }
+          }
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+  
+  if (isLoading) {
+    return <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator color='black' style={{alignSelf: 'center'}} size={50}/>
+    </View>;
+  }
+
   return (
     <View style={{flex:1}}>
       <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
       <ExpoStatusBar style="light" />
       <UserContext.Provider value={{user, setUser}}>
-      <NavigationContainer theme={AppTheme}>
-        {state.isLoggedIn
-          ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
-          : LoginStack(customerLoginCB,sellerLoginCB)
-        }
-      </NavigationContainer>
+        <NavigationContainer theme={AppTheme}>
+          {state.isLoggedIn
+            ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
+            : LoginStack(customerLoginCB,sellerLoginCB)
+          }
+        </NavigationContainer>
       </UserContext.Provider>
     </View>
   );
