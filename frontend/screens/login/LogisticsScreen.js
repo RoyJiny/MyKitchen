@@ -15,7 +15,7 @@ import FormInput from '../../components/FormInput';
 
 const LogisticsScreen = ({navigation,loginCB}) => {
   const {user, setUser} = useContext(UserContext);
-  const [operatingDays, setOperatingDays] = useState({preorderOnly: false, sunday:{active:false, startTime:'08:00', endTime:'16:00'},monday:{active:true, startTime:'08:00', endTime:'16:00'},thuesday:{active:true, startTime:'08:00', endTime:'16:00'},wednesday:{active:false, startTime:'08:00', endTime:'16:00'},thursday:{active:false, startTime:'08:00', endTime:'16:00'},friday:{active:false, startTime:'08:00', endTime:'16:00'},saturday:{active:false, startTime:'08:00', endTime:'16:00'}});
+  const [operatingDays, setOperatingDays] = useState({preorderOnly: false, sunday:{active:false, startTime:'08:00', endTime:'16:00'},monday:{active:false, startTime:'08:00', endTime:'16:00'},thuesday:{active:false, startTime:'08:00', endTime:'16:00'},wednesday:{active:false, startTime:'08:00', endTime:'16:00'},thursday:{active:false, startTime:'08:00', endTime:'16:00'},friday:{active:false, startTime:'08:00', endTime:'16:00'},saturday:{active:false, startTime:'08:00', endTime:'16:00'}});
   const [delivery, setDelivery] = useState({support: false, distance: ''});
   const [payLinks, setPayLinks] = useState(['','']);
   const [firstTime, setfirstTime] = useState(true);

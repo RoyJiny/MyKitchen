@@ -236,9 +236,7 @@ export default APP = () => {
 
           isSeller = false; // tmp
           if(true) { // if res status == 200
-            if (isSeller) { // user.isSeller
-              sellerLoginCB();
-            } else {
+            if (!isSeller) { // user.isSeller
               customerLoginCB();
             }
           }
