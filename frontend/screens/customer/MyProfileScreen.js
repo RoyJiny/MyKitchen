@@ -180,6 +180,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     isPickup: false,
     deliveryAddress: "hashalom 1",
     status: 'Waiting Payment',
+    rated: false,
     items: [
         {
             name: "dish 1",
@@ -213,6 +214,14 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
 
   const sendRating = () => {
     console.log(ratingState);
+    for (let i=0; i< orderList.length; i++){
+      if(orderList[i]._id == ratingState.id){
+        let orderCopy = [...orderList];
+        orderCopy[i].rated=true;
+        setOrderList(orderCopy)
+        break
+      }
+    }
     // post rating state to DB 
   }
   
@@ -286,7 +295,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           <Rating startingValue={3} onFinishRating={(rating) => {setRatingState({...ratingState ,rating: rating});}}/>
           <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
           <TouchableOpacity
-              onPress={sendRating}
+              onPress={() => {sendRating();setShowRating(false)}}
               style={{alignItems: 'center', marginBottom: 8}}
           >
             <Text>Send Rating</Text>
