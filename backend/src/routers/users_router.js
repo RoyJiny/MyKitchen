@@ -3,10 +3,13 @@ const router = new express.Router();
 
 const User = require('../models/User');
 const Kitchen = require("../models/Kitchen");
+const Order = require("../models/Order");
 
 const auth = require('../middleware/auth');
 const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
+
+const {send_notification_to_user} = require('../external_api/notifications');
 
 // Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
@@ -130,6 +133,7 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 
 router.get("/users/me", auth, async (req,res) => {
     const user = req.user;
+    send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
 
@@ -188,11 +192,16 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
     try {
         rating = req.body.rating;
         
+        if(req.order.rated == true){
+            res.status(400).send('Order was already rated');
+        }
+
         const kitchen = await Kitchen.findById(req.order.kitchen);
 
         new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}
 
         await Kitchen.findByIdAndUpdate(order_data.kitchen, {rating: new_rating})
+        await Order.findByIdAndUpdate(req.order._id, {rated: true})
 
         res.send("Processed Successfuly");
     } catch (err) {

@@ -3,10 +3,8 @@ const router = new express.Router();
 
 const Kitchen = require("../models/Kitchen");
 const Order = require("../models/Order");
-const User = require("../models/User");
 
 const auth = require('../middleware/auth');
-const { matchKitchenOrder } = require('../middleware/matchUser');
 
 router.post("/order/submit", auth, async (req,res) => {
   try {
@@ -50,9 +48,9 @@ router.get("/orders/seller/get_orders", auth, async (req,res) => {
 
     let kitchen = await Kitchen.findOne({_seller: user._id});
     
-    let user_orders = await Order.find({kitchen: kitchen}).populate("customer")
+    let user_orders = await Order.find({kitchen: kitchen}).populate("customer");
 
-    res.send({user_orders})
+    res.send({user_orders});
   } catch (err) {
     console.log(err);
     res.status(500).send('Server Error');
@@ -64,9 +62,9 @@ router.get("/orders/customer/get_orders", auth, async (req,res) => {
   try {
     const user = req.user;
 
-    let user_orders = await Order.find({_customer: user._id}).populate('kitchen')
+    let user_orders = await Order.find({_customer: user._id}).populate('kitchen');
 
-    res.send({user_orders})
+    res.send({user_orders});
   } catch (err) {
     console.log(err);
     res.status(500).send('Server Error');

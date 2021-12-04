@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const OrderCustomer = ({order,setRatingState,setShowRating,setLinksState,setShowLinks,setNavigationState,setShowNavigation}) => {
+const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setShowLinks,setNavigationState,setShowNavigation}) => {
     return (
       <View>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
@@ -30,7 +30,7 @@ const OrderCustomer = ({order,setRatingState,setShowRating,setLinksState,setShow
           <TouchableOpacity onPress={() => {setLinksState(order.kitchen.logistics.paymentLinks);setShowLinks(true);}} >
             <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
           </TouchableOpacity> : null}
-          {order.status == null? // && order.rated == false
+          {order.rated == false && order.status == "Done" ?
           <TouchableOpacity onPress={() => {setRatingState({id: order._id, rating: 3});setShowRating(true);}} >
             <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>rate seller</Text>
           </TouchableOpacity> : null}

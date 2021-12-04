@@ -3,9 +3,9 @@ const Order = require('../models/Order');
 
 const matchUserKitchen = async (req, res, next) => {
     try {
-        kitchen_data = req.body.kitchen;
+        kitchen_id = req.body.kitchen.id;
 
-        const kitchen = await Kitchen.findById(kitchen_data.id);
+        const kitchen = await Kitchen.findById(kitchen_id);
 
         if (!kitchen.seller.equals(req.user._id)) {
             throw new Error();
@@ -13,7 +13,7 @@ const matchUserKitchen = async (req, res, next) => {
 
         next();
     } catch (e) {
-        res.status(401).send({ error: "User auth not matching Kitchen" });
+        res.status(401).send("Unauthorized");
     }
 };
 
@@ -30,7 +30,7 @@ const matchUserOrder = async (req, res, next) => {
         req.order = order;
         next();
     } catch (e) {
-        res.status(401).send({ error: "User auth not matching Order" });
+        res.status(401).send("Unauthorized");
     }
 };
 
@@ -48,7 +48,7 @@ const matchKitchenOrder = async (req, res, next) => {
         req.order = order;
         next();
     } catch (e) {
-        res.status(401).send({ error: "User auth" });
+        res.status(401).send("Unauthorized");
     }
 };
 
