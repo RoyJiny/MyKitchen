@@ -192,6 +192,10 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
     try {
         rating = req.body.rating;
         
+        if(req.order.rated == true){
+            res.status(400).send('Order was already rated');
+        }
+
         const kitchen = await Kitchen.findById(req.order.kitchen);
 
         new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}

@@ -30,7 +30,7 @@ const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setSho
           <TouchableOpacity onPress={() => {setLinksState(order.kitchen.logistics.paymentLinks);setShowLinks(true);}} >
             <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
           </TouchableOpacity> : null}
-          {order.rated == false ?
+          {order.rated == false && order.status == "Done" ?
           <TouchableOpacity onPress={() => {setRatingState({id: order._id, rating: 3});setShowRating(true);}} >
             <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>rate seller</Text>
           </TouchableOpacity> : null}
