@@ -8,6 +8,8 @@ const auth = require('../middleware/auth');
 const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
 
+const {send_notification_to_user} = require('../external_api/notifications');
+
 // Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
     try {
@@ -130,6 +132,7 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 
 router.get("/users/me", auth, async (req,res) => {
     const user = req.user;
+    send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
 
