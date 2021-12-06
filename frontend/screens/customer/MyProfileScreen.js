@@ -352,7 +352,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.filter(t => t.status !== null).map((item, index) => {
+          orderList.filter(t => t.status !== 'Done').map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
@@ -375,7 +375,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         {
-          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
+          orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
