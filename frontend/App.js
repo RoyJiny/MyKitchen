@@ -268,8 +268,10 @@ export default APP = () => {
     setState({isLoggedIn: true, isCustomer: false});
   };
   const signoutCB = () => {
-    deleteAuthToken();
-    setState({isLoggedIn: false, isCustomer: true});
+    deleteAuthToken()
+      .then(() => setState({isLoggedIn: false, isCustomer: true}))
+      .catch(err => console.log(err));
+    ;
   };
 
   const AppTheme = {
