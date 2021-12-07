@@ -56,6 +56,14 @@ const userSchema = new mongoose.Schema(
         }
       }
     ],
+    favourites: [
+      {
+        kitchen: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Kitchen'
+        }
+      }
+    ],
   }
 );
 
