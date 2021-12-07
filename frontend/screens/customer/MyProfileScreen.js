@@ -82,8 +82,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [ratingState, setRatingState] = useState({id: 0,rating: 0})
   const [showNavigation, setShowNavigation] = useState(false);
   const [navigationState, setNavigationState] = useState('')
-  
-  const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
+  // for addresses useState(user.addresses) ?? or go straight to user and make new set function
+  // previous mock data - [{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]
+  const [addresses, setAddresses] = useState(user.addresses);
   const [orderList, setOrderList] = useState([{
     _id: "61a0b59b0cce3e7dc7586631",
     kitchen: {
@@ -352,7 +353,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.filter(t => t.status !== null).map((item, index) => {
+          orderList.filter(t => t.status !== 'Done').map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
@@ -375,7 +376,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         {
-          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
+          orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})

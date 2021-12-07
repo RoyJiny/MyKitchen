@@ -188,6 +188,7 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
 });
 // Customer Addresses - END
 
+// Customer requests - START
 router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,res) => {
     try {
         rating = req.body.rating;
@@ -209,5 +210,31 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
         res.status(500).send('Server Error');
     }
 });
+
+router.post("/users/customer/edit/favourites", auth, async (req,res) => {
+    try {
+        new_favourites = req.body.favourites;
+
+        await User.findByIdAndUpdate(req.user._id, {favourites: new_favourites})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get("/users/customer/pastKitchens", auth, async (req,res) => {
+    try {
+        let orders = await Order.find({customer: req.user._id}).populate('kitchen');
+        let kitchens = [...new Set(orders.map(a => a.kitchen))]; // maybe populate after removing duplicates (didn't work for me, maybe findByID will)
+        res.send({kitchens})
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Customer requests - END
 
 module.exports = router;

@@ -12,7 +12,7 @@ const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setSho
           
           <View>
             <Text style={{fontSize: 18}}>{order.kitchen.bio.name}</Text>
-            {order.status != 'Pending Approval' && order.status != null? 
+            {order.status != 'Pending Approval' && order.status != 'Done'? 
             <TouchableOpacity onPress={() => {setNavigationState(order.kitchen.bio.street+', '+order.kitchen.bio.city);setShowNavigation(true);}} >
               <Text style={{fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>show address</Text>
             </TouchableOpacity> : null}
