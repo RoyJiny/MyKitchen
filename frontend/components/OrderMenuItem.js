@@ -16,7 +16,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
     }}>
 
       <View style={{width: 70, height: 70, borderRadius: 10, alignContent:'center'}}>
-        <Image style={{width: 70, height: (isLoading ? 0 : 70), borderRadius: 10}} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);/*setTimeout(() => {  setIsLoading(false); }, 3000);*/}}}/>
+        <Image style={{width: 70, height: (isLoading ? 0 : 70), borderRadius: 10}} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);}}}/>
         <ActivityIndicator style={{ marginTop:20 ,alignSelf: 'center', display: (isLoading ? 'flex' : 'none') }} size={30} color="black" />
       </View>
 

@@ -26,7 +26,7 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
         
         /* send to server and get a token back */
         
-        saveAuthToken('thisisatmptoken').then(successCB).catch(err => console.log(err));
+        saveAuthToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTllOTFjOTU2NmUzOTc1NmVmNjI5MGIiLCJpYXQiOjE2Mzc3ODE5NjF9.5D2E1KXY1y63Rrw6KmBF7xIdctx_aDZACR_H5fGbJlQ').then(successCB).catch(err => console.log(err));
       } else {
         stopLoadingCB();
       }

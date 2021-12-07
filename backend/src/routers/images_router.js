@@ -52,7 +52,7 @@ router.post("/upload/", auth, multer_upload.single('img'), async (req,res) => {
     }
 });
 
-router.get("/images/:id", auth, async (req,res) => {
+router.get("/images/:id", async (req,res) => {
   try {
     const image = await Image.findById(req.params.id);
 

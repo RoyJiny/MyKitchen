@@ -1,14 +1,34 @@
-import React from 'react';
-import {View,StyleSheet,ScrollView,Dimensions, Text} from 'react-native';
+import React,{useState} from 'react';
+import {View,StyleSheet,ScrollView,Text} from 'react-native';
 import * as Icons from '@expo/vector-icons';
 
 import Colors from '../../globals/Colors';
+import { ServerBase } from '../../globals/globals';
 
-import Button from '../../components/Button';
 import Input from '../../components/Input';
 import SearchCard from '../../components/SearchCard';
 
+import {send_post_request} from '../../utils/requests';
+
 const SearchScreen = ({ route, navigation }) => {
+  const [results, setResults] = useState([]);
+
+  const fetch_results = (text_query) => {
+    send_post_request(
+      'search/kitchen/text',
+      {
+        // TODO: use location service to get current location
+        location: {
+          'latitude':32.061942,
+          'longitude':34.813562
+        },
+        text_query: text_query
+      }
+    )
+    .then(data => setResults(data))
+    .catch(err => console.log(err));
+  };
+
   return (
     <View style={{flex:1}}>
       <View style={{flex:1}}>
@@ -17,9 +37,9 @@ const SearchScreen = ({ route, navigation }) => {
             icon={{component:Icons.Feather, name: 'search'}}
             iconName="search"
             placeholder="search"
-            updateOriginalValue={txt => console.log(txt)}
+            updateOriginalValue={text => fetch_results(text)}
             additionalStyle={{marginHorizontal: 16}}
-            onSubmit={event => console.log('submitted:',event.nativeEvent.text)}
+            onSubmit={event => fetch_results(event.nativeEvent.text)}
           />
         </View>
         <View style={{
@@ -41,13 +61,14 @@ const SearchScreen = ({ route, navigation }) => {
                 automaticallyAdjustContentInsets = {true}
                 style={{marginBottom: 16, marginLeft: 8}}
             >
-              <SearchCard
-              onClick={() => navigation.navigate("KitchenPage")}
-                  OrderName="Super Cake"
-                  description="Uniqe deserts at your service"
-                  imgLink="https://preppykitchen.com/wp-content/uploads/2019/06/Chocolate-cake-recipe-1200a-500x375.jpg"
-                  distance= "3.2"
-              />
+              {results.map(kitchen => <SearchCard
+                key={kitchen._id}
+                onClick={() => navigation.navigate("KitchenPage",{kitchen})}
+                OrderName={kitchen.bio.name}
+                description={kitchen.bio.description}
+                imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
+                distance={kitchen.distance.toFixed(1)}
+              />)}
             </ScrollView>
           </ScrollView>
         </View>
