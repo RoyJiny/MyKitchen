@@ -22,7 +22,7 @@ const ExploreScreen = ({navigation}) => {
                     pastKitchens.length == 0? <Text style={styles.subTitle}>make your first order</Text> : 
                     pastKitchens.map((item, index) => {
                             return (
-                                <KitchenExploreCard key={index} kitchenName={item.bio.name} subtitle={item.bio.city} imgLink={item.bio.coverImg} />
+                                <KitchenExploreCard key={index} kitchenName={item.bio.name} subtitle={item.bio.city} imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}/>
                             )})
                     }
                 </ScrollView>
@@ -60,7 +60,7 @@ const ExploreScreen = ({navigation}) => {
                     user.favourites.length == 0? <Text style={styles.subTitle}>add kitchens to your favourites</Text> : 
                         user.favourites.map((item, index) => {
                             return (
-                                <KitchenExploreCard key={index} kitchenName={item.bio.name} subtitle={item.bio.city} imgLink={item.bio.coverImg} />
+                                <KitchenExploreCard key={index} kitchenName={item.bio.name} subtitle={item.bio.city} imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'} />
                             )})
                     }
                     

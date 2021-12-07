@@ -258,7 +258,15 @@ export default APP = () => {
   console.log(expoPushToken);
   
   const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({
+    email: '',
+    name: '',
+    imgUrl: '',
+    isSeller: false,
+    googleId: '',
+    addresses: [],
+    favourites: []
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   const customerLoginCB = () => {

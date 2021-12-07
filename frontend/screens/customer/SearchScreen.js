@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import {View,StyleSheet,ScrollView,Text} from 'react-native';
 import * as Icons from '@expo/vector-icons';
 
@@ -28,6 +28,31 @@ const SearchScreen = ({ route, navigation }) => {
     .then(data => setResults(data))
     .catch(err => console.log(err));
   };
+  const fetch_by_tag = (tag) => {
+    send_post_request(
+      'search/kitchen/tag',
+      {
+        // TODO: use location service to get current location
+        location: {
+          'latitude':32.061942,
+          'longitude':34.813562
+        },
+        tag: tag
+      }
+    )
+    .then(data => setResults(data))
+    .catch(err => console.log(err));
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (route.params!==undefined && route.params.category!==undefined) {
+        fetch_by_tag(route.params.category);
+        route.params.category = undefined;
+      }
+    });
+    return unsubscribe;
+  },[route,navigation]);
 
   return (
     <View style={{flex:1}}>
@@ -46,9 +71,6 @@ const SearchScreen = ({ route, navigation }) => {
             height: 15,
             backgroundColor: 'transparent'
         }}/>
-        <View>
-          { (route.params!==undefined && route.params.category!==undefined) ? <Text style={styles.results}>Showing results for: {route.params.category}</Text> : null}
-        </View>
         <View style={{
             height: 15,
             backgroundColor: 'transparent'
@@ -61,6 +83,7 @@ const SearchScreen = ({ route, navigation }) => {
                 automaticallyAdjustContentInsets = {true}
                 style={{marginBottom: 16, marginLeft: 8}}
             >
+              {results.length === 0 && <Text style={{alignSelf:'center'}}>No results</Text>}
               {results.map(kitchen => <SearchCard
                 key={kitchen._id}
                 onClick={() => navigation.navigate("KitchenPage",{kitchen})}

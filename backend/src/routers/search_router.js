@@ -29,4 +29,23 @@ router.post("/search/kitchen/text", auth, async (req,res) => {
     }
 });
 
+router.post("/search/kitchen/tag", auth, async (req,res) => {
+    try {
+        const user_location = req.body.location;
+        const tag = req.body.tag;
+
+        var kitchens = await Kitchen.find({
+            "bio.tags": tag
+        });
+        
+        kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
+        kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
+
+        res.send(kitchens);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

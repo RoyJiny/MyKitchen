@@ -133,7 +133,6 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 
 router.get("/users/me", auth, async (req,res) => {
     const user = req.user;
-    send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
 
@@ -227,7 +226,7 @@ router.post("/users/customer/edit/favourites", auth, async (req,res) => {
 router.get("/users/customer/pastKitchens", auth, async (req,res) => {
     try {
         let orders = await Order.find({customer: req.user._id}).populate('kitchen');
-        let kitchens = [...new Set(orders.map(a => a.kitchen))]; // maybe populate after removing duplicates (didn't work for me, maybe findByID will)
+        let kitchens = [...new Set(orders.map(a => a.kitchen))];
         res.send({kitchens})
     } catch (err) {
         console.log(err);
