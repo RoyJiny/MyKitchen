@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false
     },
+    googleId: {
+      type: String,
+      required: true
+    },
+    expoPushToken: {
+      type: String
+    },
     tokens: [
       {
         token: {
@@ -47,6 +54,12 @@ const userSchema = new mongoose.Schema(
           type: Number,
           required: true
         }
+      }
+    ],
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Kitchen'
       }
     ],
   }

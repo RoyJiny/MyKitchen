@@ -1,7 +1,8 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { UserContext } from "../../contexts/UserContext";
+import * as Animatable from 'react-native-animatable';
 
 import BackButton from '../../components/BackButton';
 import Button2 from '../../components/Button2';
@@ -12,6 +13,8 @@ const AddDishesScreen = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const [dishItems, setDishItems] = useState([]);
   const [alerted, setAlerted] = useState(false);
+  const [firstTime, setfirstTime] = useState(true);
+  const [checkValid, setcheckValid] = useState(false);
 
   const handleAdd = () => {
     for (let i = 0; i <= dishItems.length; i++) {
@@ -66,6 +69,18 @@ const AddDishesScreen = ({navigation}) => {
     setDishItems(itemsCopy)
   }
 
+  const checkEmptyDish = () => {
+    let item = {key: 0, name: '', description: '', price: '', imgLink: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}
+    let itemsCopy = [...dishItems];
+    for (let i = 0; i < itemsCopy.length; i++) {
+      item = itemsCopy[i]
+      if(item.name == '' || item.price == ''){
+        return false
+      }
+    }
+    return true
+  }
+
   return (
       <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -78,7 +93,7 @@ const AddDishesScreen = ({navigation}) => {
         <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
           <TouchableOpacity
-            onPress={() => handleAdd()}
+            onPress={() => {handleAdd(),setcheckValid(false)}}
             style={{
                 borderRadius: 24,
                 backgroundColor: 'white',
@@ -106,8 +121,18 @@ const AddDishesScreen = ({navigation}) => {
               }
           </TouchableOpacity>
         </View>
-        <BlankDivider height={16}/>
-
+        <BlankDivider height={8}/>
+          { firstTime==true || dishItems.length > 0 ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Please add dishes to your kitchen</Text>
+            </Animatable.View>
+          }
+          { firstTime==true || checkValid==false || checkEmptyDish()==true ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Please add name and price for each dish</Text>
+            </Animatable.View>
+          }
+          <BlankDivider height={8}/>
           {
             dishItems.map((item, index) => {
               return (
@@ -128,14 +153,17 @@ const AddDishesScreen = ({navigation}) => {
             })
           }
 
-
+        
         <BlankDivider height={16}/>
+        <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
         <Button2
           onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{menu: dishItems}}}});navigation.navigate("Logistics");}} //here use global args from all forms
           fillColor = "white"
           text ="Next"
           textColor = "black"
+          disable = { checkEmptyDish()==true && dishItems.length > 0 ? false : true }
         />
+        </TouchableOpacity>
         <BlankDivider height={32}/>
         </View>
     </TouchableWithoutFeedback>
@@ -148,7 +176,14 @@ AddDishesScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginTop: 2,
+  },
 });
 
 export default AddDishesScreen;

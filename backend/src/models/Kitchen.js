@@ -1,12 +1,5 @@
 const mongoose = require('mongoose');
 
-const imageSchema = new mongoose.Schema(
-  {
-    data: Buffer,
-    contentType: String
-  }
-);
-
 const dishSchema = new mongoose.Schema(
   {
     name: {
@@ -18,7 +11,8 @@ const dishSchema = new mongoose.Schema(
       required: true
     },
     img: {
-      type: imageSchema
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Image'
     },
     description: {
       type: String,
@@ -71,7 +65,8 @@ const kitchenSchema = new mongoose.Schema(
         }
       ],
       coverImg: {
-        type: imageSchema
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Image'
       }
     },
     menu: [

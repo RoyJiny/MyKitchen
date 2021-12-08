@@ -12,6 +12,7 @@ import BlankDivider from '../../components/BlankDivider';
 import ShadowCard from '../../components/ShadowCard';
 import ExpantionArrow from '../../components/ExpantionArrow';
 import Button from '../../components/Button';
+import OrderCustomer from '../../components/OrderCustomer';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
@@ -45,54 +46,6 @@ const AddressCard = (address,onEdit,onDelete) => {
   );
 };
 
-const Order = (kitchen,contents,status,price,date,img,payLinks,setRatingState,setShowRating,key) => {
-  const [showModal, setShowModal] = status == 'Waiting payment' ? useState(false) : [false, (value) => {}]
-  return (
-    <View>
-    {status == 'Waiting payment'?   
-    <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
-      <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
-        {payLinks.map((item, index) => {
-            return (
-              <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(payLinks.length - 1)}/>
-            )
-        })}
-      </View>
-    </Modal>
-    : null}
-
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
-      <View style={{flexDirection: 'row'}}>
-        <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: img}}/>
-        
-        <View>
-          <Text style={{fontSize: 18}}>{kitchen}</Text>
-          {contents.length > 0 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[0]}</Text> : null}
-          {contents.length > 1 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>{contents[1]}</Text> : null}
-          {contents.length > 2 ? <Text numberOfLines={1} style={{width: 150, fontSize: 14, color: Colors.lightGray}}>...</Text> : null}
-        </View>
-      </View>
-
-      <View style={{alignSelf: 'center'}}>
-        {status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{status}</Text> : null}
-        <Text style={{textAlign: 'center', fontSize: 14}}>${price}</Text>
-        <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{date}</Text>
-        {status == 'Waiting payment'? 
-        <TouchableOpacity onPress={() => setShowModal(true)} >
-          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
-        </TouchableOpacity> : null}
-        {status == null? 
-        <TouchableOpacity onPress={() => {setRatingState({id: 0, rating: 0});setShowRating(true);}} >
-          <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>rate seller</Text>
-        </TouchableOpacity> : null}
-      </View>
-    </View>
-
-    <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
-    </View>
-  );
-};
-
 const OpenURLButton = ({ url, text, addLine }) => {
   const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
@@ -123,13 +76,128 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
 
+  const [showLinks, setShowLinks] = useState(false);
+  const [linksState, setLinksState] = useState([])
   const [showRating, setShowRating] = useState(false);
   const [ratingState, setRatingState] = useState({id: 0,rating: 0})
-  
-  const [addresses, setAddresses] = useState([{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]);
-  const [orderList, setOrderList] = useState([{kitchenName: 'The Desert',items: ['Chocolate Cupcake','Birthday Cake'],status: 'Waiting payment',price: 45,dueDate: '30/11/2021',imgLink: "http://cdn.sallysbakingaddiction.com/wp-content/uploads/2017/06/moist-chocolate-cupcakes-5.jpg",paymentLinks: ["https://google.com","https://google.com"]},
-        {kitchenName: 'My Pastry',items: ['Special Cupcake'],status: 'Pending',price: 60,dueDate: '27/10/2021',imgLink: "https://www.lifeloveandsugar.com/wp-content/uploads/2018/03/Berries-And-Cream-Mini-Puff-Pastry-Cakes1.jpg",paymentLinks: []},
-        {kitchenName: 'Home Cookie',items: ['White cupcake'],status: null,price: 30,dueDate: '10/4/2021',imgLink: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/delish-202012-lofthousecookies-130-ls-1608834762.jpg",paymentLinks: []}])
+  const [showNavigation, setShowNavigation] = useState(false);
+  const [navigationState, setNavigationState] = useState('')
+  // for addresses useState(user.addresses) ?? or go straight to user and make new set function
+  // previous mock data - [{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]
+  const [addresses, setAddresses] = useState(user.addresses);
+  const [orderList, setOrderList] = useState([{
+    _id: "61a0b59b0cce3e7dc7586631",
+    kitchen: {
+        bio: {
+            coordinates: {
+                longitude: 34.8163735,
+                latitude: 32.0666868
+            },
+            name: "test kitchen",
+            street: "Ben Gurion 100",
+            city: "Ramat Gan",
+            phone: "03123123",
+            description: "best kitchen ever!",
+            tags: [
+                "bakery",
+                "deserts"
+            ],
+            coverImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpd2o2M9OaVj4KTy6iqtHbJeSlvTAHhUuHaA&usqp=CAU'
+        },
+        logistics: {
+            isOnlyFutureDelivery: false,
+            operationDays: [
+                {
+                    day: "sunday",
+                    isActive: false,
+                    startTime: "",
+                    endTime: "",
+                    _id: "61a2398f81bb968b5c850f05"
+                },
+                {
+                    day: "monday",
+                    isActive: true,
+                    startTime: "8:00",
+                    endTime: "16:00",
+                    _id: "61a2398f81bb968b5c850f06"
+                }
+            ],
+            isSupportDelivery: true,
+            maxDeliveryDistance: 5,
+            paymentLinks: [
+                "link1",
+                "link2"
+            ]
+        },
+        rating: {
+            value: 4.7,
+            count: 83
+        },
+        _id: "61a2398f81bb968b5c850f00",
+        seller: "61a2398f81bb968b5c850eff",
+        menu: [
+            {
+                name: "dish1",
+                price: 30,
+                img: {
+                    data: {
+                        type: "Buffer",
+                        data: [
+                            52,
+                            53,
+                            54,
+                            52
+                        ]
+                    },
+                    _id: "61a2398f81bb968b5c850f02"
+                },
+                description: "good dish 1",
+                _id: "61a2398f81bb968b5c850f01"
+            },
+            {
+                name: "dish2",
+                price: 30,
+                img: {
+                    data: {
+                        type: "Buffer",
+                        data: [
+                            52,
+                            53,
+                            54,
+                            52
+                        ]
+                    },
+                    _id: "61a2398f81bb968b5c850f04"
+                },
+                description: "good dish 2",
+                _id: "61a2398f81bb968b5c850f03"
+            }
+        ],
+        __v: 0
+    },
+    customer: "619e91c9566e39756ef6290b",
+    price: 30,
+    comments: "make it good",
+    isPickup: false,
+    deliveryAddress: "hashalom 1",
+    status: 'Waiting Payment',
+    rated: false,
+    items: [
+        {
+            name: "dish 1",
+            quantity: 1,
+            _id: "61a0b59b0cce3e7dc7586632"
+        },
+        {
+            name: "dish 2",
+            quantity: 3,
+            _id: "61a0b59b0cce3e7dc7586633"
+        }
+    ],
+    dueDate: "ASAP",
+    __v: 0,
+    date: "ASAP"
+}])
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
@@ -147,6 +215,14 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
 
   const sendRating = () => {
     console.log(ratingState);
+    for (let i=0; i< orderList.length; i++){
+      if(orderList[i]._id == ratingState.id){
+        let orderCopy = [...orderList];
+        orderCopy[i].rated=true;
+        setOrderList(orderCopy)
+        break
+      }
+    }
     // post rating state to DB 
   }
   
@@ -205,15 +281,39 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
       </Modal>
 
+      <Modal isVisible={showLinks} onBackdropPress={() => setShowLinks(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          {linksState.map((item, index) => {
+              return (
+                <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(linksState.length - 1)}/>
+              )
+          })}
+        </View>
+      </Modal>
+
       <Modal isVisible={showRating} onBackdropPress={() => setShowRating(false)}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10, paddingTop: 10}}>
-          <Rating showRating jumpValue={0.5} fractions={1} onFinishRating={(rating) => {setRatingState({id: 0,rating: rating});}}/>
+          <Rating startingValue={3} onFinishRating={(rating) => {setRatingState({...ratingState ,rating: rating});}}/>
           <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
           <TouchableOpacity
-              onPress={sendRating}
+              onPress={() => {sendRating();setShowRating(false)}}
               style={{alignItems: 'center', marginBottom: 8}}
           >
             <Text>Send Rating</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal isVisible={showNavigation} onBackdropPress={() => setShowNavigation(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          <Text style={{alignSelf: 'center', marginVertical: 8}}>{navigationState}</Text>
+          <OpenURLButton url={'https://waze.com/ul?q='+navigationState} text={'Navigate'} addLine={false}/>
+          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
+          <TouchableOpacity
+              onPress={() => setShowNavigation(false)}
+              style={{alignItems: 'center', marginVertical: 8}}
+          >
+            <Text>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -253,9 +353,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.filter(t => t.status !== null).map((item, index) => {
+          orderList.filter(t => t.status !== 'Done').map((item, index) => {
             return (
-              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
         }
         
@@ -276,9 +376,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         {
-          orderList.filter(t => ((t.status == null) && expandRecentOrders)).map((item, index) => {
+          orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
             return (
-              Order(item.kitchenName,item.items,item.status,item.price,item.dueDate,item.imgLink,item.paymentLinks,setRatingState,setShowRating,index)
+              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
           )})
         }
 

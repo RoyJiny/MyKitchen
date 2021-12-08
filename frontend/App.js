@@ -1,14 +1,18 @@
-import React, {useState} from 'react';
-import {StatusBar, View, I18nManager} from 'react-native'
+import React, {useState,useEffect,useRef} from 'react';
+import {StatusBar, View, I18nManager, ActivityIndicator} from 'react-native'
 
 import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import * as Icons from '@expo/vector-icons'
+import * as Notifications from 'expo-notifications';
+
 import { UserContext } from "./contexts/UserContext";
 
 import Colors from './globals/Colors';
+
+import { getAuthToken, deleteAuthToken } from './api/async_storage';
 
 import LoginScreen from './screens/login/LoginScreen';
 import SellerSigninScreen from './screens/login/SellerSigninScreen'
@@ -32,6 +36,40 @@ I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 const Stack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true
+  })
+});
+
+const registerForPushNotificationsAsync = async () => {
+  let token;
+  
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') {
+    console.log('Failed to get push token - need permissions');
+    return;
+  }
+  token = (await Notifications.getExpoPushTokenAsync()).data;
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('MyKitchen', {
+      name: 'MyKitchen',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250]
+    });
+  }
+
+  return token;
+}
 
 const getTabIcon = (route,color) => {
   const size = 20;
@@ -198,8 +236,30 @@ const SellerTabsNavigator = (signoutCB) => {
 };
 
 export default APP = () => {
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('response:',response);
+    });
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  console.log(expoPushToken);
+  
   const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const customerLoginCB = () => {
     setState({isLoggedIn: true, isCustomer: true});
@@ -208,7 +268,10 @@ export default APP = () => {
     setState({isLoggedIn: true, isCustomer: false});
   };
   const signoutCB = () => {
-    setState({isLoggedIn: false, isCustomer: true});
+    deleteAuthToken()
+      .then(() => setState({isLoggedIn: false, isCustomer: true}))
+      .catch(err => console.log(err));
+    ;
   };
 
   const AppTheme = {
@@ -220,17 +283,48 @@ export default APP = () => {
     }
   };
 
+  if (isLoading) {
+    // try to sign in with existing token
+    getAuthToken()
+      .then(auth_token => {
+        if (auth_token) {
+          // send request to /users/me with the token to verify
+
+          // test if returned a user back
+          // if yes, test if seller or customer
+
+          isSeller = false; // tmp
+          if(true) { // if res status == 200
+            if (!isSeller) { // user.isSeller
+              customerLoginCB();
+            }
+          }
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+  
+  if (isLoading) {
+    return <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator color='black' style={{alignSelf: 'center'}} size={50}/>
+    </View>;
+  }
+
   return (
     <View style={{flex:1}}>
       <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
       <ExpoStatusBar style="light" />
       <UserContext.Provider value={{user, setUser}}>
-      <NavigationContainer theme={AppTheme}>
-        {state.isLoggedIn
-          ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
-          : LoginStack(customerLoginCB,sellerLoginCB)
-        }
-      </NavigationContainer>
+        <NavigationContainer theme={AppTheme}>
+          {state.isLoggedIn
+            ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
+            : LoginStack(customerLoginCB,sellerLoginCB)
+          }
+        </NavigationContainer>
       </UserContext.Provider>
     </View>
   );

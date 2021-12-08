@@ -27,4 +27,48 @@ router.post("/order/submit", auth, async (req,res) => {
   }
 });
 
+
+router.post("/orders/seller/update_status", [auth], async (req,res) => {
+  try {
+    updated_status = req.body.status;
+    
+    await Order.findByIdAndUpdate(req.body.id, {"status":updated_status});
+    
+    res.send("Processed Successfuly");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+router.get("/orders/seller/get_orders", auth, async (req,res) => {
+  try {
+    const user = req.user;
+
+    let kitchen = await Kitchen.findOne({_seller: user._id});
+    
+    let user_orders = await Order.find({kitchen: kitchen}).populate("customer");
+
+    res.send({user_orders});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+router.get("/orders/customer/get_orders", auth, async (req,res) => {
+  try {
+    const user = req.user;
+
+    let user_orders = await Order.find({_customer: user._id}).populate('kitchen');
+
+    res.send({user_orders});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;

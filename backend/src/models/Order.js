@@ -35,6 +35,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 'Pending Approval'
     },
+    rated: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
     items: [
       {
         name: {
@@ -49,6 +54,11 @@ const orderSchema = new mongoose.Schema(
       }
     ],
     dueDate: {
+      type: String,
+      required: true,
+      default: 'ASAP'
+    },
+    date: {
       type: String,
       required: true,
       default: 'ASAP'

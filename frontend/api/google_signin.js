@@ -15,15 +15,18 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
           email: user.email,
           name: user.givenName,
           imgUrl: user.photoUrl,
-          isSeller: isSeller
+          isSeller: isSeller,
+          googleId: idToken,
+          addresses: [],
+          favourites: []
         };
   
         console.log('details to send:',userDetails);
-        setUser(userDetails)
+        setUser(userDetails); // later get that from the server response or request from /users/me 
+        
         /* send to server and get a token back */
-        // saveAuthToken(token);
-
-        successCB();
+        
+        saveAuthToken('thisisatmptoken').then(successCB).catch(err => console.log(err));
       } else {
         stopLoadingCB();
       }

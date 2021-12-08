@@ -3,11 +3,13 @@ const router = new express.Router();
 
 const User = require('../models/User');
 const Kitchen = require("../models/Kitchen");
+const Order = require("../models/Order");
 
 const auth = require('../middleware/auth');
-const matchUserKitchen = require('../middleware/matchUser');
-const matchUserOrder = require('../middleware/matchUser');
+const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
+
+const {send_notification_to_user} = require('../external_api/notifications');
 
 // Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
@@ -50,7 +52,44 @@ router.post("/users/seller/register", async (req,res) => {
     }
 });
 
-router.post("/users/seller/edit/bio", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/signin", async (req,res) => {
+    try {
+        const user = await User.findOne({ googleId: req.body.googleId });
+        if (!user) {
+            return res.status(401).send('The user does not exist');
+        }
+
+        const token = await user.generateAuthToken();
+        const data = {token: token};
+
+        if (!user.isSeller) {
+            return res.send(data);
+        } else {
+            const kitchen = await Kitchen.findOne({ seller: user._id });
+            data.kitchen_id = kitchen._id || '-1';
+            res.send(data);
+        }
+    }  catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get("/users/signout", auth, async (req,res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(
+            token => token.token !== req.token
+        );
+        await req.user.save();
+
+        res.send();
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen; // TBD: maybe send bio only? 
 
@@ -66,7 +105,7 @@ router.post("/users/seller/edit/bio", auth, matchUserKitchen,  async (req,res) =
     }
 });
 
-router.post("/users/seller/edit/menu", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen;
 
@@ -79,7 +118,7 @@ router.post("/users/seller/edit/menu", auth, matchUserKitchen,  async (req,res) 
     }
 });
 
-router.post("/users/seller/edit/logistics", auth, matchUserKitchen,  async (req,res) => {
+router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (req,res) => {
     try {
         kitchen_data = req.body.kitchen;
 
@@ -93,23 +132,11 @@ router.post("/users/seller/edit/logistics", auth, matchUserKitchen,  async (req,
 });
 
 router.get("/users/me", auth, async (req,res) => {
-    const user = req.user;
+    const user = await User.findById(req.user._id).populate('favorites');
+    send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
 
-router.get("/users/logout", auth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter(
-            token => token.token !== req.token
-        );
-        await req.user.save();
-
-        res.sendStatus(200);
-    } catch (err) {
-        console.log(err);
-        res.status(500).send();
-    }
-});
 // Users Registration, info and editing - END
 
 // Customer Addresses - START
@@ -161,16 +188,21 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
 });
 // Customer Addresses - END
 
-router.post("/users/customer/rate_kitchen", auth, matchUserOrder, async (req,res) => {
+// Customer requests - START
+router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,res) => {
     try {
         rating = req.body.rating;
-        order_data = req.body.order;
         
-        const kitchen = await Kitchen.findById(order_data.kitchen);
+        if(req.order.rated == true){
+            res.status(400).send('Order was already rated');
+        }
+
+        const kitchen = await Kitchen.findById(req.order.kitchen);
 
         new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}
 
         await Kitchen.findByIdAndUpdate(order_data.kitchen, {rating: new_rating})
+        await Order.findByIdAndUpdate(req.order._id, {rated: true})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -178,5 +210,58 @@ router.post("/users/customer/rate_kitchen", auth, matchUserOrder, async (req,res
         res.status(500).send('Server Error');
     }
 });
+
+router.post("/users/customer/edit/favorites", auth, async (req,res) => {
+    try {
+        new_favorites = req.body.favorites;
+
+        await User.findByIdAndUpdate(req.user._id, {favorites: new_favorites})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/customer/edit/favorites/add", auth, async (req,res) => {
+    try {
+        kitchenID = req.body.id;
+        favorites = req.user.favorites
+
+        if (!favorites.includes(kitchenID)) {await User.findByIdAndUpdate(req.user._id, {favorites: [...favorites, kitchenID]})}
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/customer/edit/favorites/remove", auth, async (req,res) => {
+    try {
+        kitchenID = req.body.id;
+
+        await User.findByIdAndUpdate(req.user._id, {favorites: req.user.favorites.filter(id => id != kitchenID)})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get("/users/customer/pastKitchens", auth, async (req,res) => {
+    try {
+        let orders = await Order.find({customer: req.user._id}).populate('kitchen');
+        let kitchens = [...new Set(orders.map(a => a.kitchen))]; // maybe populate after removing duplicates (didn't work for me, maybe findByID will)
+        res.send({kitchens})
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Customer requests - END
 
 module.exports = router;
