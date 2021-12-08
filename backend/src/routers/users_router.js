@@ -132,7 +132,7 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 });
 
 router.get("/users/me", auth, async (req,res) => {
-    const user = req.user;
+    const user = await User.findById(req.user._id).populate('favorites');
     send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
@@ -211,11 +211,38 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
     }
 });
 
-router.post("/users/customer/edit/favourites", auth, async (req,res) => {
+router.post("/users/customer/edit/favorites", auth, async (req,res) => {
     try {
-        new_favourites = req.body.favourites;
+        new_favorites = req.body.favorites;
 
-        await User.findByIdAndUpdate(req.user._id, {favourites: new_favourites})
+        await User.findByIdAndUpdate(req.user._id, {favorites: new_favorites})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/customer/edit/favorites/add", auth, async (req,res) => {
+    try {
+        kitchenID = req.body.id;
+        favorites = req.user.favorites
+
+        if (!favorites.includes(kitchenID)) {await User.findByIdAndUpdate(req.user._id, {favorites: [...favorites, kitchenID]})}
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post("/users/customer/edit/favorites/remove", auth, async (req,res) => {
+    try {
+        kitchenID = req.body.id;
+
+        await User.findByIdAndUpdate(req.user._id, {favorites: req.user.favorites.filter(id => id != kitchenID)})
 
         res.send("Processed Successfuly");
     } catch (err) {

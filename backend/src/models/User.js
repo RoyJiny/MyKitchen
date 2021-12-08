@@ -56,12 +56,10 @@ const userSchema = new mongoose.Schema(
         }
       }
     ],
-    favourites: [
+    favorites: [
       {
-        kitchen: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Kitchen'
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Kitchen'
       }
     ],
   }
