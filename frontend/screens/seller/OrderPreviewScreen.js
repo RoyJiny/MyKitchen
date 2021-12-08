@@ -1,92 +1,276 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Dimensions, Text, navigation, route, PushNotificationIOS } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import BackButton from '../../components/BackButton';
 import Colors from '../../globals/Colors';
-
 import BlankDivider from '../../components/BlankDivider';
 import ItemPreview from '../../components/ItemPreview';
+import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import Button2 from '../../components/Button2';
+
 
 
 
 const OrderPreviewScreen = ({ navigation, route }) => {
-  const { order, items } = route.params;
+  const { item } = route.params;
+  const [st, setSt] = useState(item.order.status);
+
+  const getButton = (i) => {
+    var j = getJ(st);
+    if (i == j) {
+      return <Button2 borderColor="black"
+        fillColor="white"
+        text="Update"
+        textColor="black" style={getButtonStyle} onClick={() => { updateStat() }} />;
+    }
+    else {
+      return;
+    }
+  }
+
+  const updateStat = () => {
+    switch (st) {
+      case "Pending Approval":
+        setSt("Waiting For Payment");
+        break;
+      case "Waiting For Payment":
+        setSt("In the Making");
+        break;
+      case "In the Making":
+        setSt("Ready for Customer");
+        break;
+      case "Ready for Customer":
+        setSt("Done");
+        break;
+      case "Done":
+        setSt("");
+        break;
+      default:
+        setSt("");
+        break;
+    }
+  }
 
   return (
-    <ScrollView style={{marginHorizontal: 16}} showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <BlankDivider height={12} />
       <View>
         <View style={styles.body}>
-          <Icon style={{ marginLeft: 16, marginRight: 16, marginTop: 8, }}
-            name="angle-left"
-            size={40}
-            color="black"
-            underlayColor="blue"
-            onPress={() => navigation.goBack()}>
-          </Icon>
-          <Text style={styles.orderNum}>{"Order #" + order.key}</Text>
+          <BackButton onClick={navigation.goBack} />
+
+          <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
         </View>
-        
-        <View>
-          <View style={{ marginBottom: 20 }}>
-            
-            <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+        <BlankDivider height={20} />
+        <View style={{ paddingHorizontal: 16, }}>
+          <View style={{ marginBottom: 20, }}>
+
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={styles.title}>Order:</Text>
-              <Text style={styles.date}>{order.date}</Text>
+              <Text style={styles.date}>{item.order.date}</Text>
             </View>
           </View>
           <ScrollView>{
-            order.items.map((item,index) => {
+            item.order.items.map((i, index) => {
               return (
-                <ItemPreview key={index} OrderName={item.name} number={item.amount} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"}/>
+                <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
               )
             })
           }
           </ScrollView>
-          
-          <Text style={styles.title}>Notes:</Text>
+          <Text style={styles.title}>Comments:</Text>
           <View>
-            <Text style={{padding:4, }}>{order.customer.notes}</Text>
+            <Text style={{ padding: 4, }}>{item.order.comments}</Text>
           </View>
-          <View style={{height:1, borderWidth:0.5, borderColor:Colors.lightGray, marginVertical:16}}/>
-          
+          <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
+
           <Text style={styles.title}>Customer Info:</Text>
-          <Text style={{fontSize: 16}}>Name: {order.customer.name}</Text>
-          <Text style={{fontSize: 16}}>Address: {order.customer.address}</Text>
-          <Text style={{fontSize: 16}}>Phone: {order.customer.phone}</Text>
-          
-          <View style={{height:1, borderWidth:0.5, borderColor:Colors.lightGray, marginVertical:16}}/>
-          
+          <Text style={styles.general}>Name: {item.customer.name}</Text>
+          <Text style={styles.general}>Address: {item.order.deliveryAddress}</Text>
+          <Text style={styles.general}>Phone: {item.customer.phone}</Text>
+
+          <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
+
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={{fontWeight:"bold", fontSize: 16}}>{order.ddate}</Text>
-          
-          <View style={{height:1, borderWidth:0.5, borderColor:Colors.lightGray, marginVertical:16}}/>
-          
+          <Text style={styles.general}>{item.order.dueDate}</Text>
+
+          <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
+
           <Text style={styles.title}>Status:</Text>
-          <Text style={{fontSize: 16, fontWeight:"bold", color:Colors.green}}>Waiting For Approval</Text>
-          <Text style={{fontSize: 16, fontWeight:"bold", color:Colors.green}}>Waiting For Payment</Text>
-          <Text style={{fontSize: 16, fontWeight:"bold", color:Colors.orange}}>In The Oven</Text>
-          <Text style={{fontSize: 16, fontWeight:"bold", color:Colors.lightGray}}>Delivered</Text>
+          <BlankDivider height={8} />
+          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
+            <View style={{ flex: 1, }}>
+              <Entypo name="stopwatch" size={28} style={getIconStatus(st, 0)} />
+            </View>
+            <Text style={getStatusStyle(st, 0)}>Pending Approval</Text>
+            <View style={{ flex: 2, height: 36, }}>
+              {
+                getButton(0)
+              }
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
+            <View style={{ flex: 1, }}>
+              <MaterialIcons name="payment" size={28} style={getIconStatus(st, 1)} />
+            </View>
+            <Text style={getStatusStyle(st, 1)}>Waiting For Payment</Text>
+            <View style={{ flex: 2, height: 36, }}>
+              {
+                getButton(1)
+              }
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
+            <View style={{ flex: 1, }}>
+              <MaterialCommunityIcons name="chef-hat" size={28} style={getIconStatus(st, 2)} />
+            </View>
+            <Text style={getStatusStyle(st, 2)}>In the Making</Text>
+            <View style={{ flex: 2, height: 36, }}>
+              {
+                getButton(2)
+              }
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
+            <View style={{ flex: 1, }}>
+              <MaterialCommunityIcons name="bike-fast" size={28} style={getIconStatus(st, 3)} />
+            </View>
+            <Text style={getStatusStyle(st, 3)}>Ready for Customer</Text>
+            <View style={{ flex: 2, height: 36, }}>
+              {
+                getButton(3)
+              }
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
+            <View style={{ flex: 1, }}>
+              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 4)} />
+            </View>
+            <Text style={getStatusStyle(st, 4)}>Done</Text>
+            <View style={{ flex: 2, height: 36, }}>
+              {
+                getButton(4)
+              }
+            </View>
+          </View>
+        </View>
+        <View>
+          <BlankDivider height={12} />
         </View>
       </View>
-      <BlankDivider height={16} />
     </ScrollView>
   )
 };
+const getJ = (stat) => {
+  switch (stat) {
+    case "Pending Approval":
+      return 0;
+      break;
+    case "Waiting For Payment":
+      return 1;
+      break;
+
+    case "In the Making":
+      return 2;
+      break;
+    case "Ready for Customer":
+      return 3;
+      break;
+    case "Done":
+      return 4;
+      break;
+    default:
+      return 5;
+      break;
+  }
+}
+
+const getStatusStyle = (stat, i) => {
+  var j = getJ(stat);
+  if (i < j) {
+    return {
+      color: "#3CB371",
+      textAlign: 'left',
+      fontSize: 20,
+      flex: 4,
+    }
+  }
+  else {
+    if (i > j) {
+      return {
+        color: "#D3D3D3",
+        textAlign: 'left',
+        fontSize: 20,
+        flex: 4,
+      }
+    }
+    return {
+      color: "#FFD700",
+      textAlign: 'left',
+      fontSize: 20,
+      flex: 4,
+    }
+  }
+
+}
+
+const getIconStatus = (stat, i) => {
+  var j = getJ(stat);
+  if (i < j) {
+    return {
+      color: "#3CB371",
+      flex: 1,
+      height: 28,
+    }
+  }
+  else {
+    if (i > j) {
+      return {
+        color: "#D3D3D3",
+        flex: 1,
+        height: 28,
+      }
+    }
+    return {
+      color: "#FFD700",
+      flex: 1,
+      height: 28,
+    }
+  }
+
+}
+
+const getButtonStyle = (stat, i) => {
+  var j = getJ(stat);
+  if (i !== j) {
+    return {
+      color: "#D3D3D3",
+    }
+  }
+  else {
+    return {
+      color: "#3CB371"
+    }
+  }
+}
+
+
+
 
 OrderPreviewScreen.navigationOptions = (props) => {
   return {};
 };
 
+
 const styles = StyleSheet.create({
   body: {
     flexDirection: 'row',
-
+    marginLeft: 12,
   },
   orderNum: {
-    fontSize: 40,
+    fontSize: 32,
     marginLeft: 8,
   },
   title: {
-    fontWeight: 'bold',
+    //fontWeight: 'bold',
     fontSize: 24,
     alignSelf: "flex-start",
   },
@@ -94,6 +278,9 @@ const styles = StyleSheet.create({
     color: "#808080",
     alignSelf: 'flex-end',
     fontSize: 24,
+  },
+  general: {
+    fontSize: 16,
   }
 });
 
