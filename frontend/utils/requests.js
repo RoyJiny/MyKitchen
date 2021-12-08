@@ -21,3 +21,23 @@ export const send_post_request = async (url,body,auth=true) => {
     return undefined;
   }
 }
+
+export const send_get_request = async (url,auth=true) => {
+  try {
+    var config = {}
+    if (auth) {
+      const token = await getAuthToken();
+      config = {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      };
+    }
+    
+    const {data} = await axios.get(`${ServerBase}/${url}`,config);
+    return data;
+  } catch (err) {
+    console.log('POST request failed:',err)
+    return undefined;
+  }
+}

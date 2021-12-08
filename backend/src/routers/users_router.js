@@ -227,7 +227,7 @@ router.get("/users/customer/pastKitchens", auth, async (req,res) => {
     try {
         let orders = await Order.find({customer: req.user._id}).populate('kitchen');
         let kitchens = [...new Set(orders.map(a => a.kitchen))];
-        res.send({kitchens})
+        res.status(200).send(kitchens);
     } catch (err) {
         console.log(err);
         res.status(500).send('Server Error');
