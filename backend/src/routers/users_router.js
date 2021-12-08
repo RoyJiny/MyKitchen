@@ -132,7 +132,7 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 });
 
 router.get("/users/me", auth, async (req,res) => {
-    const user = req.user;
+    const user = await User.findById(req.user._id).populate('favorites');
     send_notification_to_user(user,'My Kitchen','we got ya');
     res.send(JSON.stringify(user));
 });
@@ -227,7 +227,7 @@ router.post("/users/customer/edit/favorites", auth, async (req,res) => {
 router.post("/users/customer/edit/favorites/add", auth, async (req,res) => {
     try {
         kitchenID = req.body.id;
-        favorites = req.user.favorites.map(a => String(a._id))
+        favorites = req.user.favorites
 
         if (!favorites.includes(kitchenID)) {await User.findByIdAndUpdate(req.user._id, {favorites: [...favorites, kitchenID]})}
 
@@ -242,7 +242,7 @@ router.post("/users/customer/edit/favorites/remove", auth, async (req,res) => {
     try {
         kitchenID = req.body.id;
 
-        await User.findByIdAndUpdate(req.user._id, {favorites: req.user.favorites.map(a => a._id).filter(id => id != kitchenID)})
+        await User.findByIdAndUpdate(req.user._id, {favorites: req.user.favorites.filter(id => id != kitchenID)})
 
         res.send("Processed Successfuly");
     } catch (err) {
