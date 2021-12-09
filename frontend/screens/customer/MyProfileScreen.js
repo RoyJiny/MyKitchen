@@ -76,15 +76,20 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
 
+  const [showPhone, setShowPhone] = useState(false);
+  const [phoneState, setPhoneState] = useState(user.phone);
+  const [waitingCode, setWaitingCode] = useState(false);
+  const [code, setCode] = useState('');
+
   const [showLinks, setShowLinks] = useState(false);
-  const [linksState, setLinksState] = useState([])
+  const [linksState, setLinksState] = useState([]);
   const [showRating, setShowRating] = useState(false);
-  const [ratingState, setRatingState] = useState({id: 0,rating: 0})
+  const [ratingState, setRatingState] = useState({id: 0,rating: 0});
   const [showNavigation, setShowNavigation] = useState(false);
-  const [navigationState, setNavigationState] = useState('')
+  const [navigationState, setNavigationState] = useState('');
   // for addresses useState(user.addresses) ?? or go straight to user and make new set function
   // previous mock data - [{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]
-  const [addresses, setAddresses] = useState(user.addresses);
+  const [addresses, setAddresses] = useState([...user.addresses]);
   const [orderList, setOrderList] = useState([{
     _id: "61a0b59b0cce3e7dc7586631",
     kitchen: {
@@ -230,7 +235,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
       
-      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
+      <Modal isVisible={showModal} onBackdropPress={() => {setModalState({id: 0,addressName: "", address: ""});setShowModal(false);}}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
@@ -277,6 +282,57 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
             style={{alignItems: 'center', marginVertical: 8}}
           >
             <Text>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal isVisible={showPhone} onBackdropPress={() => setShowPhone(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setPhoneState(txt);
+            }}
+            value={phoneState}
+            placeholder={"Enter Phone Number"}
+            keyboardType="numeric"
+            autoFocus={true}
+            editable={!waitingCode}
+            onSubmitEditing={(txt) => {setCode('');setWaitingCode(true)}} // send code here TODO
+          />
+          {waitingCode? 
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setCode(txt);
+            }}
+            value={code}
+            placeholder={"Enter Verification Code"}
+            keyboardType="numeric"
+            autoFocus={true}
+            onSubmitEditing={(txt) => {setWaitingCode(false);setShowPhone(false);setUser({...user, phone: phoneState})}} // confirm here TODO
+          />
+          :null}
+          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
+          <TouchableOpacity
+            onPress={waitingCode? ({code}) => {setWaitingCode(false);setShowPhone(false);setUser({...user, phone: phoneState})} : ({phoneState}) => {setCode('');setWaitingCode(true)}}
+            style={{alignItems: 'center', marginVertical: 8}}
+          >
+            <Text>{waitingCode? 'Submit' : 'Done'}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -329,7 +385,15 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           <Image style={styles.profileImage} source={{uri: user.imgUrl}}/>
         </View>
         
-        <BlankDivider height={32}/>
+        <BlankDivider height={16}/>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+          {user.phone == ''? <Text style={styles.subtitle}>Add Phone Number</Text>
+            :<View style={{flexDirection: 'row'}}><Text style={styles.subtitle}>Phone Number:  </Text><Text style={styles.phone}>{user.phone}</Text></View>}
+          <TouchableOpacity onPress={() => {setWaitingCode(false);setShowPhone(true);}}>
+            <Icons.Feather name={user.phone == ''? 'plus':'edit'} size={30} color={addresses.length <= 2 ? 'black' : 'gray'}/>
+          </TouchableOpacity>
+        </View>
+        <BlankDivider height={16}/>
         
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
@@ -411,6 +475,9 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+  phone: {
+    fontSize: 20
   },
   contentContainer: {
     marginHorizontal: 16

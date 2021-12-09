@@ -57,8 +57,8 @@ const ExploreScreen = ({navigation}) => {
                     style={{marginBottom: 16, marginLeft: 8}}
                 >
                     {
-                    user.favourites.length == 0? <Text style={styles.subTitle}>add kitchens to your favourites</Text> : 
-                        user.favourites.map((item, index) => {
+                    user.favorites.length == 0? <Text style={styles.subTitle}>add kitchens to your favourites</Text> : 
+                        user.favorites.map((item, index) => {
                             return (
                                 <KitchenExploreCard key={index} kitchenName={item.bio.name} subtitle={item.bio.city} imgLink={item.bio.coverImg} />
                             )})

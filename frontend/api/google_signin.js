@@ -13,12 +13,13 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
       if (type == 'success') {
         userDetails = {
           email: user.email,
+          phone: '',
           name: user.givenName,
           imgUrl: user.photoUrl,
           isSeller: isSeller,
           googleId: idToken,
           addresses: [],
-          favourites: []
+          favorites: []
         };
   
         console.log('details to send:',userDetails);
