@@ -19,7 +19,7 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
                 send_get_request('users/me')
                   .then(user_data => {
                     setUser({...user, ...user_data});
-                    successCB(user.isSeller);
+                    successCB(user_data.isSeller);
                   })
                   .catch(err => console.log(err))
               })
