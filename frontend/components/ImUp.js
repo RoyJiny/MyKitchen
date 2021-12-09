@@ -23,8 +23,6 @@ export default function ImUp({image, setImage}) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
     }
@@ -33,12 +31,12 @@ export default function ImUp({image, setImage}) {
   return (
     <View style={{ flex: 1, flexDirection:'row', alignItems: 'center', justifyContent: 'center' }}>
       <Icon style={{marginLeft: 80, alignSelf: 'center'}}
-                name="upload"
-                size={20}
-                color="black"
-                underlayColor="blue"
-                onPress={pickImage}>
-              </Icon>
+        name="upload"
+        size={20}
+        color="black"
+        underlayColor="blue"
+        onPress={pickImage}>
+      </Icon>
       {image && <Image source={{ uri: image }} style={{ width: 64, height: 64 ,marginLeft: 16, borderRadius: 8}} />}
     </View>
   );

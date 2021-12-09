@@ -2,13 +2,7 @@ import React, { useContext, useState } from 'react';
 import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { UserContext } from "../../contexts/UserContext";
 
-import BackButton from '../../components/BackButton';
-import Tag from '../../components/Tag';
-import Button2 from '../../components/Button2';
-import FormInput from '../../components/FormInput';
-import ShadowCard2 from '../../components/ShadowCard2';
-import BlankDivider from '../../components/BlankDivider';
-import ImUp from '../../components/ImUp';
+import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
 
 const EditBioScreen = ({navigation, loginCB}) => {
   const {user, setUser} = useContext(UserContext);

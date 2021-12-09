@@ -1,16 +1,13 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { UserContext } from "../../contexts/UserContext";
+import { SellerContext } from "../../contexts/SellerContext";
 import * as Animatable from 'react-native-animatable';
 
-import BackButton from '../../components/BackButton';
-import Button2 from '../../components/Button2';
-import BlankDivider from '../../components/BlankDivider';
-import Dish from '../../components/Dish';
+import {BackButton,Button2,BlankDivider,Dish} from '../../components';
 
 const AddDishesScreen = ({navigation}) => {
-  const {user, setUser} = useContext(UserContext);
+  const {seller, setSeller} = useContext(SellerContext);
   const [dishItems, setDishItems] = useState([]);
   const [alerted, setAlerted] = useState(false);
   const [firstTime, setfirstTime] = useState(true);
@@ -157,7 +154,7 @@ const AddDishesScreen = ({navigation}) => {
         <BlankDivider height={16}/>
         <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
         <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, ...{menu: dishItems}}}});navigation.navigate("Logistics");}} //here use global args from all forms
+          onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, menu: dishItems}}); navigation.navigate("Logistics");}}
           fillColor = "white"
           text ="Next"
           textColor = "black"

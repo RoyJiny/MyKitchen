@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Dimensions, Text, navigation, route, PushNotificationIOS } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import Colors from '../../globals/Colors';
-
-import BlankDivider from '../../components/BlankDivider';
-import ItemPreview from '../../components/ItemPreview';
-
-
+import {BlankDivider,ItemPreview} from '../../components';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { order, items } = route.params;

@@ -1,32 +1,66 @@
-import React,{useState} from 'react'
-import {View,StyleSheet,Text,TextInput,Image,Dimensions,TouchableOpacity,Linking,ScrollView} from 'react-native'
+import React,{useState,useContext} from 'react'
+import {View,StyleSheet,Text,Image,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
+import { UserContext } from '../../contexts/UserContext';
+import { LocationContext } from '../../contexts/LocationContext';
+import { send_post_request } from '../../utils/requests';
 
 import Modal from 'react-native-modal';
-import Button from '../../components/Button';
-import BackButton from '../../components/BackButton';
-import ShadowCard from '../../components/ShadowCard';
-import ExpantionArrow from '../../components/ExpantionArrow';
-import OrderMenuItem from '../../components/OrderMenuItem';
-import BlankDivider from '../../components/BlankDivider';
+import  {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider} from '../../components';
 
 const KitchenPageScreen = ({route,navigation}) => {
   const {kitchen} = route.params;
   
+  const {user,setUser} = useContext(UserContext);
+  const {location} = useContext(LocationContext);
   const [expandTimes, setExpandTimes] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(user.favorites.filter(k => k._id === kitchen._id).length > 0);
   
   const initial_item_counts = {};
   for (const item of kitchen.menu) {
     initial_item_counts[item._id] = {count: 0};
   }
-  const [itemCounts, setItemCounts] = useState(initial_item_counts)
+  const [itemCounts, setItemCounts] = useState(initial_item_counts);
   const [showModal, setShowModal] = useState(false);
-  const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""})
-  
+  const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  if (isLoading) {
+    if (kitchen.distance === undefined) {
+      send_post_request('users/customer/getDistance',{
+        id: kitchen._id,
+        location: location
+      })
+      .then(data => {kitchen.distance = data.distance; setIsLoading(false);})
+      .catch(err => {console.log(err); kitchen.distance=0 ; setIsLoading(false);});
+    } else {
+      setIsLoading(false);
+    }
+    return <ActivityIndicator size={50} color='black'/>;
+  }
+
+  const getCloseTimeDesc = () => {
+    const date = new Date();
+    const day = kitchen.logistics.operationDays[date.getDay()];
+    const currentTime = date.getHours() * 60 + date.getMinutes();
+    if (day.isActive) {
+      const openingHours = parseInt(day.startTime.split(':')[0]);
+      const openingMinutes = parseInt(day.startTime.split(':')[1]);
+      const closingHours = parseInt(day.endTime.split(':')[0]);
+      const closingMinutes = parseInt(day.endTime.split(':')[1]);
+      const openingTime = openingHours * 60 + openingMinutes;
+      const closingTime = closingHours * 60 + closingMinutes;
+      if (openingTime <= currentTime && closingTime >= currentTime) {
+        return `Closing at ${day.endTime}`
+      }
+    }
+    return 'Currently Closed';
+  };
+
   return (
     <View style={{flex:1}}>
       <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
@@ -85,26 +119,42 @@ const KitchenPageScreen = ({route,navigation}) => {
           <Text style={styles.title}>{kitchen.bio.name}</Text>
         </View>
         <Icons.FontAwesome 
-          name={isFavorite? 'star-o' : 'star'}
+          name={isFavorite ? 'star' : 'star-o'}
           style={{marginRight: 16}}
           size={32}
-          color={isFavorite? 'black' : 'gold'} 
-          onPress={() => setIsFavorite(!isFavorite)/* also send to DB */} />
+          color={isFavorite ? 'gold' : 'black'} 
+          onPress={() => {
+            if (!isFavorite) {
+              send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
+                .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
+                .catch(err => console.log(err));
+            } else {
+              send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
+                .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
+                .catch(err => console.log(err));
+            }
+          }} />
       </View>
 
       <View style={{marginHorizontal: 16}}>
         <ShadowCard>
-          <View style={styles.rowView}>
+          {kitchen.rating.value !== 0 && <View style={styles.rowView}>
             <Icons.FontAwesome name="star" size={16} color="black"/>
             <Text style={styles.details}>{kitchen.rating.value}</Text>
-          </View>
+          </View>}
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
-            <Text style={styles.details}>Closes at 20:00 update me</Text>
-            <ExpantionArrow
-              isInitaialyExpanded={expandTimes}
-              onClick={() => setExpandTimes(!expandTimes)}
-            />
+            {
+              kitchen.logistics.isOnlyFutureDelivery
+               ? <Text style={styles.details}>Future Devileries Only</Text>
+               : <View style={{flexDirection: 'row',alignItems:'center'}}>
+                  <Text style={styles.details}>{getCloseTimeDesc()}</Text>
+                  <ExpantionArrow
+                    isInitaialyExpanded={expandTimes}
+                    onClick={() => setExpandTimes(!expandTimes)}
+                  />
+                </View>
+            }
           </View>
           {expandTimes ?
             kitchen.logistics.operationDays.map(day => 
@@ -114,7 +164,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             )
             : null
           }
-          <TouchableOpacity onPress={() => Linking.openURL(`tel:${"03-1237890"}`)}>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:${kitchen.bio.phone}`)}>
             <View style={styles.rowView}>
               <Icons.FontAwesome name="phone" size={16} color="black"/>
               <Text style={styles.details}>{kitchen.bio.phone}</Text>
@@ -127,13 +177,13 @@ const KitchenPageScreen = ({route,navigation}) => {
         </ShadowCard>
       </View>
 
-      <View style={[styles.rowView,{justifyContent:'space-between'}]}>
+      <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
             onClick={() => navigation.navigate("Order")}
             borderColor="black"
             fillColor="white"
-            text="Order Now"
+            text="Order"
             textColor="#7CC0FA"
             height={30}
             width={100}

@@ -1,12 +1,9 @@
 import React,{useState} from 'react'
-import {View,StyleSheet,Text,Image,Dimensions,TouchableOpacity,Linking,ScrollView} from 'react-native'
+import {View,StyleSheet,Text,Image,Dimensions,ScrollView} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
+import {BackButton,ShadowCard,ExpantionArrow,SellerMenuItem} from '../../components';
 import Colors from '../../globals/Colors';
-import BackButton from '../../components/BackButton';
-import ShadowCard from '../../components/ShadowCard';
-import ExpantionArrow from '../../components/ExpantionArrow';
-import SellerMenuItem from '../../components/SellerMenuItem';
 
 const KitchenPreviewScreen = ({navigation}) => {
   const [expandTimes, setExpandTimes] = useState(false);

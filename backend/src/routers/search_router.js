@@ -25,7 +25,7 @@ router.post("/search/kitchen/text", auth, async (req,res) => {
         res.send(kitchens);
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -44,7 +44,7 @@ router.post("/search/kitchen/tag", auth, async (req,res) => {
         res.send(kitchens);
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 

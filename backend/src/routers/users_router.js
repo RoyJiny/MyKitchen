@@ -45,8 +45,10 @@ router.post("/users/seller/register", async (req,res) => {
         await user.save();
         await kitchen.save();
 
+        const dishes_ids = kitchen.menu.map(dish => dish._id);
+
         const token = await user.generateAuthToken();
-        res.status(201).send({token: token, kitchen_id: kitchen._id});
+        res.status(201).send({token: token, kitchen_id: kitchen._id, dishes_ids: dishes_ids});
     } catch (err) {
         console.log(err);
         res.status(500).send({error: 'Server Error'});

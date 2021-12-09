@@ -25,7 +25,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
         <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
       </View>
 
-      <Text style={styles.price}>${price}</Text>
+      <Text style={styles.price}>₪{price}</Text>
 
       <ShadowCard>
         <View style={{flexDirection: 'row',alignItems:'center'}}>
@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   title: {
-    fontSize: 18
-  },
-  price: {
     fontSize: 16
   },
+  price: {
+    fontSize: 14
+  },
   description: {
-    fontSize: 16,
+    fontSize: 12,
     color: Colors.lightGray
   }
 });

@@ -1,50 +1,39 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import {View,StyleSheet,ScrollView,Text,ActivityIndicator} from 'react-native';
 import * as Icons from '@expo/vector-icons';
 
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
 
-import Input from '../../components/Input';
-import SearchCard from '../../components/SearchCard';
+import {Input,SearchCard} from '../../components';
 
 import {send_post_request} from '../../utils/requests';
+import { UserContext } from '../../contexts/UserContext';
+import { LocationContext } from '../../contexts/LocationContext';
 
 const SearchScreen = ({ route, navigation }) => {
+  const {user,SetUser} = useContext(UserContext);
+  const {location} = useContext(LocationContext);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const search_by_text = (text_query) => {
     setIsLoading(true);
-    send_post_request(
-      'search/kitchen/text',
-      {
-        // TODO: use location service to get current location
-        location: {
-          'latitude':32.061942,
-          'longitude':34.813562
-        },
-        text_query: text_query
-      }
-    )
+    send_post_request('search/kitchen/text',{
+      location: location,
+      text_query: text_query
+    })
     .then(data => {setResults(data); setIsLoading(false)})
-    .catch(err => console.log(err));
+    .catch(err => {console.log(err); setResults([]); setIsLoading(false)});
   };
   const search_by_tag = (tag) => {
     setIsLoading(true);
-    send_post_request(
-      'search/kitchen/tag',
-      {
-        // TODO: use location service to get current location
-        location: {
-          'latitude':32.061942,
-          'longitude':34.813562
-        },
-        tag: tag
-      }
-    )
+    send_post_request('search/kitchen/tag',{
+      location: location,
+      tag: tag
+    })
     .then(data => {setResults(data); setIsLoading(false)})
-    .catch(err => console.log(err));
+    .catch(err => {console.log(err); setResults([]); setIsLoading(false)});
   };
 
   useEffect(() => {
