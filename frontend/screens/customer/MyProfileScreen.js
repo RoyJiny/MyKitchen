@@ -6,17 +6,13 @@ import { UserContext } from "../../contexts/UserContext";
 import { Rating } from 'react-native-ratings';
 
 import Colors from '../../globals/Colors';
+import { deleteAuthToken } from '../../api/async_storage';
 
-import Backdrop from '../../components/Backdrop';
-import BlankDivider from '../../components/BlankDivider';
-import ShadowCard from '../../components/ShadowCard';
-import ExpantionArrow from '../../components/ExpantionArrow';
-import Button from '../../components/Button';
-import OrderCustomer from '../../components/OrderCustomer';
+import {Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
 
 const AddressCard = (address,onEdit,onDelete) => {
   return (
-    <ShadowCard key={address.id}>
+    <ShadowCard key={address._id}>
       <View style={{
         flexDirection:'row',
         justifyContent: 'space-between',
@@ -24,7 +20,7 @@ const AddressCard = (address,onEdit,onDelete) => {
         marginVertical: 8
       }}>
         <View>
-          <Text style={{fontWeight: 'bold', fontSize: 18}}>{address.addressName}</Text>
+          <Text style={{fontWeight: 'bold', fontSize: 18}}>{address.name}</Text>
           <Text numberOfLines={1} style={{width: 225,fontSize: 14}}>{address.address}</Text>
         </View>
         <View style={{flexDirection:'row', alignSelf: 'center'}}>
@@ -225,7 +221,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     }
     // post rating state to DB 
   }
-  
+
   return (
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
@@ -325,8 +321,8 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       >
       <View style={styles.contentContainer}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Text style={styles.title}>Hello, {user.name}</Text>
-          <Image style={styles.profileImage} source={{uri: user.imgUrl}}/>
+          <Text style={styles.title}>Hello, {user.name !== "" ? user.name : "User"}</Text>
+          <Image style={styles.profileImage} source={{uri: user.imgUrl || "https://w7.pngwing.com/pngs/527/663/png-transparent-logo-person-user-person-icon-rectangle-photography-computer-wallpaper.png"}}/>
         </View>
         
         <BlankDivider height={32}/>
@@ -385,7 +381,17 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={16}/>
 
         <Button
-          onClick={() => {setUser({}); signoutCB();}}
+          onClick={() => {
+            setUser({
+              email: '',
+              name: '',
+              imgUrl: '',
+              isSeller: false,
+              googleId: '',
+              addresses: [],
+              favorites: []
+            });
+            deleteAuthToken().then(signoutCB).catch(err => console.log(err));}}
           text="Sign Out"
           fillColor="white"
           textColor="black"

@@ -1,18 +1,12 @@
 import React, { useContext, useState } from 'react';
 import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { UserContext } from "../../contexts/UserContext";
+import { SellerContext } from "../../contexts/SellerContext";
 
-import BackButton from '../../components/BackButton';
-import Tag from '../../components/Tag';
-import Button2 from '../../components/Button2';
-import FormInput from '../../components/FormInput';
-import ShadowCard2 from '../../components/ShadowCard2';
-import BlankDivider from '../../components/BlankDivider';
-import ImUp from '../../components/ImUp';
+import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
 
 const KitchenBioScreen = ({navigation, loginCB}) => {
-  const {user, setUser} = useContext(UserContext);
+  const {seller, setSeller} = useContext(SellerContext);
   const [name, setName] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
@@ -176,7 +170,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <BlankDivider height={16}/>
         <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}}); navigation.navigate("AddDishes");}} //here use global args from all forms and send to DB
+          onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");}}
           borderColor = "black"
           fillColor = "white"
           text ="Next"

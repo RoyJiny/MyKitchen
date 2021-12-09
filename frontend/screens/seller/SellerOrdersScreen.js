@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, ScrollView, Text, RefreshControl, Dimensions } from 'react-native'
-import Tag from '../../components/Tag';
-import Backdrop from '../../components/Backdrop';
-import OrderCard from '../../components/OrderCard';
-import Colors from '../../globals/Colors';
-import BlankDivider from '../../components/BlankDivider';
+import { View, StyleSheet, ScrollView, RefreshControl, Dimensions } from 'react-native'
 
+import {Tag,Backdrop,OrderCard,BlankDivider} from '../../components';
+import Colors from '../../globals/Colors';
 
 const SellerOrdersScreen = ({ navigation }) => {
   const [tagList, setTagList] = useState([]);

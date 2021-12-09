@@ -4,13 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { UserContext } from "../../contexts/UserContext";
 import ToggleSwitch from 'toggle-switch-react-native'
 
-import BackButton from '../../components/BackButton';
-import Button2 from '../../components/Button2';
-import BlankDivider from '../../components/BlankDivider';
-import ShadowCard2 from '../../components/ShadowCard2';
-import ToggleText from '../../components/ToggleText';
-import YesNoChoice from '../../components/YesNoChoice';
-import FormInput from '../../components/FormInput';
+import {BackButton,Button2,BlankDivider,ShadowCard2,ToggleText,YesNoChoice,FormInput} from '../../components';
 
 const EditLogisticsScreen = ({navigation,loginCB}) => {
   const {user, setUser} = useContext(UserContext);

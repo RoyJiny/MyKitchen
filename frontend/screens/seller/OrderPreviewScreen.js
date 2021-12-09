@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
-import BackButton from '../../components/BackButton';
-import Colors from '../../globals/Colors';
-import BlankDivider from '../../components/BlankDivider';
-import ItemPreview from '../../components/ItemPreview';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-import Button2 from '../../components/Button2';
 
-
-
+import Colors from '../../globals/Colors';
+import {BlankDivider,ItemPreview,BackButton,Button2} from '../../components';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;

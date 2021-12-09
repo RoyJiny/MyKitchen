@@ -18,7 +18,7 @@ const LogoButton = ({logoConf,onClick, fillColor, text, textColor, isLoading=fal
               backgroundColor: fillColor,
               alignItems: 'center',
               height: 50,
-              width: 310,
+              width: 350,
               alignSelf: 'center',
               flexDirection: 'row',
               paddingHorizontal: 20,
@@ -55,7 +55,7 @@ const LogoButton = ({logoConf,onClick, fillColor, text, textColor, isLoading=fal
                             style={{
                                 textAlign:'center',
                                 color: textColor,
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: 'bold',
                             }}
                         >

@@ -10,6 +10,7 @@ const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
 
 const {send_notification_to_user} = require('../external_api/notifications');
+const calculate_distance = require("../utils/distance");
 
 // Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
@@ -24,7 +25,7 @@ router.post("/users/customer/register", async (req,res) => {
         res.status(201).send({token});
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -44,11 +45,13 @@ router.post("/users/seller/register", async (req,res) => {
         await user.save();
         await kitchen.save();
 
+        const dishes_ids = kitchen.menu.map(dish => dish._id);
+
         const token = await user.generateAuthToken();
-        res.status(201).send({token: token, kitchen_id: kitchen._id});
+        res.status(201).send({token: token, kitchen_id: kitchen._id, dishes_ids: dishes_ids});
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -56,7 +59,7 @@ router.post("/users/signin", async (req,res) => {
     try {
         const user = await User.findOne({ googleId: req.body.googleId });
         if (!user) {
-            return res.status(401).send('The user does not exist');
+            return res.status(401).send({error:'The user does not exist'});
         }
 
         const token = await user.generateAuthToken();
@@ -71,7 +74,7 @@ router.post("/users/signin", async (req,res) => {
         }
     }  catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -85,7 +88,7 @@ router.get("/users/signout", auth, async (req,res) => {
         res.send();
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -101,7 +104,7 @@ router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res)
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -114,7 +117,7 @@ router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -127,14 +130,13 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
 router.get("/users/me", auth, async (req,res) => {
     const user = await User.findById(req.user._id).populate('favorites');
-    send_notification_to_user(user,'My Kitchen','we got ya');
-    res.send(JSON.stringify(user));
+    res.send(user);
 });
 
 // Users Registration, info and editing - END
@@ -146,7 +148,7 @@ router.get("/users/customer/addresses", auth, async (req,res) => {
         res.send({addresses})
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -168,7 +170,7 @@ router.post("/users/customer/addresses", auth, async (req,res) => {
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -183,7 +185,7 @@ router.delete("/users/customer/addresses", auth, async (req,res) => {
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 // Customer Addresses - END
@@ -207,7 +209,7 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -220,7 +222,7 @@ router.post("/users/customer/edit/favorites", auth, async (req,res) => {
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -234,7 +236,7 @@ router.post("/users/customer/edit/favorites/add", auth, async (req,res) => {
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -247,18 +249,32 @@ router.post("/users/customer/edit/favorites/remove", auth, async (req,res) => {
         res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
 router.get("/users/customer/pastKitchens", auth, async (req,res) => {
     try {
         let orders = await Order.find({customer: req.user._id}).populate('kitchen');
-        let kitchens = [...new Set(orders.map(a => a.kitchen))]; // maybe populate after removing duplicates (didn't work for me, maybe findByID will)
-        res.send({kitchens})
+        let kitchens = [...new Set(orders.map(a => a.kitchen))];
+        res.status(200).send(kitchens);
     } catch (err) {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
+    }
+});
+
+router.post("/users/customer/getDistance", auth, async (req,res) => {
+    try {
+        let kitchen = await Kitchen.findById(req.body.id);
+        if (!kitchen) throw new Error('Unknown kitchen');
+
+        const distance = calculate_distance(kitchen.bio.coordinates, req.body.location);
+
+        res.status(200).send({distance});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
     }
 });
 
