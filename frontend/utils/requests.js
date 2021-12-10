@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Alert } from 'react-native';
+
 import { ServerBase } from '../globals/globals';
 import { getAuthToken } from '../api/async_storage';
 
@@ -15,10 +17,11 @@ export const send_post_request = async (url,body,auth=true,additional_headers={}
       };
     }
     const res = await axios.post(`${ServerBase}/${url}`,body,config);
-    if (res.status >= 300) throw new Error("Bad status code:",status);
+    if (res.status >= 300) throw new Error("Bad status code:",res.status);
     return res.data;
   } catch (err) {
     console.log('POST request failed:',err)
+    Alert.alert('Network Error','Failed to communicate with server, try again later...')
     return undefined;
   }
 }
@@ -36,10 +39,11 @@ export const send_get_request = async (url,auth=true,additional_headers={}) => {
       };
     }    
     const res = await axios.get(`${ServerBase}/${url}`,config);
-    if (res.status >= 300) throw new Error("Bad status code:",status);
+    if (res.status >= 300) throw new Error("Bad status code:",res.status);
     return res.data;
   } catch (err) {
     console.log('POST request failed:',err)
+    Alert.alert('Network Error','Failed to communicate with server, try again later...')
     return undefined;
   }
 }

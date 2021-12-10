@@ -48,4 +48,14 @@ router.post("/search/kitchen/tag", auth, async (req,res) => {
     }
 });
 
+router.get("/tags/list", async (req,res) => {
+    try {
+        const tags = require('../constants/tags');
+        res.send({tags});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+    }
+})
+
 module.exports = router;
