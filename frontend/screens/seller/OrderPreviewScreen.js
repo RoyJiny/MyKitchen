@@ -7,7 +7,7 @@ import {BlankDivider,ItemPreview,BackButton,Button2} from '../../components';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
-  const [st, setSt] = useState(item.order.status);
+  const [st, setStatus] = useState(item.order.status);
 
   const getButton = (i) => {
     var j = getJ(st);
@@ -15,32 +15,32 @@ const OrderPreviewScreen = ({ navigation, route }) => {
       return <Button2 borderColor="black"
         fillColor="white"
         text="Update"
-        textColor="black" style={getButtonStyle} onClick={() => { updateStat() }} />;
+        textColor="black" style={getButtonStyle} onClick={() => { updateStatus() }} />;
     }
     else {
       return;
     }
   }
 
-  const updateStat = () => {
+  const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
-        setSt("Waiting For Payment");
+        setStatus("Waiting For Payment");
         break;
       case "Waiting For Payment":
-        setSt("In the Making");
+        setStatus("In the Making");
         break;
       case "In the Making":
-        setSt("Ready for Customer");
+        setStatus("Ready for Customer");
         break;
       case "Ready for Customer":
-        setSt("Done");
+        setStatus("Done");
         break;
       case "Done":
-        setSt("");
+        setStatus("");
         break;
       default:
-        setSt("");
+        setStatus("");
         break;
     }
   }
@@ -49,32 +49,36 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <BlankDivider height={12} />
       <View>
-        <View style={styles.body}>
-          <BackButton onClick={navigation.goBack} />
-
-          <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
-        </View>
-        <BlankDivider height={20} />
-        <View style={{ paddingHorizontal: 16, }}>
-          <View style={{ marginBottom: 20, }}>
-
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={styles.title}>Order:</Text>
-              <Text style={styles.date}>{item.order.date}</Text>
-            </View>
+        <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
+          <View style={{flexDirection:'row'}}>
+            <BackButton onClick={navigation.goBack} />
+            <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
           </View>
-          <ScrollView>{
-            item.order.items.map((i, index) => {
-              return (
-                <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
-              )
-            })
-          }
+
+          <Text style={styles.date}>{item.order.date}</Text>
+        </View>
+        
+        <BlankDivider height={20} />
+        
+        <View style={{ paddingHorizontal: 16, }}>
+          <Text style={styles.title}>Items:</Text>
+          <ScrollView>
+            {
+              item.order.items.map((i, index) => {
+                return (
+                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
+                )
+              })
+            }
           </ScrollView>
+
+          <BlankDivider height={16} />
+          
           <Text style={styles.title}>Comments:</Text>
           <View>
             <Text style={{ padding: 4, }}>{item.order.comments}</Text>
           </View>
+          
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
@@ -90,7 +94,9 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Status:</Text>
+          
           <BlankDivider height={8} />
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <Entypo name="stopwatch" size={28} style={getIconStatus(st, 0)} />
@@ -102,6 +108,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialIcons name="payment" size={28} style={getIconStatus(st, 1)} />
@@ -113,6 +120,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialCommunityIcons name="chef-hat" size={28} style={getIconStatus(st, 2)} />
@@ -124,6 +132,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialCommunityIcons name="bike-fast" size={28} style={getIconStatus(st, 3)} />
@@ -135,6 +144,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 4)} />
@@ -146,10 +156,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+
         </View>
-        <View>
-          <BlankDivider height={12} />
-        </View>
+        
+        <BlankDivider height={12} />
       </View>
     </ScrollView>
   )
@@ -184,7 +194,7 @@ const getStatusStyle = (stat, i) => {
     return {
       color: "#3CB371",
       textAlign: 'left',
-      fontSize: 20,
+      fontSize: 18,
       flex: 4,
     }
   }
@@ -193,14 +203,14 @@ const getStatusStyle = (stat, i) => {
       return {
         color: "#D3D3D3",
         textAlign: 'left',
-        fontSize: 20,
+        fontSize: 18,
         flex: 4,
       }
     }
     return {
-      color: "#FFD700",
+      color: "#f59c02",
       textAlign: 'left',
-      fontSize: 20,
+      fontSize: 18,
       flex: 4,
     }
   }
@@ -225,7 +235,7 @@ const getIconStatus = (stat, i) => {
       }
     }
     return {
-      color: "#FFD700",
+      color: "#f59c02",
       flex: 1,
       height: 28,
     }
@@ -256,23 +266,17 @@ OrderPreviewScreen.navigationOptions = (props) => {
 
 
 const styles = StyleSheet.create({
-  body: {
-    flexDirection: 'row',
-    marginLeft: 12,
-  },
   orderNum: {
     fontSize: 32,
-    marginLeft: 8,
+    marginLeft: 16,
   },
   title: {
-    //fontWeight: 'bold',
-    fontSize: 24,
-    alignSelf: "flex-start",
+    fontSize: 20,
+    marginBottom: 8
   },
   date: {
     color: "#808080",
-    alignSelf: 'flex-end',
-    fontSize: 24,
+    fontSize: 18,
   },
   general: {
     fontSize: 16,

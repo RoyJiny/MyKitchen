@@ -3,33 +3,28 @@ import {Text,View,StyleSheet,TouchableOpacity,Image,Dimensions} from 'react-nati
 
 import Colors from '../globals/Colors';
 
-import ShadowCard from './ShadowCard';
 import BlankDivider from './BlankDivider'
 
-const ItemPreview = ({onClick,OrderName,number,imgLink}) => {
+const ItemPreview = ({OrderName,number,imgLink}) => {
   return (
-    <ShadowCard>
-        <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-            <View style={{flexDirection:"row", alignItems:"center"}}>
-            <View>
-                <Image style={styles.image} source={{ uri: imgLink }}/>
-            </View>
-            <View style={{marginLeft:16}}>
-                <Text style={styles.name}>{OrderName}</Text>
-                <BlankDivider height={10} />
-                <Text style={styles.subtitle}>{"x"+number}</Text>
-            </View>
-            </View>
-            
+    <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+      <View style={{flexDirection:"row"}}>
+        <Image style={styles.image} source={{ uri: imgLink }}/>
+        
+        <View style={{marginLeft:16}}>
+            <Text style={styles.name}>{OrderName}</Text>
+            <Text style={styles.subtitle}>x{number}</Text>
         </View>
-    </ShadowCard>
+      </View>
+        
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   image: {
-    height: Dimensions.get('window').height*0.1,
-    width: Dimensions.get('window').width*0.25,
+    height: 60,
+    width: 60,
     borderTopRightRadius: 6,
     borderTopLeftRadius: 6,
     borderBottomLeftRadius: 6,

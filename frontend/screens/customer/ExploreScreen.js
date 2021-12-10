@@ -8,45 +8,53 @@ import Colors from '../../globals/Colors';
 import {Backdrop,KitchenExploreCard} from '../../components';
 
 import { send_get_request } from '../../utils/requests';
+import { ActivityIndicator } from 'react-native-paper';
 
 const ExploreScreen = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const [pastKitchens, setPastKitchens] = useState([]);
+  const [categories, setCategories] = useState([]);
   
-  const get_past_kitchens = () => {
+  const get_data_from_server = () => {
     send_get_request('users/customer/pastKitchens')
       .then(data => setPastKitchens(data))
       .catch(err => {console.log(err);setPastKitchens([])});
+      
+    send_get_request('tags/list')
+    .then(data => setCategories(data.tags,false))
+    .catch(err => {console.log(err);setCategories([])});
   }
   
-  useEffect(get_past_kitchens, []);
+  useEffect(get_data_from_server, []);
 
   return (
     <View style={{flex:1}}>
       <Backdrop text='Explore' height={80}/>
       <ScrollView>
+        
         <Text style={styles.title}>Categories</Text>
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          style={{marginBottom: 16, marginLeft: 8}}
-        >
-          <KitchenExploreCard
-            kitchenName="Cakes"
-            onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Cakes"}})}
-            imgLink="https://img.taste.com.au/9isesBer/taste/2016/11/caramello-cake-105070-1.jpeg"
-          />
-          <KitchenExploreCard
-            kitchenName="Bread"
-            onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Bread"}})}
-            imgLink="https://www.kingarthurbaking.com/sites/default/files/2020-02/the-easiest-loaf-of-bread-youll-ever-bake.jpg"
-          />
-          <KitchenExploreCard
-            kitchenName="Burekas"
-            onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:"Burekas"}})}
-            imgLink="https://shimrit.co.il/wp-content/uploads/2020/06/%D7%91%D7%95%D7%A8%D7%A7%D7%A1-%D7%92%D7%91%D7%99%D7%A0%D7%95%D7%AA-410x308.png"
-          />
-        </ScrollView>
+        {
+          categories.length > 0
+          ? <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={{marginBottom: 16, marginLeft: 8}}
+            >
+              {
+                categories.map(category => 
+                  <KitchenExploreCard
+                    key={category.name}
+                    kitchenName={category.name}
+                    onClick={() => navigation.navigate("Search",{screen:"SearchInternal",params:{category:category.name}})}
+                    imgLink={category.imgUrl}
+                  />
+                )
+              }
+            </ScrollView>
+          : <ActivityIndicator color="black" size={30} style={{alignSelf:'center'}}/>
+        }
+        
+        
         
         <Text style={styles.title}>Order Again</Text>
           {
@@ -72,7 +80,8 @@ const ExploreScreen = ({navigation}) => {
         
         <Text style={styles.title}>Favorites</Text>
         {
-          user.favorites.length == 0 ? <Text style={styles.subTitle}>Add kitchens to your favorites</Text> 
+          user.favorites.length == 0
+          ? <Text style={styles.subTitle}>Add kitchens to your favorites</Text> 
           : <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
