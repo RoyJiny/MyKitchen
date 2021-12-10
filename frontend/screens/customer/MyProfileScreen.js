@@ -373,6 +373,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
+          orderList.length == 0 ? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> :
           orderList.filter(t => t.status !== 'Done').map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
@@ -381,25 +382,29 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <BlankDivider height={32}/>
 
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={styles.subtitle}>Recent Orders</Text>
-          <ExpantionArrow
-            onClick={() => {
-              if (!expandRecentOrders){
-                // 88 for each order we want to scroll + 16 of extra padding
-                ScrollViewRef.current?.scrollTo({y: scroll_position + 2*88 + 16,animated: true,});
-              }
-              setExpandRecentOrders(!expandRecentOrders);
-            }}
-            isInitaialyExpanded={true}
-          />
-        </View>
-        
-        {
-          orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
-            return (
-              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
-          )})
+        { orderList.filter(t => t.status == 'Done').length > 0 ?
+          (<><View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={styles.subtitle}>Recent Orders</Text>
+            <ExpantionArrow
+              onClick={() => {
+                if (!expandRecentOrders){
+                  // 88 for each order we want to scroll + 16 of extra padding
+                  ScrollViewRef.current?.scrollTo({y: scroll_position + 2*88 + 16,animated: true,});
+                }
+                setExpandRecentOrders(!expandRecentOrders);
+              }}
+              isInitaialyExpanded={true}
+            />
+          </View>
+          
+          <View>
+            {
+              orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
+                return (
+                  <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
+              )})
+            }
+          </View></>) : null
         }
 
         <BlankDivider height={16}/>

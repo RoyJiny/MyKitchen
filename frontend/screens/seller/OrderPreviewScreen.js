@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
-import {BlankDivider,ItemPreview,BackButton,Button2} from '../../components';
+import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -11,11 +11,17 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
   const getButton = (i) => {
     var j = getJ(st);
+    var text = ["Approve","Received","Ready","Delivered","Complete"][j];
+    
     if (i == j) {
-      return <Button2 borderColor="black"
+      return <Button
+        onClick={() => { updateStatus() }}
+        textColor="#3CB371"
+        text={text}
         fillColor="white"
-        text="Update"
-        textColor="black" style={getButtonStyle} onClick={() => { updateStatus() }} />;
+        height={30}
+        width={90}
+      />;
     }
     else {
       return;
@@ -74,22 +80,19 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
           <BlankDivider height={16} />
           
-          <Text style={styles.title}>Comments:</Text>
-          <View>
-            <Text style={{ padding: 4, }}>{item.order.comments}</Text>
-          </View>
-          
+          {item.order.comments !== "" && <Text style={styles.textStyle}>Comments: {item.order.comments}</Text>}
+
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
-          <Text style={styles.general}>Name: {item.customer.name}</Text>
-          <Text style={styles.general}>Address: {item.order.deliveryAddress}</Text>
-          <Text style={styles.general}>Phone: {item.customer.phone}</Text>
+          <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
+          <Text style={styles.textStyle}>Address: {item.order.deliveryAddress}</Text>
+          <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={styles.general}>{item.order.dueDate}</Text>
+          <Text style={styles.textStyle}>{item.order.dueDate}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
@@ -243,22 +246,6 @@ const getIconStatus = (stat, i) => {
 
 }
 
-const getButtonStyle = (stat, i) => {
-  var j = getJ(stat);
-  if (i !== j) {
-    return {
-      color: "#D3D3D3",
-    }
-  }
-  else {
-    return {
-      color: "#3CB371"
-    }
-  }
-}
-
-
-
 
 OrderPreviewScreen.navigationOptions = (props) => {
   return {};
@@ -278,7 +265,7 @@ const styles = StyleSheet.create({
     color: "#808080",
     fontSize: 18,
   },
-  general: {
+  textStyle: {
     fontSize: 16,
   }
 });
