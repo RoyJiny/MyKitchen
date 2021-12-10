@@ -20,8 +20,8 @@ const ExploreScreen = ({navigation}) => {
       .then(data => setPastKitchens(data))
       .catch(err => {console.log(err);setPastKitchens([])});
       
-    send_get_request('tags/list')
-    .then(data => setCategories(data.tags,false))
+    send_get_request('tags/list',false)
+    .then(data => setCategories(data.tags))
     .catch(err => {console.log(err);setCategories([])});
   }
   
