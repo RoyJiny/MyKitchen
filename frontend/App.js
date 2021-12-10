@@ -59,6 +59,9 @@ export default APP = () => {
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  I18nManager.allowRTL(false);
+  I18nManager.forceRTL(false);  
+
   const [location, setLocation] = useState({ // some default if we dont have location
     longitude: 34.798571,
     latitude: 32.059999
