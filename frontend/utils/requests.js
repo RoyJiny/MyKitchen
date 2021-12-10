@@ -39,7 +39,7 @@ export const send_get_request = async (url,auth=true,additional_headers={}) => {
     if (res.status >= 300) throw new Error("Bad status code:",status);
     return res.data;
   } catch (err) {
-    console.log('GET request failed:',err)
+    console.log('POST request failed:',err)
     return undefined;
   }
 }

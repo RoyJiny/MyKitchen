@@ -5,10 +5,7 @@ import { saveAuthToken } from './async_storage';
 const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
   const config = {
     androidClientId: '225045444277-o7k85cn5613jru2vm2qnlgfa74gpbe8a.apps.googleusercontent.coma',
-    scopes: ['profile','email'],
-    serviceConfiguration: {
-      authorizationEndpoint: ''
-    }
+    scopes: ['profile','email']
   };
 
   Google.logInAsync(config)
