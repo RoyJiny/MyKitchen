@@ -1,17 +1,15 @@
 import React,{useState, useContext} from 'react';
 import {View,StyleSheet,Text,Image} from 'react-native';
-import { UserContext } from "../../contexts/UserContext";
+import { SellerContext } from "../../contexts/SellerContext";
 
 import {signin} from '../../api/google_signin';
 
-import BackButton from '../../components/BackButton';
-import LogoButton from '../../components/LogoButton';
-import BlankDivider from '../../components/BlankDivider';
+import {BackButton,LogoButton,BlankDivider} from '../../components';
 
 const SellerSigninScreen = ({navigation}) => {
-  const {user, setUser} = useContext(UserContext);
+  const {seller, setSeller} = useContext(SellerContext);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
-  
+
   return (
     <View style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
         <View style={{ flexDirection:'row'}}>
@@ -37,7 +35,7 @@ const SellerSigninScreen = ({navigation}) => {
               () => {setIsLoadingGoogle(false);navigation.navigate("KitchenBio");},
               () => setIsLoadingGoogle(false),
               true,
-              (newData) => setUser({...user, ...newData})
+              (newData) => setSeller({...seller, user: {...seller.user, ...newData}})
             );
           }}
           borderColor='black'

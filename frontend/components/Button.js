@@ -36,9 +36,9 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300}) => {
                     style={{
                         textAlign:'center',
                         color: textColor,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: 'bold',
-                        padding: 4
+                        padding: 2
                     }}
                 >
                         {text}

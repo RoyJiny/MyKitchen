@@ -3,10 +3,7 @@ import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOp
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { UserContext } from "../../contexts/UserContext";
 
-import BackButton from '../../components/BackButton';
-import Button2 from '../../components/Button2';
-import BlankDivider from '../../components/BlankDivider';
-import Dish from '../../components/Dish';
+import {BackButton,Button2,BlankDivider,Dish} from '../../components';
 
 const EditMenuScreen = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);

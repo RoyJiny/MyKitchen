@@ -16,7 +16,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
     }}>
 
       <View style={{width: 70, height: 70, borderRadius: 10, alignContent:'center'}}>
-        <Image style={{width: 70, height: (isLoading ? 0 : 70), borderRadius: 10}} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);/*setTimeout(() => {  setIsLoading(false); }, 3000);*/}}}/>
+        <Image style={{width: 70, height: (isLoading ? 0 : 70), borderRadius: 10}} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);}}}/>
         <ActivityIndicator style={{ marginTop:20 ,alignSelf: 'center', display: (isLoading ? 'flex' : 'none') }} size={30} color="black" />
       </View>
 
@@ -25,7 +25,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
         <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
       </View>
 
-      <Text style={styles.price}>${price}</Text>
+      <Text style={styles.price}>₪{price}</Text>
 
       <ShadowCard>
         <View style={{flexDirection: 'row',alignItems:'center'}}>
@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   title: {
-    fontSize: 18
-  },
-  price: {
     fontSize: 16
   },
+  price: {
+    fontSize: 14
+  },
   description: {
-    fontSize: 16,
+    fontSize: 12,
     color: Colors.lightGray
   }
 });

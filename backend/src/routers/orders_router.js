@@ -23,7 +23,7 @@ router.post("/order/submit", auth, async (req,res) => {
     res.status(200).send();
   } catch (err) {
     console.log(err);
-    res.status(500).send('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 });
 
@@ -37,7 +37,7 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
     res.send("Processed Successfuly");
   } catch (err) {
     console.log(err);
-    res.status(500).send('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 });
 
@@ -53,7 +53,7 @@ router.get("/orders/seller/get_orders", auth, async (req,res) => {
     res.send({user_orders});
   } catch (err) {
     console.log(err);
-    res.status(500).send('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 });
 
@@ -67,7 +67,7 @@ router.get("/orders/customer/get_orders", auth, async (req,res) => {
     res.send({user_orders});
   } catch (err) {
     console.log(err);
-    res.status(500).send('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 });
 

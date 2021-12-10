@@ -5,9 +5,7 @@ import { UserContext } from "../../contexts/UserContext";
 
 import {signin} from '../../api/google_signin';
 
-import LogoButton from '../../components/LogoButton';
-import Backdrop from '../../components/Backdrop';
-import BlankDivider from '../../components/BlankDivider';
+import {LogoButton,Backdrop,BlankDivider} from '../../components';
 
 const LoginScreen = ({navigation, loginCB}) => {
   const {user, setUser} = useContext(UserContext);
