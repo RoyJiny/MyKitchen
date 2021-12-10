@@ -1,14 +1,17 @@
 import React, {useContext, useState} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { UserContext } from "../../contexts/UserContext";
+import { SellerContext } from "../../contexts/SellerContext";
+import * as Animatable from 'react-native-animatable';
 
 import {BackButton,Button2,BlankDivider,Dish} from '../../components';
 
 const EditMenuScreen = ({navigation}) => {
-  const {user, setUser} = useContext(UserContext);
-  const [dishItems, setDishItems] = useState(user.kitchen.menu);
+  const {seller, setSeller} = useContext(SellerContext);
+  const [dishItems, setDishItems] = useState([]);
   const [alerted, setAlerted] = useState(false);
+  const [firstTime, setfirstTime] = useState(true);
+  const [checkValid, setcheckValid] = useState(false);
 
   const handleAdd = () => {
     for (let i = 0; i <= dishItems.length; i++) {
@@ -63,25 +66,40 @@ const EditMenuScreen = ({navigation}) => {
     setDishItems(itemsCopy)
   }
 
+  const checkEmptyDish = () => {
+    let item = {key: 0, name: '', description: '', price: '', imgLink: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}
+    let itemsCopy = [...dishItems];
+    for (let i = 0; i < itemsCopy.length; i++) {
+      item = itemsCopy[i]
+      if(item.name == '' || item.price == ''){
+        return false
+      }
+    }
+    return true
+  }
+
   return (
       <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex:1, marginTop: 16, marginHorizontal: 8}}>
         <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
           <BackButton onClick={navigation.goBack}/>
+          <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
           <Button2
-            onClick={() => {setUser({...user, ...{kitchen: {...user.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
+            onClick={() => {setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
             fillColor = "white"
             text ="Done"
             textColor = "black"
+            disable = { checkEmptyDish()==true && dishItems.length > 0 ? false : true }
           />
+          </TouchableOpacity>
         </View>
 
         <BlankDivider height={16}/>
         <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
           <TouchableOpacity
-            onPress={() => handleAdd()}
+            onPress={() => {handleAdd(),setcheckValid(false)}}
             style={{
                 borderRadius: 24,
                 backgroundColor: 'white',
@@ -110,7 +128,17 @@ const EditMenuScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <BlankDivider height={16}/>
-
+          { firstTime==true || dishItems.length > 0 ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Please add dishes to your kitchen</Text>
+            </Animatable.View>
+          }
+          { firstTime==true || checkValid==false || checkEmptyDish()==true ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Please add name and price for each dish</Text>
+            </Animatable.View>
+          }
+          <BlankDivider height={8}/>
           {
             dishItems.map((item, index) => {
               return (
@@ -143,7 +171,14 @@ EditMenuScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginTop: 2,
+  },
 });
 
 export default EditMenuScreen;
