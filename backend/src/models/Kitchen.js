@@ -117,7 +117,8 @@ const kitchenSchema = new mongoose.Schema(
     rating: {
       value: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
       },
       count: { // for average calculations
         type: Number,

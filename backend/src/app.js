@@ -25,6 +25,8 @@ app.use(searchRouter);
 app.use(imagesRouter);
 app.use(verificationRouter);
 
+app.disable('etag');
+
 app.listen(PORT, () => {
   console.log(`server is listening on port ${PORT}`);
 });

@@ -4,13 +4,7 @@ import { RadioButton } from 'react-native-paper';
 
 import Colors from '../../globals/Colors';
 
-import BackButton from '../../components/BackButton';
-import ShadowCard from '../../components/ShadowCard';
-import MultilineInput from '../../components/MultilineInput';
-import ExpantionArrow from '../../components/ExpantionArrow';
-import Button from '../../components/Button';
-import BlankDivider from '../../components/BlankDivider';
-import PickerDate from '../../components/PickerDate';
+import {BackButton,ShadowCard,MultilineInput,ExpantionArrow,Button,BlankDivider,PickerDate} from '../../components';
 
 const SingleOrder = (name,amount,price) => {  
   return (
@@ -20,7 +14,7 @@ const SingleOrder = (name,amount,price) => {
         <Text style={styles.itemName}>{name}</Text>
         <Text style={styles.amount}>x{amount}</Text>
       </View>
-      <Text style={styles.price}>${price}</Text>
+      <Text style={styles.price}>₪{price}</Text>
     </View>
     <View style={{
       borderColor: Colors.lightGray,
@@ -67,7 +61,7 @@ const OrderScreen = ({navigation}) => {
           }
           <View style={[styles.rowView, {justifyContent: 'space-between'}]}>
             <Text style={styles.totalPrice}>Total</Text>
-            <Text style={styles.totalPrice}>${totalPrice}</Text>
+            <Text style={styles.totalPrice}>₪{totalPrice}</Text>
           </View>
         </View>
       </ShadowCard>      
@@ -142,7 +136,7 @@ const OrderScreen = ({navigation}) => {
         height={30}
         width={100}
       />
-      <BlankDivider height={8}/>
+      <BlankDivider height={24}/>
       </ScrollView>
     </View>
   )

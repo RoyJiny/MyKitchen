@@ -4,6 +4,8 @@ const router = new express.Router();
 
 const ENV = require('../../config/env');
 
+const User = require('../models/User');
+
 const auth = require('../middleware/auth');
 
 router.get("/verify/request_verification/", auth, async (req,res) => {
@@ -29,7 +31,7 @@ router.get("/verify/request_verification/", auth, async (req,res) => {
       res.sendStatus(200);
     } catch (err) {
       console.log(err);
-      res.status(500).send('Server Error');
+      res.status(500).send({error: 'Server Error'});
     }
 });
 
@@ -55,18 +57,19 @@ router.post("/verify/submit_code/", auth, async (req,res) => {
       );
 
       if (data.success) {
-        res.send(data.message);
+        res.send({msg: data.message});
         // set the phone number of req.user here !
+        await User.findByIdAndUpdate(req.user._id, {phone: phone})
       } else {
-        res.status(401).send(data.message);
+        res.status(401).send({msg: data.message});
       };
 
     } catch (err) {
       if (err.isAxiosError) {
-        res.status(err.response.status).send(err.response.data.message)
+        res.status(err.response.status).send({err: err.response.data.message})
       } else {
         console.log(err);
-        res.status(500).send('Server Error');
+        res.status(500).send({error: 'Server Error'});
       }
     }
 });

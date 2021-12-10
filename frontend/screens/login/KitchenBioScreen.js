@@ -1,18 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { UserContext } from "../../contexts/UserContext";
 
-import BackButton from '../../components/BackButton';
-import Tag from '../../components/Tag';
-import Button2 from '../../components/Button2';
-import FormInput from '../../components/FormInput';
-import ShadowCard2 from '../../components/ShadowCard2';
-import BlankDivider from '../../components/BlankDivider';
-import ImUp from '../../components/ImUp';
+import { send_get_request } from '../../utils/requests';
+import { SellerContext } from "../../contexts/SellerContext";
+import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
 
 const KitchenBioScreen = ({navigation, loginCB}) => {
-  const {user, setUser} = useContext(UserContext);
+  const {seller, setSeller} = useContext(SellerContext);
   const [name, setName] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
@@ -21,6 +16,16 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   const [tagList, setTagList] = useState([]);
   const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
   const [firstTime, setfirstTime] = useState(true);
+  const [categories, setCategories] = useState([]);
+  
+  const get_tags = () => {
+    send_get_request('tags/list',false)
+    .then(data => setCategories(data.tags))
+    .catch(err => {console.log(err);setCategories([])});
+  }
+
+  useEffect(get_tags, []);
+
 
   const addTag = (text) => {
     setTagList([...tagList, text])
@@ -108,59 +113,20 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
 
         <ShadowCard2>
           <Text style={{fontSize: 18, marginLeft: 8}}>Tags:</Text>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
-            <Tag
-              text ="Bakery"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Cakes"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Special Events"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Meat"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-          </View>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
-            <Tag
-              text ="Delivery"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Home Food"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Vegan"
-              textColor = "black"
-              stateInit = {false}
-              add = {addTag}
-              remove = {removeTag}
-            />
-          </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: 4}}>
+            {
+              categories.map(category =>
+                <Tag
+                  key = {category.name}
+                  text = {category.name}
+                  textColor = "black"
+                  stateInit = {false}
+                  add = {addTag}
+                  remove = {removeTag}
+                />
+              )
+            }
+          </ScrollView>
         </ShadowCard2>
 
         <BlankDivider height={16}/>
@@ -176,7 +142,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <BlankDivider height={16}/>
         <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
-          onClick={() => {setUser({...user, ...{kitchen: {bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}}); navigation.navigate("AddDishes");}} //here use global args from all forms and send to DB
+          onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");}}
           borderColor = "black"
           fillColor = "white"
           text ="Next"
