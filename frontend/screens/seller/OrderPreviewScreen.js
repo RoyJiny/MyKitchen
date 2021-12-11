@@ -121,7 +121,8 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Customer Info:</Text>
           <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
           <Text style={styles.textStyle}>Address: {item.deliveryAddress}</Text>
-          <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text>
+          {item.customer.phone !== "" ? <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text> : null}
+          
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
