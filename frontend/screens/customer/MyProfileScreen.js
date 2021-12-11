@@ -93,7 +93,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
 
   useEffect(() => {
     send_get_request("orders/customer/get_orders")
-      .then(data => {setOrderList(data.user_orders);console.log(data);})
+      .then(data => {setOrderList(data);})
       .catch(err => {console.log(err);});
   },[]);
 
