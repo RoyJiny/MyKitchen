@@ -16,6 +16,7 @@ const EditBioScreen = ({navigation, loginCB}) => {
   const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
   const [firstTime, setfirstTime] = useState(true);
   const [categories, setCategories] = useState([]);
+  
 
   const addTag = (text) => {
     setTagList([...tagList, text])

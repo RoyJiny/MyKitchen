@@ -21,7 +21,6 @@ export const send_post_request = async (url,body,auth=true,additional_headers={}
     return res.data;
   } catch (err) {
     console.log('POST request failed:',err)
-    Alert.alert('Network Error','Failed to communicate with server, try again later...')
     return undefined;
   }
 }
@@ -43,7 +42,6 @@ export const send_get_request = async (url,auth=true,additional_headers={}) => {
     return res.data;
   } catch (err) {
     console.log('POST request failed:',err)
-    Alert.alert('Network Error','Failed to communicate with server, try again later...')
     return undefined;
   }
 }
