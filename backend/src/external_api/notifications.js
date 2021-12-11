@@ -22,7 +22,10 @@ const send_notification = async (expoPushToken,title,body,extra_data) => {
   }
 };
 
+// Send notification to a user, if the user is missing a notification
+// token, then don't do anything
 const send_notification_to_user = async (user,title,body,extra_data={}) => {
+  if (!user.expoPushToken) return;
   send_notification(user.expoPushToken,title,body,extra_data)
 }
 

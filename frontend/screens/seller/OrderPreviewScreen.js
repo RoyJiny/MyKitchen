@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-import { send_post_request } from '../../utils/requests';
+
 import Colors from '../../globals/Colors';
 import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
-import { send_get_request } from '../../utils/requests';
+import { send_get_request,send_post_request } from '../../utils/requests';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -29,23 +29,13 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     }
   }
 
-  const get_data_from_server = () => {
-    send_get_request('orders/seller/get_orders')
-      .then(data => setStatus(data.status))
-      .catch(err => {console.log(err);setStatus("Pending Approval")});
-  }
-
   const updateStatusDB = (new_status) => {
-    console.log(item._id)
-    console.log(new_status)
     send_post_request('orders/seller/update_status',{
       id: item._id,
       status: new_status
     })
     .then()
     .catch(err => {console.log(err); kitchen.distance=0 ; setIsLoading(false);});
-
-    get_data_from_server();
   }
 
  
@@ -178,14 +168,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
-              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 4)} />
+              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 3)} />
             </View>
-            <Text style={getStatusStyle(st, 4)}>Done</Text>
-            <View style={{ flex: 2, height: 36, }}>
-              {
-                getButton(4)
-              }
-            </View>
+            <Text style={getStatusStyle(st, 3)}>Done</Text>
+            <View style={{ flex: 2, height: 36, }}></View>
           </View>
 
         </View>
@@ -199,23 +185,16 @@ const getJ = (stat) => {
   switch (stat) {
     case "Pending Approval":
       return 0;
-      break;
     case "Waiting For Payment":
       return 1;
-      break;
-
     case "In the Making":
       return 2;
-      break;
     case "Ready for Customer":
       return 3;
-      break;
     case "Done":
       return 4;
-      break;
     default:
       return 5;
-      break;
   }
 }
 
