@@ -14,7 +14,7 @@ import Colors from './globals/Colors';
 import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/stacks'
 
 import { getAuthToken, deleteAuthToken } from './api/async_storage';
-import { send_get_request } from './utils/requests';
+import { send_get_request,send_post_request } from './utils/requests';
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
@@ -62,21 +62,16 @@ export default APP = () => {
   I18nManager.allowRTL(false);
   I18nManager.forceRTL(false);  
 
-  const [location, setLocation] = useState({ // some default if we dont have location
+  const [location, setLocation] = useState({
     longitude: 34.798571,
     latitude: 32.059999
-  })
-  const [user, setUser] = useState({
-    email: '',
-    name: '',
-    imgUrl: '',
-    isSeller: false,
-    googleId: '',
-    addresses: [],
-    favorites: []
   });
-  const [seller, setSeller] = useState({
-    user: {
+
+  const [user, setUser] = useState({});
+  const [seller, setSeller] = useState({});
+
+  const init_contexts = () => {
+    setUser({
       email: '',
       name: '',
       imgUrl: '',
@@ -84,11 +79,24 @@ export default APP = () => {
       googleId: '',
       addresses: [],
       favorites: []
-    },
-    kitchen: {}
-  });
+    });
+    setSeller({
+      user: {
+        email: '',
+        name: '',
+        imgUrl: '',
+        isSeller: false,
+        googleId: '',
+        addresses: [],
+        favorites: []
+      },
+      kitchen: {}
+    });
+  }
 
   useEffect(() => {
+    init_contexts();
+
     Location.requestForegroundPermissionsAsync()
       .then(data => {
         if (data.status !== 'granted') {
@@ -118,11 +126,23 @@ export default APP = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const loginCB = (isSeller) => {
+    if (expoPushToken != '') {
+      send_post_request('users/notification_token',{expo_token: expoPushToken})
+        .then(()=>{})
+        .catch(err => console.log("Failed to send notification token:",err));
+    }
     setState({isLoggedIn: true, isCustomer: !isSeller});
   };
   const signoutCB = () => {
-    deleteAuthToken()
-      .then(() => setState({isLoggedIn: false, isCustomer: true}))
+    send_get_request("users/signout")
+      .then(() => {
+        deleteAuthToken()
+          .then(() => {
+            setState({isLoggedIn: false, isCustomer: true});
+            init_contexts();
+          })
+          .catch(err => console.log(err))       
+      })
       .catch(err => console.log(err));
     ;
   };

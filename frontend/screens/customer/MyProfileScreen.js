@@ -410,17 +410,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <BlankDivider height={16}/>
 
         <Button
-          onClick={() => {
-            setUser({
-              email: '',
-              name: '',
-              imgUrl: '',
-              isSeller: false,
-              googleId: '',
-              addresses: [],
-              favorites: []
-            });
-            deleteAuthToken().then(signoutCB).catch(err => console.log(err));}}
+          onClick={signoutCB}
           text="Sign Out"
           fillColor="white"
           textColor="black"
