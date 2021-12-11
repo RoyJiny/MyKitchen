@@ -3,44 +3,84 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
-import {BlankDivider,ItemPreview,BackButton,Button2} from '../../components';
+import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
+import { send_get_request,send_post_request } from '../../utils/requests';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
-  const [st, setSt] = useState(item.order.status);
+  const [st, setStatus] = useState(item.status);
 
   const getButton = (i) => {
     var j = getJ(st);
+    var text = ["Approve","Received","Ready","Delivered","Complete"][j];
+    
     if (i == j) {
-      return <Button2 borderColor="black"
+      return <Button
+        onClick={() => { updateStatus() }}
+        textColor="#3CB371"
+        text={text}
         fillColor="white"
-        text="Update"
-        textColor="black" style={getButtonStyle} onClick={() => { updateStat() }} />;
+        height={30}
+        width={90}
+      />;
     }
     else {
       return;
     }
   }
 
-  const updateStat = () => {
+  const changeStatus = (data) => {
+    data.forEach(order => {
+      if(order._id == item._id){
+        setStatus(order.status);
+      }
+    });
+  }
+
+  const get_data_from_server = () => {
+    send_get_request('orders/seller/get_orders')
+      .then(data => changeStatus(data))
+      .catch(err => {console.log(err);setStatus("Pending Approval")});
+  }
+
+  const updateStatusDB = (new_status) => {
+    send_post_request('orders/seller/update_status',{
+      id: item._id,
+      status: new_status
+    })
+    .then()
+    .catch(err => {console.log(err);});
+
+    get_data_from_server();
+  }
+
+ 
+
+  const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
-        setSt("Waiting For Payment");
+        setStatus("Waiting For Payment");
+        updateStatusDB("Waiting For Payment");
         break;
       case "Waiting For Payment":
-        setSt("In the Making");
+        setStatus("In the Making");
+        updateStatusDB("In the Making");
         break;
       case "In the Making":
-        setSt("Ready for Customer");
+        setStatus("Ready for Customer");
+        updateStatusDB("Ready for Customer");
         break;
       case "Ready for Customer":
-        setSt("Done");
+        setStatus("Done");
+        updateStatusDB("Done");
         break;
       case "Done":
-        setSt("");
+        setStatus("");
+        updateStatusDB("");
         break;
       default:
-        setSt("");
+        setStatus("");
+        updateStatusDB("");
         break;
     }
   }
@@ -49,48 +89,52 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <BlankDivider height={12} />
       <View>
-        <View style={styles.body}>
-          <BackButton onClick={navigation.goBack} />
+        <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
+          <View style={{flexDirection:'row'}}>
+            <BackButton onClick={navigation.goBack} />
+            <Text style={styles.orderNum}>{"Order #" + item._id}</Text>
+          </View>
 
-          <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
+          <Text style={styles.date}>{item.date}</Text>
         </View>
+        
         <BlankDivider height={20} />
+        
         <View style={{ paddingHorizontal: 16, }}>
-          <View style={{ marginBottom: 20, }}>
-
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={styles.title}>Order:</Text>
-              <Text style={styles.date}>{item.order.date}</Text>
-            </View>
-          </View>
-          <ScrollView>{
-            item.order.items.map((i, index) => {
-              return (
-                <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
-              )
-            })
-          }
+          <Text style={styles.title}>Items:</Text>
+          <ScrollView>
+            {
+              item.items.map((i, index) => {
+                return (
+                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} />
+                )
+              })
+            }
           </ScrollView>
-          <Text style={styles.title}>Comments:</Text>
-          <View>
-            <Text style={{ padding: 4, }}>{item.order.comments}</Text>
-          </View>
+
+          <BlankDivider height={16} />
+          
+          {item.comments !== "" && <Text style={styles.textStyle}>Comments: {item.comments}</Text>}
+
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
-          <Text style={styles.general}>Name: {item.customer.name}</Text>
-          <Text style={styles.general}>Address: {item.order.deliveryAddress}</Text>
-          <Text style={styles.general}>Phone: {item.customer.phone}</Text>
+          <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
+          <Text style={styles.textStyle}>Address: {item.deliveryAddress}</Text>
+          {item.customer.phone !== "" ? <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text> : null}
+          
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={styles.general}>{item.order.dueDate}</Text>
+          <Text style={styles.textStyle}>{item.dueDate}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Status:</Text>
+          
           <BlankDivider height={8} />
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <Entypo name="stopwatch" size={28} style={getIconStatus(st, 0)} />
@@ -102,6 +146,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialIcons name="payment" size={28} style={getIconStatus(st, 1)} />
@@ -113,6 +158,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialCommunityIcons name="chef-hat" size={28} style={getIconStatus(st, 2)} />
@@ -124,6 +170,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
               <MaterialCommunityIcons name="bike-fast" size={28} style={getIconStatus(st, 3)} />
@@ -135,21 +182,18 @@ const OrderPreviewScreen = ({ navigation, route }) => {
               }
             </View>
           </View>
+          
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
-              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 4)} />
+              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 3)} />
             </View>
-            <Text style={getStatusStyle(st, 4)}>Done</Text>
-            <View style={{ flex: 2, height: 36, }}>
-              {
-                getButton(4)
-              }
-            </View>
+            <Text style={getStatusStyle(st, 3)}>Done</Text>
+            <View style={{ flex: 2, height: 36, }}></View>
           </View>
+
         </View>
-        <View>
-          <BlankDivider height={12} />
-        </View>
+        
+        <BlankDivider height={12} />
       </View>
     </ScrollView>
   )
@@ -158,23 +202,16 @@ const getJ = (stat) => {
   switch (stat) {
     case "Pending Approval":
       return 0;
-      break;
     case "Waiting For Payment":
       return 1;
-      break;
-
     case "In the Making":
       return 2;
-      break;
     case "Ready for Customer":
       return 3;
-      break;
     case "Done":
       return 4;
-      break;
     default:
       return 5;
-      break;
   }
 }
 
@@ -184,7 +221,7 @@ const getStatusStyle = (stat, i) => {
     return {
       color: "#3CB371",
       textAlign: 'left',
-      fontSize: 20,
+      fontSize: 18,
       flex: 4,
     }
   }
@@ -193,14 +230,14 @@ const getStatusStyle = (stat, i) => {
       return {
         color: "#D3D3D3",
         textAlign: 'left',
-        fontSize: 20,
+        fontSize: 18,
         flex: 4,
       }
     }
     return {
-      color: "#FFD700",
+      color: "#f59c02",
       textAlign: 'left',
-      fontSize: 20,
+      fontSize: 18,
       flex: 4,
     }
   }
@@ -225,29 +262,13 @@ const getIconStatus = (stat, i) => {
       }
     }
     return {
-      color: "#FFD700",
+      color: "#f59c02",
       flex: 1,
       height: 28,
     }
   }
 
 }
-
-const getButtonStyle = (stat, i) => {
-  var j = getJ(stat);
-  if (i !== j) {
-    return {
-      color: "#D3D3D3",
-    }
-  }
-  else {
-    return {
-      color: "#3CB371"
-    }
-  }
-}
-
-
 
 
 OrderPreviewScreen.navigationOptions = (props) => {
@@ -256,25 +277,19 @@ OrderPreviewScreen.navigationOptions = (props) => {
 
 
 const styles = StyleSheet.create({
-  body: {
-    flexDirection: 'row',
-    marginLeft: 12,
-  },
   orderNum: {
     fontSize: 32,
-    marginLeft: 8,
+    marginLeft: 16,
   },
   title: {
-    //fontWeight: 'bold',
-    fontSize: 24,
-    alignSelf: "flex-start",
+    fontSize: 20,
+    marginBottom: 8
   },
   date: {
     color: "#808080",
-    alignSelf: 'flex-end',
-    fontSize: 24,
+    fontSize: 18,
   },
-  general: {
+  textStyle: {
     fontSize: 16,
   }
 });

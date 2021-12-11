@@ -37,7 +37,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
   };
 
   const register = (newSellerData) => {
-    submit_data(newSellerData).then(loginCB).catch(err => console.log(err));
+    submit_data(newSellerData).then(() => loginCB(true)).catch(err => console.log(err));
   }
 
   const setPreorderOnly = (value) => {
@@ -140,7 +140,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
           </ShadowCard2>
           
           <BlankDivider height={16}/>
-          <TouchableOpacity onPress={()=>{console.log(payLinks), setfirstTime(false)}}>
+          <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
           <Button2
             onClick={() => {
               var logistics_obj = {operationDays: [{day:"Sunday",...operatingDays.Sunday},{day:"Monday",...operatingDays.Monday},{day:"Thuesday",...operatingDays.Thuesday},{day:"Wednesday",...operatingDays.Wednesday},{day:"Thursday",...operatingDays.Thursday},{day:"Friday",...operatingDays.Friday},{day:"Saturday",...operatingDays.Saturday}], isSupportDelivery: delivery.support, paymentLinks: payLinks, isOnlyFutureDelivery: operatingDays.preorderOnly}

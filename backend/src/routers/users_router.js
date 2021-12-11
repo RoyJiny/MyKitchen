@@ -9,7 +9,6 @@ const auth = require('../middleware/auth');
 const { matchUserKitchen,matchUserOrder } = require('../middleware/matchUser');
 const {get_coordinates} = require('../external_api/geocoding');
 
-const {send_notification_to_user} = require('../external_api/notifications');
 const calculate_distance = require("../utils/distance");
 
 // Users Registration, info and editing - START
@@ -83,9 +82,26 @@ router.get("/users/signout", auth, async (req,res) => {
         req.user.tokens = req.user.tokens.filter(
             token => token.token !== req.token
         );
+        if (req.user.expoPushToken) req.user.expoPushToken = undefined
+
         await req.user.save();
 
-        res.send();
+        res.send("Signed Out");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+    }
+});
+
+router.post("/users/notification_token", auth,  async (req,res) => {
+    try {
+        const token = req.body.expo_token;
+        if (!token) throw new Error("Missing Token");
+        
+        if (!await User.findByIdAndUpdate(req.user._id, {expoPushToken: token}))
+            throw new Error("Couldn't find user");
+
+        res.send("Processed Successfuly");
     } catch (err) {
         console.log(err);
         res.status(500).send({error: 'Server Error'});

@@ -46,20 +46,7 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
         </View>
 
         <Button
-          onClick={() => {
-            setSeller({
-              user: {
-                email: '',
-                name: '',
-                imgUrl: '',
-                isSeller: false,
-                googleId: '',
-                addresses: [],
-                favorites: []
-              },
-              kitchen: {}
-            });
-            deleteAuthToken().then(signoutCB).catch(err => console.log(err));}}
+          onClick={signoutCB}
           text="Sign Out"
           fillColor="white"
           textColor="black"

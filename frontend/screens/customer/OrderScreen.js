@@ -1,18 +1,22 @@
-import React,{useState} from 'react'
+import React,{useState,useContext, useEffect} from 'react'
 import {View,StyleSheet,Text, ScrollView} from 'react-native'
 import { RadioButton } from 'react-native-paper';
 
 import Colors from '../../globals/Colors';
 
 import {BackButton,ShadowCard,MultilineInput,ExpantionArrow,Button,BlankDivider,PickerDate} from '../../components';
+import {send_post_request} from '../../utils/requests';
+import { send_get_request } from '../../utils/requests';
+import { UserContext } from '../../contexts/UserContext';
 
-const SingleOrder = (name,amount,price) => {  
+
+const SingleOrder = (name,count,price) => {  
   return (
     <View key={name}>
     <View style={[styles.rowView, {justifyContent: 'space-between'}]}>
       <View style={{flexDirection:'row', alignItems: 'center'}}>
         <Text style={styles.itemName}>{name}</Text>
-        <Text style={styles.amount}>x{amount}</Text>
+        <Text style={styles.count}>x{count}</Text>
       </View>
       <Text style={styles.price}>₪{price}</Text>
     </View>
@@ -27,16 +31,31 @@ const SingleOrder = (name,amount,price) => {
   );
 };
 
-const OrderScreen = ({navigation}) => {
-  const items = [{name:'Birthday Cake',amount: 2,price: 120},{name:'Birthday Cake',amount: 2,price: 120},{name:'Birthday Cake',amount: 2,price: 120}]
+const get_address = async () => {
+  try{
+    const answer = await send_get_request('users/customer/addresses');
+    if (answer == undefined) throw new Error("Failed to send data");
+    
+    return answer["addresses"];
+  } catch(err){
+    console.log(err);
+  }
+}
+
+const OrderScreen = ({navigation, route}) => {
+  const items = route.params.params.itemCounts;
+  const kitchen = route.params.params.kitchen;
+  //const items = [{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120}]
   var totalPrice = 0;
-  items.map(item => {totalPrice = totalPrice + item.price});
+  kitchen.menu.map(dish => {totalPrice = totalPrice + items[dish._id].price;});
 
+  const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
-
-  const deliveryOptions = ["Home","Office", "Pickup"];
+  const [addresses, setAddresses] = useState([]);
+  useEffect(() => get_address().then(address => setAddresses(address)).catch(error => console.log(error)), []);
+  const deliveryOptions =  [...addresses.map(a => a.name),"Pickup"];
   const dateOptions = ["ASAP","Future Delivery"];
-  const [selectedDelivery, setSelectedDelivery] = useState("Home");
+  const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -45,6 +64,47 @@ const OrderScreen = ({navigation}) => {
 
   const [date, setDate] = useState(new Date());
 
+  const get_address_delivery = (name) => {
+    var selected_address = "Pickup";
+    addresses.forEach(location => {
+      if(location.name === name){
+        selected_address = location.address;
+      }
+    });
+    return selected_address;
+  }
+
+  const get_items = () => {
+    let new_items = [];
+    kitchen.menu.forEach(dish => {
+      new_items = [...new_items,{"name": dish.name ,"quantity": items[dish._id].count}]
+    });
+    
+    return new_items;
+  }
+
+  const send_order = async () => {
+    try{
+      const current_date = new Date();
+      const new_order = {
+        "kitchen": kitchen._id,
+        "price": totalPrice,
+        "costumer":user._id,
+        "comments": comments,
+        "isPickup": selectedDelivery == "Pickup",
+        "deliveryAddress": get_address_delivery(selectedDelivery),
+        "status": "Pending Approval",
+        "items": get_items(),
+        "date": current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
+        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
+      }
+      const answer = await send_post_request('order/submit',new_order);
+      if (answer == undefined) throw new Error("Failed to send data");
+    } catch(err){
+      console.log(err);
+    }
+  };
+  
   return (
     <View style={{flex:1}}>
       <View style={[styles.rowView, {marginBottom: 32}]}>
@@ -57,7 +117,7 @@ const OrderScreen = ({navigation}) => {
       <ShadowCard>
         <View style={{paddingHorizontal: 8}}>
           {
-            items.map((item,idx) => SingleOrder(`${item.name}${idx}`,item.amount,item.price))
+            kitchen.menu.map((dish,idx) => SingleOrder(`${dish.name}`,items[dish._id].count,items[dish._id].price))
           }
           <View style={[styles.rowView, {justifyContent: 'space-between'}]}>
             <Text style={styles.totalPrice}>Total</Text>
@@ -128,7 +188,7 @@ const OrderScreen = ({navigation}) => {
 
       <BlankDivider height={32}/>
       <Button
-        onClick={() => console.log('sending order...')}
+        onClick={() => {send_order().then(() => navigation.navigate("ExploreInternal")).catch(error => console.log(error));}}
         borderColor="black"
         fillColor="white"
         text="Send Order"
@@ -163,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 8
   },
-  amount: {
+  count: {
     color: Colors.lightGray
   },
   price: {
