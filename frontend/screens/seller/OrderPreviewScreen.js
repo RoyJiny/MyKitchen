@@ -108,19 +108,19 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
           <BlankDivider height={16} />
           
-          {item.order.comments !== "" && <Text style={styles.textStyle}>Comments: {item.order.comments}</Text>}
+          {item.comments !== "" && <Text style={styles.textStyle}>Comments: {item.comments}</Text>}
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
           <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
-          <Text style={styles.textStyle}>Address: {item.order.deliveryAddress}</Text>
+          <Text style={styles.textStyle}>Address: {item.deliveryAddress}</Text>
           <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={styles.textStyle}>{item.order.dueDate}</Text>
+          <Text style={styles.textStyle}>{item.dueDate}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
