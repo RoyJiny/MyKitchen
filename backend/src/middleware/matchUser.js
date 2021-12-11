@@ -3,14 +3,15 @@ const Order = require('../models/Order');
 
 const matchUserKitchen = async (req, res, next) => {
     try {
-        kitchen_id = req.body.kitchen.id;
+        kitchen_id = req.body.kitchenID;
 
         const kitchen = await Kitchen.findById(kitchen_id);
 
         if (!kitchen.seller.equals(req.user._id)) {
             throw new Error();
         }
-
+        
+        req.kitchen = kitchen;
         next();
     } catch (e) {
         res.status(401).send("Unauthorized");

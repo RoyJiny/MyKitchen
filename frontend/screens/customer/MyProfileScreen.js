@@ -1,4 +1,4 @@
-import React,{useState,useRef,useCallback, useContext } from 'react'
+import React,{useState,useRef,useCallback, useContext, useEffect } from 'react'
 import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
 import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
@@ -6,7 +6,6 @@ import * as Icons from '@expo/vector-icons'
 import { UserContext } from "../../contexts/UserContext";
 import { Rating } from 'react-native-ratings';
 
-import { ServerBase } from '../../globals/globals';
 import Colors from '../../globals/Colors';
 import { deleteAuthToken } from '../../api/async_storage';
 
@@ -92,17 +91,14 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [addresses, setAddresses] = useState([...user.addresses]);
   const [orderList, setOrderList] = useState([])
 
+  useEffect(() => {
+    send_get_request("orders/customer/get_orders")
+      .then(data => {setOrderList(data);})
+      .catch(err => {console.log(err);});
+  },[]);
+
   let scroll_position = 0;
   const ScrollViewRef = useRef();
-
-  const sendAddresses = async () => {
-    try{
-      const answer = await send_post_request("users/customer/addresses",addresses); // need to change the route for it to work with addresses TODO
-      if (answer == undefined) throw new Error("Failed to send data");
-    } catch(err){
-      console.log(err);
-    }
-  }
 
   const modalOnSubmit = () => {
     if (addresses.filter(a => a.id == modalState.id).length >= 1) {
@@ -111,9 +107,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       modalState.id = addresses.length + 1;
       setAddresses([...addresses, modalState]);
     }
-    //sendAddresses(); TODO
-    setModalState({id: 0,name: "", address: ""});
-    setShowModal(false)
+    send_post_request("users/customer/addresses/add",{address: {name: modalState.name, address: modalState.address}})
+      .then(() => {setModalState({id: 0,name: "", address: ""});setShowModal(false);})
+      .catch(err => {console.log(err);});
   }
 
   const postRating = async () => {
@@ -362,7 +358,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           index,
           address,
           () => {setModalState(address); setShowModal(true)},
-          () => setAddresses(addresses.filter(a => a.id != address.id))
+          () => send_post_request("users/customer/addresses/remove",{address_name: address.name})
+            .then(() => {setAddresses(addresses.filter(a => a.id != address.id))})
+            .catch(() => {console.log(err);})
         ))}
         {
           addresses.length == 0 ? <Text style={{alignSelf: 'center', color: Colors.lightGray}}>Click the '+' to add an address</Text> : null

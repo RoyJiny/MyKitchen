@@ -1,1 +1,1 @@
-export const ServerBase = "https://a0f7-176-230-236-178.ngrok.io";
+export const ServerBase=  "http://0565-80-230-103-107.ngrok.io";
