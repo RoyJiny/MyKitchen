@@ -1,18 +1,22 @@
 import React,{useState,useRef,useCallback, useContext } from 'react'
 import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
+import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
 import { UserContext } from "../../contexts/UserContext";
 import { Rating } from 'react-native-ratings';
 
+import { ServerBase } from '../../globals/globals';
 import Colors from '../../globals/Colors';
 import { deleteAuthToken } from '../../api/async_storage';
 
 import {Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
 
-const AddressCard = (address,onEdit,onDelete) => {
+import { send_post_request, send_get_request } from '../../utils/requests';
+
+const AddressCard = (key,address,onEdit,onDelete) => {
   return (
-    <ShadowCard key={address._id}>
+    <ShadowCard key={key}>
       <View style={{
         flexDirection:'row',
         justifyContent: 'space-between',
@@ -70,133 +74,35 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [modalState, setModalState] = useState({id: 0,addressName: "", address: ""})
+  const [modalState, setModalState] = useState({id: 0,name: "", address: ""})
+
+  const [showPhone, setShowPhone] = useState(false);
+  const [phoneState, setPhoneState] = useState(user.phone);
+  const [waitingCode, setWaitingCode] = useState(false);
+  const [codeState, setCodeState] = useState('');
+  const [wrongCode, setWrongCode] = useState(false);
+  const [wrongPhone, setWrongPhone] = useState(false);
 
   const [showLinks, setShowLinks] = useState(false);
-  const [linksState, setLinksState] = useState([])
+  const [linksState, setLinksState] = useState([]);
   const [showRating, setShowRating] = useState(false);
-  const [ratingState, setRatingState] = useState({id: 0,rating: 0})
+  const [ratingState, setRatingState] = useState({id: 0,rating: 0});
   const [showNavigation, setShowNavigation] = useState(false);
-  const [navigationState, setNavigationState] = useState('')
-  // for addresses useState(user.addresses) ?? or go straight to user and make new set function
-  // previous mock data - [{id: 1,addressName: "Home", address: "Rothschild 100, Tel Aviv"},{id: 2,addressName: "Office", address: "HaShalom 17, Tel Aviv"}]
-  const [addresses, setAddresses] = useState(user.addresses);
-  const [orderList, setOrderList] = useState([{
-    _id: "61a0b59b0cce3e7dc7586631",
-    kitchen: {
-        bio: {
-            coordinates: {
-                longitude: 34.8163735,
-                latitude: 32.0666868
-            },
-            name: "test kitchen",
-            street: "Ben Gurion 100",
-            city: "Ramat Gan",
-            phone: "03123123",
-            description: "best kitchen ever!",
-            tags: [
-                "bakery",
-                "deserts"
-            ],
-            coverImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpd2o2M9OaVj4KTy6iqtHbJeSlvTAHhUuHaA&usqp=CAU'
-        },
-        logistics: {
-            isOnlyFutureDelivery: false,
-            operationDays: [
-                {
-                    day: "sunday",
-                    isActive: false,
-                    startTime: "",
-                    endTime: "",
-                    _id: "61a2398f81bb968b5c850f05"
-                },
-                {
-                    day: "monday",
-                    isActive: true,
-                    startTime: "8:00",
-                    endTime: "16:00",
-                    _id: "61a2398f81bb968b5c850f06"
-                }
-            ],
-            isSupportDelivery: true,
-            maxDeliveryDistance: 5,
-            paymentLinks: [
-                "link1",
-                "link2"
-            ]
-        },
-        rating: {
-            value: 4.7,
-            count: 83
-        },
-        _id: "61a2398f81bb968b5c850f00",
-        seller: "61a2398f81bb968b5c850eff",
-        menu: [
-            {
-                name: "dish1",
-                price: 30,
-                img: {
-                    data: {
-                        type: "Buffer",
-                        data: [
-                            52,
-                            53,
-                            54,
-                            52
-                        ]
-                    },
-                    _id: "61a2398f81bb968b5c850f02"
-                },
-                description: "good dish 1",
-                _id: "61a2398f81bb968b5c850f01"
-            },
-            {
-                name: "dish2",
-                price: 30,
-                img: {
-                    data: {
-                        type: "Buffer",
-                        data: [
-                            52,
-                            53,
-                            54,
-                            52
-                        ]
-                    },
-                    _id: "61a2398f81bb968b5c850f04"
-                },
-                description: "good dish 2",
-                _id: "61a2398f81bb968b5c850f03"
-            }
-        ],
-        __v: 0
-    },
-    customer: "619e91c9566e39756ef6290b",
-    price: 30,
-    comments: "make it good",
-    isPickup: false,
-    deliveryAddress: "hashalom 1",
-    status: 'Waiting Payment',
-    rated: false,
-    items: [
-        {
-            name: "dish 1",
-            quantity: 1,
-            _id: "61a0b59b0cce3e7dc7586632"
-        },
-        {
-            name: "dish 2",
-            quantity: 3,
-            _id: "61a0b59b0cce3e7dc7586633"
-        }
-    ],
-    dueDate: "ASAP",
-    __v: 0,
-    date: "ASAP"
-}])
+  const [navigationState, setNavigationState] = useState('');
+  const [addresses, setAddresses] = useState([...user.addresses]);
+  const [orderList, setOrderList] = useState([])
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
+
+  const sendAddresses = async () => {
+    try{
+      const answer = await send_post_request("users/customer/addresses",addresses); // need to change the route for it to work with addresses TODO
+      if (answer == undefined) throw new Error("Failed to send data");
+    } catch(err){
+      console.log(err);
+    }
+  }
 
   const modalOnSubmit = () => {
     if (addresses.filter(a => a.id == modalState.id).length >= 1) {
@@ -205,8 +111,18 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       modalState.id = addresses.length + 1;
       setAddresses([...addresses, modalState]);
     }
-    setModalState({id: 0,addressName: "", address: ""});
+    //sendAddresses(); TODO
+    setModalState({id: 0,name: "", address: ""});
     setShowModal(false)
+  }
+
+  const postRating = async () => {
+    try{
+      const answer = await send_post_request("users/customer/rate_kitchen",ratingState);
+      if (answer == undefined) throw new Error("Failed to send data");
+    } catch(err){
+      console.log(err);
+    }
   }
 
   const sendRating = () => {
@@ -219,14 +135,42 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         break
       }
     }
-    // post rating state to DB 
+    // postRating(); // post rating state to DB
+  }
+
+  const sendPhone = async (phone) => {
+    try{
+      const answer = await send_get_request('verify/request_verification/?phone='+phone);
+      if (answer == undefined) throw new Error("Failed to send data");
+      setCodeState('');
+      setWrongPhone(false);
+      setWaitingCode(true);
+    } catch(err){
+      console.log(err);
+      setWrongPhone(true);
+    }
+  }
+
+  const sendCode = async (code,phone) => {
+    try{
+      const answer = await send_post_request("verify/submit_code/",{code: code, phone: phone});
+      if (answer == undefined) throw new Error("Failed to send data");
+      setWaitingCode(false);
+      setWrongCode(false);
+      setWrongPhone(false);
+      setShowPhone(false);
+      setUser({...user, phone: phoneState});
+    } catch(err){
+      console.log(err);
+      setWrongCode(true);
+    }
   }
 
   return (
     <View style={{flex:1}}>
       <Backdrop text='My Profile' height={80}/>
       
-      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
+      <Modal isVisible={showModal} onBackdropPress={() => {setModalState({id: 0,name: "", address: ""});setShowModal(false);}}>
         <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
@@ -238,9 +182,9 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
               margin: 4
             }}
             onChangeText={txt => {
-              setModalState({...modalState, addressName: txt});
+              setModalState({...modalState, name: txt});
             }}
-            value={modalState.addressName}
+            value={modalState.name}
             placeholder={"Address Name"}
           />
           <TextInput
@@ -260,7 +204,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           />
           <TouchableOpacity
             onPress={() => {
-              if (modalState.address !== "" && modalState.addressName !== "") {
+              if (modalState.address !== "" && modalState.name !== "") {
                 modalOnSubmit();
               }
             }}
@@ -274,6 +218,77 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           >
             <Text>Cancel</Text>
           </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal isVisible={showPhone} onBackdropPress={() => setShowPhone(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          <>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setPhoneState(txt);
+            }}
+            value={phoneState}
+            placeholder={"Enter Phone Number"}
+            keyboardType="numeric"
+            autoFocus={true}
+            onSubmitEditing={() => sendPhone(phoneState)}
+          />
+          { wrongPhone==false ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Invalid phone number</Text>
+            </Animatable.View>
+          }
+          </>
+          {waitingCode? 
+          <>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setCodeState(txt);
+            }}
+            value={codeState}
+            placeholder={"Enter Verification Code"}
+            keyboardType="numeric"
+            autoFocus={true}
+            onSubmitEditing={() => sendCode(codeState,phoneState)}
+          />
+          { wrongCode==false ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Wrong code, try again</Text>
+            </Animatable.View>
+          }
+          </>
+          :null}
+          <TouchableOpacity
+            onPress={() => sendPhone(phoneState)}
+            style={{alignItems: 'center', marginVertical: 12}}
+          >
+            <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>{waitingCode? 'Resend Code' : 'Send Code'}</Text>
+          </TouchableOpacity>
+          {waitingCode? 
+          <TouchableOpacity
+            onPress={() => sendCode(codeState,phoneState)}
+            style={{alignItems: 'center', marginVertical: 12}}
+          >
+            <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>Submit Code</Text>
+          </TouchableOpacity>
+          : null}
         </View>
       </Modal>
 
@@ -325,17 +340,26 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           <Image style={styles.profileImage} source={{uri: user.imgUrl || "https://w7.pngwing.com/pngs/527/663/png-transparent-logo-person-user-person-icon-rectangle-photography-computer-wallpaper.png"}}/>
         </View>
         
-        <BlankDivider height={32}/>
+        <BlankDivider height={16}/>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+          {user.phone == ''? <Text style={styles.subtitle}>Add Phone Number</Text>
+            :<View style={{flexDirection: 'row'}}><Text style={styles.subtitle}>Phone Number:  </Text><Text style={styles.phone}>{user.phone}</Text></View>}
+          <TouchableOpacity onPress={() => {setWaitingCode(false);setPhoneState(user.phone);setShowPhone(true);}}>
+            <Icons.Feather name={user.phone == ''? 'plus':'edit'} size={20} color={addresses.length <= 2 ? 'black' : 'gray'}/>
+          </TouchableOpacity>
+        </View>
+        <BlankDivider height={16}/>
         
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
           <Text style={styles.subtitle}>My Addresses</Text>
           <TouchableOpacity disabled={addresses.length > 2} onPress={() => setShowModal(true)}>
-            <Icons.Feather name='plus' size={30} color={addresses.length <= 2 ? 'black' : 'gray'}/>
+            <Icons.Feather name='plus' size={20} color={addresses.length <= 2 ? 'black' : 'gray'}/>
           </TouchableOpacity>
           
         </View>
         
-        {addresses.map(address => AddressCard(
+        {addresses.map((address, index) => AddressCard(
+          index,
           address,
           () => {setModalState(address); setShowModal(true)},
           () => setAddresses(addresses.filter(a => a.id != address.id))
@@ -349,6 +373,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
+          orderList.length == 0 ? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> :
           orderList.filter(t => t.status !== 'Done').map((item, index) => {
             return (
               <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
@@ -357,25 +382,29 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <BlankDivider height={32}/>
 
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={styles.subtitle}>Recent Orders</Text>
-          <ExpantionArrow
-            onClick={() => {
-              if (!expandRecentOrders){
-                // 88 for each order we want to scroll + 16 of extra padding
-                ScrollViewRef.current?.scrollTo({y: scroll_position + 2*88 + 16,animated: true,});
-              }
-              setExpandRecentOrders(!expandRecentOrders);
-            }}
-            isInitaialyExpanded={true}
-          />
-        </View>
-        
-        {
-          orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
-            return (
-              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
-          )})
+        { orderList.filter(t => t.status == 'Done').length > 0 ?
+          (<><View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={styles.subtitle}>Recent Orders</Text>
+            <ExpantionArrow
+              onClick={() => {
+                if (!expandRecentOrders){
+                  // 88 for each order we want to scroll + 16 of extra padding
+                  ScrollViewRef.current?.scrollTo({y: scroll_position + 2*88 + 16,animated: true,});
+                }
+                setExpandRecentOrders(!expandRecentOrders);
+              }}
+              isInitaialyExpanded={true}
+            />
+          </View>
+          
+          <View>
+            {
+              orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
+                return (
+                  <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
+              )})
+            }
+          </View></>) : null
         }
 
         <BlankDivider height={16}/>
@@ -418,6 +447,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold'
   },
+  phone: {
+    fontSize: 20
+  },
   contentContainer: {
     marginHorizontal: 16
   },
@@ -425,7 +457,15 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 50/2
-  }
+  },
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginTop: 2,
+  },
 });
 
 export default MyProfileScreen;

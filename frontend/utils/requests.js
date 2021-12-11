@@ -5,45 +5,33 @@ import { ServerBase } from '../globals/globals';
 import { getAuthToken } from '../api/async_storage';
 
 export const send_post_request = async (url,body,auth=true,additional_headers={}) => {
-  try {
-    var config = {}
-    if (auth) {
-      const token = await getAuthToken();
-      config = {
-        headers: {
-          ...additional_headers,
-          "Authorization": `Bearer ${token}`
-        }
-      };
-    }
-    const res = await axios.post(`${ServerBase}/${url}`,body,config);
-    if (res.status >= 300) throw new Error("Bad status code:",res.status);
-    return res.data;
-  } catch (err) {
-    console.log('POST request failed:',err)
-    return undefined;
+  var config = {}
+  if (auth) {
+    const token = await getAuthToken();
+    config = {
+      headers: {
+        ...additional_headers,
+        "Authorization": `Bearer ${token}`
+      }
+    };
   }
+  const res = await axios.post(`${ServerBase}/${url}`,body,config);
+  return res.data;
 }
 
 export const send_get_request = async (url,auth=true,additional_headers={}) => {
-  try {
-    var config = {}
-    if (auth) {
-      const token = await getAuthToken();
-      config = {
-        headers: {
-          ...additional_headers,
-          "Authorization": `Bearer ${token}`
-        }
-      };
-    }    
-    const res = await axios.get(`${ServerBase}/${url}`,config);
-    if (res.status >= 300) throw new Error("Bad status code:",res.status);
-    return res.data;
-  } catch (err) {
-    console.log('POST request failed:',err)
-    return undefined;
-  }
+  var config = {}
+  if (auth) {
+    const token = await getAuthToken();
+    config = {
+      headers: {
+        ...additional_headers,
+        "Authorization": `Bearer ${token}`
+      }
+    };
+  }    
+  const res = await axios.get(`${ServerBase}/${url}`,config);
+  return res.data;
 }
 
 export const upload_image = async (image,type,kitchenId,dishId=undefined) => {

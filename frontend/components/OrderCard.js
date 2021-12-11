@@ -11,7 +11,7 @@ const OrderCard = ({ onClick, orderNumber, orderStatus, orderDate, price }) => {
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                         <Text style={styles.number}>{"Order #" + orderNumber}</Text>
                     </View>
-                    <Text style={getTextStyle(orderStatus)}>{orderStatus}</Text>
+                    <Text style={{color: "#808080",textAlign: 'left',fontSize: 16}}>{orderStatus}</Text>
                     <Text style={styles.date}>{orderDate}</Text>
                 </View>
                 <View>
@@ -97,21 +97,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
 
     },
-
-    customer: {
-        color: Colors.black,
-        textAlign: 'left',
-        fontSize: 16,
-    },
-
     price: {
         color: Colors.black,
         textAlign: 'left',
-        fontSize: 20,
+        fontSize: 18,
         paddingRight: 15,
         paddingLeft: 20,
     },
-
 });
-//
+
 export default OrderCard;

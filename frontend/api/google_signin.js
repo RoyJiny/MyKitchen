@@ -10,15 +10,15 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
 
   Google.logInAsync(config)
     .then(result => {
-      const {type,idToken,accessToken,user} = result;
+      const {type,idToken,accessToken,user: googleUser} = result;
       if (type == 'success') {
-        send_post_request('users/signin',{googleId: user.id},false)
+        send_post_request('users/signin',{googleId: googleUser.id},false)
           .then(data => {
             saveAuthToken(data.token)
               .then(() => {
                 send_get_request('users/me')
                   .then(user_data => {
-                    setUser({...user, ...user_data});
+                    setUser({...user_data});
                     successCB(user_data.isSeller);
                   })
                   .catch(err => console.log(err))
@@ -27,24 +27,24 @@ const signin = (successCB,stopLoadingCB,isSeller,setUser) => {
           })
           .catch(_ => { // failed to sign in -> try registering
             const userDetails = {
-              email: user.email,
-              name: user.givenName,
-              imgUrl: user.photoUrl,
+              email: googleUser.email,
+              name: googleUser.givenName,
+              imgUrl: googleUser.photoUrl,
               isSeller: isSeller,
-              googleId: user.id,
+              googleId: googleUser.id,
               addresses: [],
               favorites: []
             };
 
             if (isSeller) { // dont register yet, just pass information for the next screens
-              setUser({...user, ...userDetails});
+              setUser({...userDetails});
               successCB(); // move to kitchen registration
               return;
             }
       
             send_post_request(`users/${'customer'}/register`,userDetails,false)
               .then(data => {
-                setUser({...user, ...userDetails});
+                setUser({...userDetails});
                 saveAuthToken(data.token).then(successCB).catch(err => console.log(err));
               })
               .catch(err => console.log(err));
