@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-
+import { send_post_request } from '../../utils/requests';
 import Colors from '../../globals/Colors';
 import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
+import { send_get_request } from '../../utils/requests';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
-  const [st, setStatus] = useState(item.order.status);
+  const [st, setStatus] = useState(item.status);
 
   const getButton = (i) => {
     var j = getJ(st);
@@ -28,25 +29,52 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     }
   }
 
+  const get_data_from_server = () => {
+    send_get_request('orders/seller/get_orders')
+      .then(data => setStatus(data.status))
+      .catch(err => {console.log(err);setStatus("Pending Approval")});
+  }
+
+  const updateStatusDB = (new_status) => {
+    console.log(item._id)
+    console.log(new_status)
+    send_post_request('orders/seller/update_status',{
+      id: item._id,
+      status: new_status
+    })
+    .then()
+    .catch(err => {console.log(err); kitchen.distance=0 ; setIsLoading(false);});
+
+    get_data_from_server();
+  }
+
+ 
+
   const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
         setStatus("Waiting For Payment");
+        updateStatusDB("Waiting For Payment");
         break;
       case "Waiting For Payment":
         setStatus("In the Making");
+        updateStatusDB("In the Making");
         break;
       case "In the Making":
         setStatus("Ready for Customer");
+        updateStatusDB("Ready for Customer");
         break;
       case "Ready for Customer":
         setStatus("Done");
+        updateStatusDB("Done");
         break;
       case "Done":
         setStatus("");
+        updateStatusDB("");
         break;
       default:
         setStatus("");
+        updateStatusDB("");
         break;
     }
   }
@@ -58,10 +86,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
           <View style={{flexDirection:'row'}}>
             <BackButton onClick={navigation.goBack} />
-            <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
+            <Text style={styles.orderNum}>{"Order #" + item._id}</Text>
           </View>
 
-          <Text style={styles.date}>{item.order.date}</Text>
+          <Text style={styles.date}>{item.date}</Text>
         </View>
         
         <BlankDivider height={20} />
@@ -70,7 +98,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Items:</Text>
           <ScrollView>
             {
-              item.order.items.map((i, index) => {
+              item.items.map((i, index) => {
                 return (
                   <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
                 )
@@ -80,19 +108,19 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
           <BlankDivider height={16} />
           
-          {item.order.comments !== "" && <Text style={styles.textStyle}>Comments: {item.order.comments}</Text>}
+          {item.comments !== "" && <Text style={styles.textStyle}>Comments: {item.comments}</Text>}
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
           <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
-          <Text style={styles.textStyle}>Address: {item.order.deliveryAddress}</Text>
+          <Text style={styles.textStyle}>Address: {item.deliveryAddress}</Text>
           <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={styles.textStyle}>{item.order.dueDate}</Text>
+          <Text style={styles.textStyle}>{item.dueDate}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 

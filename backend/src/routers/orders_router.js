@@ -46,11 +46,13 @@ router.get("/orders/seller/get_orders", auth, async (req,res) => {
   try {
     const user = req.user;
 
-    let kitchen = await Kitchen.findOne({_seller: user._id});
-    
-    let user_orders = await Order.find({kitchen: kitchen}).populate("customer");
+    let kitchen = await Kitchen.findOne({seller: user._id});
+    if (!kitchen) { throw new Error(); }
 
-    res.send({user_orders});
+    let orders = await Order.find({kitchen: kitchen._id}).populate("customer");
+    if (!orders) { throw new Error(); }
+
+    res.status(200).send(orders);
   } catch (err) {
     console.log(err);
     res.status(500).send({error: 'Server Error'});
@@ -62,9 +64,10 @@ router.get("/orders/customer/get_orders", auth, async (req,res) => {
   try {
     const user = req.user;
 
-    let user_orders = await Order.find({_customer: user._id}).populate('kitchen');
-
-    res.send({user_orders});
+    let user_orders = await Order.find({customer: user._id}).populate('kitchen');
+    if (!user_orders) { throw new Error(); }
+    
+    res.status(200).send(user_orders);
   } catch (err) {
     console.log(err);
     res.status(500).send({error: 'Server Error'});
