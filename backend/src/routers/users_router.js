@@ -41,7 +41,7 @@ router.post("/users/seller/register", async (req,res) => {
         
         kitchen_data.seller = user._id;
         const kitchen = new Kitchen(kitchen_data);
-        
+
         await user.save();
         await kitchen.save();
 
@@ -94,12 +94,12 @@ router.get("/users/signout", auth, async (req,res) => {
 
 router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res) => {
     try {
-        kitchen_data = req.body.kitchen; // TBD: maybe send bio only? 
+        new_data = req.body.bio; // TBD: maybe send bio only? 
 
         const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
-        kitchen_data.bio = { ...kitchen_data.bio, coordinates };
+        new_data = { ...new_data, coordinates };
 
-        await Kitchen.findByIdAndUpdate(kitchen_data.id, {bio: kitchen_data.bio})
+        await Kitchen.findByIdAndUpdate(req.user.kitchen, {bio: {...new_data}})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -110,9 +110,9 @@ router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res)
 
 router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res) => {
     try {
-        kitchen_data = req.body.kitchen;
+        new_data = req.body.menu;
 
-        await Kitchen.findByIdAndUpdate(kitchen_data.id, {menu: kitchen_data.menu})
+        await Kitchen.findByIdAndUpdate(req.user.kitchen, {menu: {...new_data}})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -121,11 +121,11 @@ router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res
     }
 });
 
-router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (req,res) => {
+router.post("/users/seller/edit/logistics", auth,  async (req,res) => {
     try {
-        kitchen_data = req.body.kitchen;
+        new_data = req.body.logistics;
 
-        await Kitchen.findByIdAndUpdate(kitchen_data.id, {logistics: kitchen_data.logistics})
+        await Kitchen.findByIdAndUpdate(req.user.kitchen, {logistics: {...new_data}})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -137,6 +137,11 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
 router.get("/users/me", auth, async (req,res) => {
     const user = await User.findById(req.user._id).populate('favorites');
     res.send(user);
+});
+
+router.get("/users/seller/kitchen", auth, async (req,res) => {
+    const kitchen = await Kitchen.findById(req.user.kitchen);
+    res.send(kitchen);
 });
 
 // Users Registration, info and editing - END
@@ -152,7 +157,7 @@ router.get("/users/customer/addresses", auth, async (req,res) => {
     }
 });
 
-router.post("/users/customer/addresses", auth, async (req,res) => {
+router.post("/users/customer/addresses/add", auth, async (req,res) => {
     try {
         user = req.user;
         new_address = req.body.address;
@@ -174,7 +179,7 @@ router.post("/users/customer/addresses", auth, async (req,res) => {
     }
 });
 
-router.delete("/users/customer/addresses", auth, async (req,res) => {
+router.post("/users/customer/addresses/remove", auth, async (req,res) => {
     try {
         user = req.user;
         address_name = req.body.address_name;

@@ -62,7 +62,7 @@ router.get("/orders/customer/get_orders", auth, async (req,res) => {
   try {
     const user = req.user;
 
-    let user_orders = await Order.find({_customer: user._id}).populate('kitchen');
+    let user_orders = await Order.find({customer: user._id}).populate('kitchen');
 
     res.send({user_orders});
   } catch (err) {

@@ -2,13 +2,14 @@ import React from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../globals/Colors';
+import {ServerBase} from '../globals/globals';
 
 const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setShowLinks,setNavigationState,setShowNavigation}) => {
     return (
       <View>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
         <View style={{flexDirection: 'row'}}>
-          <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: order.kitchen.bio.coverImg}}/>
+          <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: `${ServerBase}/images/${order.kitchen.bio.coverImg}`}}/>
           
           <View>
             <Text style={{fontSize: 18}}>{order.kitchen.bio.name}</Text>

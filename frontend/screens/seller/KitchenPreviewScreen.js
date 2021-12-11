@@ -2,8 +2,11 @@ import React,{useState} from 'react'
 import {View,StyleSheet,Text,Image,Dimensions,ScrollView} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
+import { ServerBase } from '../../globals/globals';
 import {BackButton,ShadowCard,ExpantionArrow,SellerMenuItem} from '../../components';
 import Colors from '../../globals/Colors';
+
+import { send_get_request } from '../../utils/requests';
 
 const KitchenPreviewScreen = ({navigation}) => {
   const [expandTimes, setExpandTimes] = useState(false);
