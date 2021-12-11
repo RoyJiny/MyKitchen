@@ -29,9 +29,17 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     }
   }
 
+  const changeStatus = (data) => {
+    data.forEach(order => {
+      if(order._id == item._id){
+        setStatus(order.status);
+      }
+    });
+  }
+
   const get_data_from_server = () => {
     send_get_request('orders/seller/get_orders')
-      .then(data => setStatus(data.status))
+      .then(data => changeStatus(data))
       .catch(err => {console.log(err);setStatus("Pending Approval")});
   }
 
@@ -43,7 +51,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
       status: new_status
     })
     .then()
-    .catch(err => {console.log(err); kitchen.distance=0 ; setIsLoading(false);});
+    .catch(err => {console.log(err);});
 
     get_data_from_server();
   }
@@ -100,7 +108,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
             {
               item.items.map((i, index) => {
                 return (
-                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
+                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} />
                 )
               })
             }

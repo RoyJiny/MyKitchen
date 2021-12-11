@@ -3,11 +3,11 @@ import {Text,View,StyleSheet,Image} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const ItemPreview = ({OrderName,number,imgLink}) => {
+const ItemPreview = ({OrderName,number}) => {
   return (
     <View style={{flexDirection:"row", justifyContent:"space-between",marginBottom:8}}>
       <View style={{flexDirection:"row"}}>
-        <Image style={styles.image} source={{ uri: imgLink }}/>
+        {/* <Image style={styles.image} source={{ uri: imgLink }}/> */}
         <View style={{marginLeft:16}}>
             <Text style={styles.name}>{OrderName}</Text>
             <Text style={styles.subtitle}>x{number}</Text>
