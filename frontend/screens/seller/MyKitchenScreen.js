@@ -1,14 +1,23 @@
-import React,{useContext} from 'react';
+import React,{useContext,useEffect} from 'react';
 import {View,StyleSheet,Dimensions} from 'react-native'
 import {MaterialIcons, Ionicons, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons'
 import { SellerContext } from "../../contexts/SellerContext";
 
 import { deleteAuthToken } from '../../api/async_storage';
+import { send_post_request, send_get_request } from '../../utils/requests';
 
 import {Backdrop,KitchenCard,Button} from '../../components';
  
 const MyKitchenScreen = ({navigation,signoutCB}) => {
+
   const {seller, setSeller} = useContext(SellerContext);
+
+  useEffect(() => {
+    send_get_request("users/me/seller")
+      .then(data => {setSeller(data);})
+      .catch(err => {console.log(err);});
+  },[]);
+
   const widthPhone = Dimensions.get('window').width
   const tableSpaces = widthPhone*0.03
   const logoSize = widthPhone*0.2
@@ -38,7 +47,7 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
             />
             <View style={{marginRight:tableSpaces}}></View>
             <KitchenCard
-              onClick={() => navigation.navigate("KitchenPreview")}
+              onClick={() => navigation.navigate("KitchenPreview",{seller})}
               logo = {<MaterialCommunityIcons name="chef-hat" size={logoSize} color="black" />}
               description="Kitchen Preview"
             />

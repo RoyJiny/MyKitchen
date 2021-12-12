@@ -110,12 +110,12 @@ router.post("/users/notification_token", auth,  async (req,res) => {
 
 router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res) => {
     try {
-        new_data = req.body.bio; // TBD: maybe send bio only? 
+        new_data = req.body.bio; 
 
-        const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
+        const coordinates = await get_coordinates(`${new_data.street}, ${new_data.city}`)
         new_data = { ...new_data, coordinates };
 
-        await Kitchen.findByIdAndUpdate(req.user.kitchen, {bio: {...new_data}})
+        await Kitchen.findByIdAndUpdate(req.body.id, {bio: {...req.kitchen.bio ,...new_data}})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -127,8 +127,17 @@ router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res)
 router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res) => {
     try {
         new_data = req.body.menu;
+        new_menu = req.kitchen.menu;
 
-        await Kitchen.findByIdAndUpdate(req.user.kitchen, {menu: {...new_data}})
+        new_data.forEach(dish => {
+            if (dish._id){
+                new_menu = [...new_menu.filter(item => (item._id !== dish._id), dish)];
+            }else{
+                new_menu = [...new_menu, dish];
+            }
+        })
+
+        await Kitchen.findByIdAndUpdate(req.body.id, {menu: new_menu})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -137,11 +146,11 @@ router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res
     }
 });
 
-router.post("/users/seller/edit/logistics", auth,  async (req,res) => {
+router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (req,res) => {
     try {
         new_data = req.body.logistics;
 
-        await Kitchen.findByIdAndUpdate(req.user.kitchen, {logistics: {...new_data}})
+        await Kitchen.findByIdAndUpdate(req.body.id, {logistics: new_data})
 
         res.send("Processed Successfuly");
     } catch (err) {
@@ -155,9 +164,9 @@ router.get("/users/me", auth, async (req,res) => {
     res.send(user);
 });
 
-router.get("/users/seller/kitchen", auth, async (req,res) => {
-    const kitchen = await Kitchen.findById(req.user.kitchen);
-    res.send(kitchen);
+router.get("/users/me/seller", auth, async (req,res) => {
+    const kitchen = await Kitchen.findOne({ seller: req.user._id });
+    res.send({user: req.user, kitchen: kitchen});
 });
 
 // Users Registration, info and editing - END

@@ -112,15 +112,6 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
       .catch(err => {console.log(err);});
   }
 
-  const postRating = async () => {
-    try{
-      const answer = await send_post_request("users/customer/rate_kitchen",ratingState);
-      if (answer == undefined) throw new Error("Failed to send data");
-    } catch(err){
-      console.log(err);
-    }
-  }
-
   const sendRating = () => {
     console.log(ratingState);
     for (let i=0; i< orderList.length; i++){
@@ -131,7 +122,19 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         break
       }
     }
-    // postRating(); // post rating state to DB
+
+    send_post_request("users/customer/rate_kitchen",{id: ratingState.id, rating: ratingState.rating})
+      .then(() => {
+        for (let i=0; i< orderList.length; i++){
+          if(orderList[i]._id == ratingState.id){
+            let orderCopy = [...orderList];
+            orderCopy[i].rated=true;
+            setOrderList(orderCopy)
+            break
+          }
+        }
+      })
+      .catch(err => {console.log(err);});
   }
 
   const sendPhone = async (phone) => {
