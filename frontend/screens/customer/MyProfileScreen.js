@@ -375,7 +375,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.length == 0 ? 
+          orderList.reverse().filter(t => t.status !== 'Done').length == 0 ? 
             fetchOrdersDone? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> 
             :
             <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>Loading your orders...</Text> 
