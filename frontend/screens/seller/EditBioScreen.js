@@ -23,7 +23,7 @@ const EditBioScreen = ({navigation}) => {
   const [phone, setPhone] = useState(seller.kitchen.bio.phone);
   const [description, setDescription] = useState(seller.kitchen.bio.description);
   const [tagList, setTagList] = useState(seller.kitchen.bio.tags);
-  const [image, setImage] = useState(seller.kitchen.bio.coverImage);
+  const [image, setImage] = useState(seller.kitchen.bio.coverImg);
   const [firstTime, setfirstTime] = useState(true);
   const [categories, setCategories] = useState([]);
 
@@ -170,7 +170,7 @@ const EditBioScreen = ({navigation}) => {
         <ShadowCard2>
           <View style={{flexDirection:'row',marginLeft: 8}}>
             <Text style={{fontSize: 18}}>Add Cover Photo:</Text>
-            <ImUp image= {didImageChange? image : `${ServerBase}/images/${image}`} /* not showing before change.. TODO */ setImage= {(im) => {setDidImageChange(true);setImage(im);}}/>
+            <ImUp image= {didImageChange ? image : `${ServerBase}/images/${image}`} setImage= {(im) => {setDidImageChange(true);setImage(im);}}/>
           </View>
         </ShadowCard2>
 
