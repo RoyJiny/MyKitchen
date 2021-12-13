@@ -126,20 +126,13 @@ router.post("/users/seller/edit/bio", [auth, matchUserKitchen],  async (req,res)
 
 router.post("/users/seller/edit/menu", [auth, matchUserKitchen],  async (req,res) => {
     try {
-        new_data = req.body.menu;
-        new_menu = req.kitchen.menu;
+        let kitchen = await Kitchen.findById(req.body.id);
+        if (!kitchen) throw new Error("Kitchen does not exist");
 
-        new_data.forEach(dish => {
-            if (dish._id){
-                new_menu = [...new_menu.filter(item => (item._id !== dish._id), dish)];
-            }else{
-                new_menu = [...new_menu, dish];
-            }
-        })
+        kitchen.menu = req.body.menu;
+        await kitchen.save();
 
-        await Kitchen.findByIdAndUpdate(req.body.id, {menu: new_menu})
-
-        res.send("Processed Successfuly");
+        res.send({dish_ids: kitchen.menu.map(dish => dish._id)});
     } catch (err) {
         console.log(err);
         res.status(500).send({error: 'Server Error'});
