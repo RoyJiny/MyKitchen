@@ -2,16 +2,17 @@ import React from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../globals/Colors';
+import {ServerBase} from '../globals/globals';
 
 const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setShowLinks,setNavigationState,setShowNavigation}) => {
     return (
-      <View>
+      <View style={{flex: 1}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
         <View style={{flexDirection: 'row'}}>
-          <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: order.kitchen.bio.coverImg}}/>
+          <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: `${ServerBase}/images/${order.kitchen.bio.coverImg}`}}/>
           
-          <View>
-            <Text style={{fontSize: 18}}>{order.kitchen.bio.name}</Text>
+          <View style={{ /* decide width? or make more robust */}}>
+            <Text numberOfLines={1} style={{width: 150, fontSize: 18}}>{order.kitchen.bio.name}</Text>
             {order.status != 'Pending Approval' && order.status != 'Done'? 
             <TouchableOpacity onPress={() => {setNavigationState(order.kitchen.bio.street+', '+order.kitchen.bio.city);setShowNavigation(true);}} >
               <Text style={{fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>show address</Text>
@@ -22,11 +23,11 @@ const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setSho
           </View>
         </View>
   
-        <View style={{alignSelf: 'center'}}>
-          {order.status !== null ? <Text style={{textAlign: 'center', fontSize: 14}}>{order.status}</Text> : null}
+        <View style={{alignSelf: 'center' /* decide width? or make more robust */}}>
+          {order.status !== null ? <Text style={{textAlign: 'center', fontSize: 12}}>{order.status}</Text> : null}
           <Text style={{textAlign: 'center', fontSize: 14}}>${order.price}</Text>
           <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{order.dueDate}</Text>
-          {order.status == 'Waiting Payment'? 
+          {order.status == 'Waiting For Payment'? 
           <TouchableOpacity onPress={() => {setLinksState(order.kitchen.logistics.paymentLinks);setShowLinks(true);}} >
             <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC', fontWeight:'bold'}}>payment links</Text>
           </TouchableOpacity> : null}

@@ -1,14 +1,23 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {View,StyleSheet,Text,Alert,Keyboard,TouchableWithoutFeedback,TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SellerContext } from "../../contexts/SellerContext";
 import * as Animatable from 'react-native-animatable';
 
 import {BackButton,Button2,BlankDivider,Dish} from '../../components';
+import { send_post_request, send_get_request } from '../../utils/requests';
 
 const EditMenuScreen = ({navigation}) => {
+
   const {seller, setSeller} = useContext(SellerContext);
-  const [dishItems, setDishItems] = useState([]);
+
+  useEffect(() => {
+    send_get_request("users/me/seller")
+      .then(data => {console.log(data);setSeller(data);})
+      .catch(err => {console.log(err);});
+  },[]);
+
+  const [dishItems, setDishItems] = useState(seller.kitchen.menu.map((item, index) => ({...item, key: index})));
   const [alerted, setAlerted] = useState(false);
   const [firstTime, setfirstTime] = useState(true);
   const [checkValid, setcheckValid] = useState(false);
@@ -78,6 +87,24 @@ const EditMenuScreen = ({navigation}) => {
     return true
   }
 
+  const sendData = () => {
+    send_post_request("users/seller/edit/menu",{id: seller.kitchen._id, menu: dishItems})
+      .then(() => {
+        // upload images
+        var upload_promises = dishItems.map(async (dish,idx) => {
+          await upload_image(dish.imgLink, 'dishImg', data.kitchen_id, data.dishes_ids[idx]);
+        });
+        // wait for all uploads
+        Promise.all(upload_promises)
+        .then(() => {
+          setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});
+          navigation.navigate("MyKitchenInternal");
+        })
+        .catch(err => {console.log(err);});
+      })
+      .catch(err => {console.log(err);});
+  }
+
   return (
       <KeyboardAwareScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -86,7 +113,7 @@ const EditMenuScreen = ({navigation}) => {
           <BackButton onClick={navigation.goBack}/>
           <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
           <Button2
-            onClick={() => {setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms
+            onClick={sendData}
             fillColor = "white"
             text ="Done"
             textColor = "black"
@@ -152,7 +179,7 @@ const EditMenuScreen = ({navigation}) => {
                   onChangeName= {(text) => changeDishName(index,text)}
                   desc= {item.description}
                   onChangeDesc= {(text) => changeDishDesc(index,text)}
-                  pricing= {item.price}
+                  pricing= {String(item.price)}
                   onChangePricing= {(text) => changeDishPrice(index,text)}
                 />
             )

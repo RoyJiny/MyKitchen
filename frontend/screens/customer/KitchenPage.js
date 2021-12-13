@@ -21,7 +21,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   
   const initial_item_counts = {};
   for (const item of kitchen.menu) {
-    initial_item_counts[item._id] = {count: 0};
+    initial_item_counts[item._id] = {count: 0, price: item.price};
   }
   const [itemCounts, setItemCounts] = useState(initial_item_counts);
   const [showModal, setShowModal] = useState(false);
@@ -80,7 +80,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             marginHorizontal: 30
           }}>
             <View style={{width: 80, height: 80, borderRadius: 10, alignContent:"center"}}>
-              <Image style={{width: 80,height:80, borderRadius: 10}} source={{uri: kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}} />
+              <Image style={{width: 80,height:80, borderRadius: 10}} source={{uri: modalState.img}} />
             </View>
             <View style={{
               flexDirection:'column',
@@ -180,7 +180,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => navigation.navigate("Order")}
+            onClick={() => navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
             borderColor="black"
             fillColor="white"
             text="Order"
@@ -192,13 +192,13 @@ const KitchenPageScreen = ({route,navigation}) => {
 
       {
         kitchen.menu.map(dish =>
-          <TouchableOpacity key={dish._id} onLongPress={() => {setModalState(dish); setShowModal(true)}}> 
+          <TouchableOpacity key={dish._id} onLongPress={() => {setModalState({...dish, img: dish.img ? `${ServerBase}/images/${dish.img}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}); setShowModal(true)}}> 
             <OrderMenuItem
               itemName={dish.name}
               price={dish.price}
               description={dish.description}
               count={itemCounts[dish._id].count}
-              setCount={diff => {setItemCounts({...itemCounts, [dish._id]: {count: Math.max(itemCounts[dish._id].count+diff,0)}})}}
+              setCount={diff => {setItemCounts({...itemCounts, [dish._id]: {count: Math.max(itemCounts[dish._id].count+diff,0), price: itemCounts[dish._id].price}})}}
               imgLink={dish.img ? `${ServerBase}/images/${dish.img}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
             />
           </TouchableOpacity>

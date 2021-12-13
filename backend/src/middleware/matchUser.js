@@ -3,17 +3,18 @@ const Order = require('../models/Order');
 
 const matchUserKitchen = async (req, res, next) => {
     try {
-        kitchen_id = req.body.kitchen.id;
+        kitchen_id = req.body.id;
 
         const kitchen = await Kitchen.findById(kitchen_id);
 
         if (!kitchen.seller.equals(req.user._id)) {
             throw new Error();
         }
-
+        
+        req.kitchen = kitchen;
         next();
     } catch (e) {
-        res.status(401).send("Unauthorized");
+        res.status(401).send({ error: "Unauthorized" });
     }
 };
 
@@ -30,7 +31,7 @@ const matchUserOrder = async (req, res, next) => {
         req.order = order;
         next();
     } catch (e) {
-        res.status(401).send("Unauthorized");
+        res.status(401).send({ error: "Unauthorized" });
     }
 };
 
@@ -48,7 +49,7 @@ const matchKitchenOrder = async (req, res, next) => {
         req.order = order;
         next();
     } catch (e) {
-        res.status(401).send("Unauthorized");
+        res.status(401).send({ error: "Unauthorized" });
     }
 };
 

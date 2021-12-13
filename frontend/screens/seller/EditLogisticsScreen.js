@@ -1,4 +1,4 @@
-import React,{useState, useContext} from 'react';
+import React,{useState, useContext, useEffect} from 'react';
 import {View,StyleSheet,Text,TouchableWithoutFeedback,Keyboard,ScrollView, TouchableOpacity} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SellerContext } from "../../contexts/SellerContext";
@@ -6,43 +6,42 @@ import ToggleSwitch from 'toggle-switch-react-native'
 import * as Animatable from 'react-native-animatable';
 
 import {BackButton,Button2,BlankDivider,ShadowCard2,ToggleText,YesNoChoice,FormInput} from '../../components';
+import { send_post_request, send_get_request } from '../../utils/requests';
 
-const EditLogisticsScreen = ({navigation,loginCB}) => {
+const EditLogisticsScreen = ({navigation}) => {
+
   const {seller, setSeller} = useContext(SellerContext);
-  const [operatingDays, setOperatingDays] = useState({preorderOnly: false, Sunday:{isActive:false, startTime:'08:00', endTime:'16:00'},Monday:{isActive:false, startTime:'08:00', endTime:'16:00'},Thuesday:{isActive:false, startTime:'08:00', endTime:'16:00'},Wednesday:{isActive:false, startTime:'08:00', endTime:'16:00'},Thursday:{isActive:false, startTime:'08:00', endTime:'16:00'},Friday:{isActive:false, startTime:'08:00', endTime:'16:00'},Saturday:{isActive:false, startTime:'08:00', endTime:'16:00'}});
-  const [delivery, setDelivery] = useState({support: false, distance: ''});
-  const [payLinks, setPayLinks] = useState(['','']);
+
+  useEffect(() => {
+    send_get_request("users/me/seller")
+      .then(data => {console.log(data);setSeller(data);})
+      .catch(err => {console.log(err);});
+  },[]);
+
+  const [isOnlyFutureDelivery, setIsOnlyFutureDelivery] = useState(seller.kitchen.logistics.isOnlyFutureDelivery);
+  const [operationDays, setOperationDays] = useState(seller.kitchen.logistics.operationDays);
+  const [isSupportDelivery, setIsSupportDelivery] = useState(seller.kitchen.logistics.isSupportDelivery);
+  const [distance, setDistance] = useState(String(seller.kitchen.logistics.maxDeliveryDistance));
+  const [payLinks, setPayLinks] = useState(seller.kitchen.logistics.paymentLinks);
   const [firstTime, setfirstTime] = useState(true);
-
-  const setPreorderOnly = (value) => {
-    setOperatingDays({...operatingDays, preorderOnly: value})
-  }
   
-  const setDayState = (day,value) => {
-    if (operatingDays.preorderOnly) {return}
-    let copy = {...operatingDays}
-    copy[day] = {...copy[day], active: value}
-    setOperatingDays(copy)
+  const setDayState = (index,value) => {
+    if (isOnlyFutureDelivery) {return}
+    let copy = [...operationDays]
+    copy[index] = {...copy[index], isActive: value}
+    setOperationDays(copy)
   }
 
-  const setDayStartTime = (day,value) => {
-    let copy = {...operatingDays}
-    copy[day] = {...copy[day], startTime: value}
-    setOperatingDays(copy)
+  const setDayStartTime = (index,value) => {
+    let copy = [...operationDays]
+    copy[index] = {...copy[index], startTime: value}
+    setOperationDays(copy)
   }
 
-  const setDayEndTime = (day,value) => {
-    let copy = {...operatingDays}
-    copy[day] = {...copy[day], endTime: value}
-    setOperatingDays(copy)
-  }
-
-  const setDeliverySupport = (value) => {
-    setDelivery({...delivery, support: value})
-  }
-
-  const changeNumber = (value) => {
-    setDelivery({...delivery, distance: value})
+  const setDayEndTime = (index,value) => {
+    let copy = [...operationDays]
+    copy[index] = {...copy[index], endTime: value}
+    setOperationDays(copy)
   }
 
   const changePayLink = (index,text) => {
@@ -59,7 +58,14 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
             <BackButton onClick={navigation.goBack}/>
             <TouchableOpacity onPress={()=>{console.log(payLinks), setfirstTime(false)}}>
             <Button2
-              onClick={() => {setSeller({...seller, ...{kitchen: {...seller.kitchen, ...{logistics: {operatingDays: operatingDays,delivery: delivery,payLinks: payLinks}}}}});navigation.navigate("MyKitchenInternal");}}
+              onClick={() => {
+                var logistics_obj = {operationDays: operationDays, isSupportDelivery: isSupportDelivery, paymentLinks: payLinks, isOnlyFutureDelivery: isOnlyFutureDelivery}
+                if (isSupportDelivery) logistics_obj.maxDeliveryDistance = parseInt(distance);
+                console.log(logistics_obj);
+                send_post_request("users/seller/edit/logistics",{id: seller.kitchen._id, logistics: logistics_obj})
+                .then(() => {setSeller({...seller, kitchen: {...seller.kitchen, logistics: logistics_obj}});navigation.navigate("MyKitchenInternal");})
+                .catch(err => {console.log(err);});
+              }}
               borderColor = "black"
               fillColor = "white"
               text ="Done"
@@ -77,27 +83,27 @@ const EditLogisticsScreen = ({navigation,loginCB}) => {
             <View style={{flexDirection:'row', justifyContent: 'space-between', alignItems:'center', marginVertical:4}}>
               <Text style={{fontSize: 16, marginLeft: 16}}>Preorders only:</Text>
               <ToggleSwitch style={{marginRight: 16}}
-                isOn={operatingDays.preorderOnly}
+                isOn={isOnlyFutureDelivery}
                 onColor='#7CC0FA'
                 offColor="lightgray"
                 size="small"
-                onToggle={(isOn) => setPreorderOnly(isOn)}
+                onToggle={setIsOnlyFutureDelivery}
               />
             </View>
-            <ToggleText text ="Sunday" isSelected={operatingDays.Sunday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('sunday',value)} startTime ={operatingDays.Sunday.startTime} setStartTime={(value) => setDayStartTime('sunday',value)} endTime ={operatingDays.Sunday.endTime} setEndTime={(value) => setDayEndTime('sunday',value)}/>
-            <ToggleText text ="Monday" isSelected={operatingDays.Monday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('monday',value)} startTime ={operatingDays.Monday.startTime} setStartTime={(value) => setDayStartTime('monday',value)} endTime ={operatingDays.Monday.endTime} setEndTime={(value) => setDayEndTime('monday',value)}/>
-            <ToggleText text ="Thuesday" isSelected={operatingDays.Thuesday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('thuesday',value)} startTime ={operatingDays.Thuesday.startTime} setStartTime={(value) => setDayStartTime('thuesday',value)} endTime ={operatingDays.Thuesday.endTime} setEndTime={(value) => setDayEndTime('thuesday',value)}/>
-            <ToggleText text ="Wednesday" isSelected={operatingDays.Wednesday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('wednesday',value)} startTime ={operatingDays.Wednesday.startTime} setStartTime={(value) => setDayStartTime('wednesday',value)} endTime ={operatingDays.Wednesday.endTime} setEndTime={(value) => setDayEndTime('wednesday',value)}/>
-            <ToggleText text ="Thursday" isSelected={operatingDays.Thursday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('thursday',value)} startTime ={operatingDays.Thursday.startTime} setStartTime={(value) => setDayStartTime('thursday',value)} endTime ={operatingDays.Thursday.endTime} setEndTime={(value) => setDayEndTime('thursday',value)}/>
-            <ToggleText text ="Friday" isSelected={operatingDays.Friday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('friday',value)} startTime ={operatingDays.Friday.startTime} setStartTime={(value) => setDayStartTime('friday',value)} endTime ={operatingDays.Friday.endTime} setEndTime={(value) => setDayEndTime('friday',value)}/>
-            <ToggleText text ="Saturday" isSelected={operatingDays.Saturday.isActive && !operatingDays.preorderOnly} setIsSelected={(value) => setDayState('saturday',value)} startTime ={operatingDays.Saturday.startTime} setStartTime={(value) => setDayStartTime('saturday',value)} endTime ={operatingDays.Saturday.endTime} setEndTime={(value) => setDayEndTime('saturday',value)}/>
+            <ToggleText text ="Sunday" isSelected={operationDays[0].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(0,value)} startTime ={operationDays[0].startTime} setStartTime={(value) => setDayStartTime(0,value)} endTime ={operationDays[0].endTime} setEndTime={(value) => setDayEndTime(0,value)}/>
+            <ToggleText text ="Monday" isSelected={operationDays[1].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(1,value)} startTime ={operationDays[1].startTime} setStartTime={(value) => setDayStartTime(1,value)} endTime ={operationDays[1].endTime} setEndTime={(value) => setDayEndTime(1,value)}/>
+            <ToggleText text ="Thuesday" isSelected={operationDays[2].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(2,value)} startTime ={operationDays[2].startTime} setStartTime={(value) => setDayStartTime(2,value)} endTime ={operationDays[2].endTime} setEndTime={(value) => setDayEndTime(2,value)}/>
+            <ToggleText text ="Wednesday" isSelected={operationDays[3].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(3,value)} startTime ={operationDays[3].startTime} setStartTime={(value) => setDayStartTime(3,value)} endTime ={operationDays[3].endTime} setEndTime={(value) => setDayEndTime(3,value)}/>
+            <ToggleText text ="Thursday" isSelected={operationDays[4].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(4,value)} startTime ={operationDays[4].startTime} setStartTime={(value) => setDayStartTime(4,value)} endTime ={operationDays[4].endTime} setEndTime={(value) => setDayEndTime(4,value)}/>
+            <ToggleText text ="Friday" isSelected={operationDays[5].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(5,value)} startTime ={operationDays[5].startTime} setStartTime={(value) => setDayStartTime(5,value)} endTime ={operationDays[5].endTime} setEndTime={(value) => setDayEndTime(5,value)}/>
+            <ToggleText text ="Saturday" isSelected={operationDays[6].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(6,value)} startTime ={operationDays[6].startTime} setStartTime={(value) => setDayStartTime(6,value)} endTime ={operationDays[6].endTime} setEndTime={(value) => setDayEndTime(6,value)}/>
             <BlankDivider height={8}/>
           </ShadowCard2>
           <BlankDivider height={16}/>
 
           <ShadowCard2>
             <Text style={{fontSize: 18, marginLeft: 8}}>Do you support delivery?</Text>
-            <YesNoChoice category = "Maximum Distance:" units = "km" Ncomment = "(pickup only)" number = {delivery.distance} onChangeNumber = {changeNumber} isSelected = {delivery.support} setIsSelected = {setDeliverySupport}/>
+            <YesNoChoice category = "Maximum Distance:" units = "km" Ncomment = "(pickup only)" number = {distance} onChangeNumber = {setDistance} isSelected = {isSupportDelivery} setIsSelected = {setIsSupportDelivery}/>
             <BlankDivider height={8}/>
           </ShadowCard2>
           <BlankDivider height={16}/>

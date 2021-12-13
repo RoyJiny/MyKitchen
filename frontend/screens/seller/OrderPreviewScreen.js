@@ -4,10 +4,11 @@ import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@exp
 
 import Colors from '../../globals/Colors';
 import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
+import { send_get_request,send_post_request } from '../../utils/requests';
 
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item } = route.params;
-  const [st, setStatus] = useState(item.order.status);
+  const [st, setStatus] = useState(item.status);
 
   const getButton = (i) => {
     var j = getJ(st);
@@ -28,25 +29,58 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     }
   }
 
+  const changeStatus = (data) => {
+    data.forEach(order => {
+      if(order._id == item._id){
+        setStatus(order.status);
+      }
+    });
+  }
+
+  const get_data_from_server = () => {
+    send_get_request('orders/seller/get_orders')
+      .then(data => changeStatus(data))
+      .catch(err => {console.log(err);setStatus("Pending Approval")});
+  }
+
+  const updateStatusDB = (new_status) => {
+    send_post_request('orders/seller/update_status',{
+      id: item._id,
+      status: new_status
+    })
+    .then()
+    .catch(err => {console.log(err);});
+
+    get_data_from_server();
+  }
+
+ 
+
   const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
         setStatus("Waiting For Payment");
+        updateStatusDB("Waiting For Payment");
         break;
       case "Waiting For Payment":
         setStatus("In the Making");
+        updateStatusDB("In the Making");
         break;
       case "In the Making":
         setStatus("Ready for Customer");
+        updateStatusDB("Ready for Customer");
         break;
       case "Ready for Customer":
         setStatus("Done");
+        updateStatusDB("Done");
         break;
       case "Done":
         setStatus("");
+        updateStatusDB("");
         break;
       default:
         setStatus("");
+        updateStatusDB("");
         break;
     }
   }
@@ -58,10 +92,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
           <View style={{flexDirection:'row'}}>
             <BackButton onClick={navigation.goBack} />
-            <Text style={styles.orderNum}>{"Order #" + item.order.id}</Text>
+            <Text style={styles.orderNum}>{"Order #" + item._id}</Text>
           </View>
 
-          <Text style={styles.date}>{item.order.date}</Text>
+          <Text style={styles.date}>{item.date}</Text>
         </View>
         
         <BlankDivider height={20} />
@@ -70,9 +104,9 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Items:</Text>
           <ScrollView>
             {
-              item.order.items.map((i, index) => {
+              item.items.map((i, index) => {
                 return (
-                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} imgLink={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPPVgeegVDlt8YwrzQDHsno8GY0cQ4LV0eMQ&usqp=CAU"} />
+                  <ItemPreview key={index} OrderName={i.name} number={i.quantity} />
                 )
               })
             }
@@ -80,19 +114,20 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
           <BlankDivider height={16} />
           
-          {item.order.comments !== "" && <Text style={styles.textStyle}>Comments: {item.order.comments}</Text>}
+          {item.comments !== "" && <Text style={styles.textStyle}>Comments: {item.comments}</Text>}
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Customer Info:</Text>
           <Text style={styles.textStyle}>Name: {item.customer.name}</Text>
-          <Text style={styles.textStyle}>Address: {item.order.deliveryAddress}</Text>
-          <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text>
+          <Text style={styles.textStyle}>Address: {item.deliveryAddress}</Text>
+          {item.customer.phone !== "" ? <Text style={styles.textStyle}>Phone: {item.customer.phone}</Text> : null}
+          
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Delivery Date:</Text>
-          <Text style={styles.textStyle}>{item.order.dueDate}</Text>
+          <Text style={styles.textStyle}>{item.dueDate}</Text>
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
@@ -150,14 +185,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           
           <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
             <View style={{ flex: 1, }}>
-              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 4)} />
+              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 3)} />
             </View>
-            <Text style={getStatusStyle(st, 4)}>Done</Text>
-            <View style={{ flex: 2, height: 36, }}>
-              {
-                getButton(4)
-              }
-            </View>
+            <Text style={getStatusStyle(st, 3)}>Done</Text>
+            <View style={{ flex: 2, height: 36, }}></View>
           </View>
 
         </View>
@@ -171,23 +202,16 @@ const getJ = (stat) => {
   switch (stat) {
     case "Pending Approval":
       return 0;
-      break;
     case "Waiting For Payment":
       return 1;
-      break;
-
     case "In the Making":
       return 2;
-      break;
     case "Ready for Customer":
       return 3;
-      break;
     case "Done":
       return 4;
-      break;
     default:
       return 5;
-      break;
   }
 }
 
