@@ -1,22 +1,41 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,TouchableOpacity,Keyboard} from 'react-native';
 import { SellerContext } from "../../contexts/SellerContext";
 import * as Animatable from 'react-native-animatable';
 
 import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
+import { send_post_request, send_get_request, upload_image } from '../../utils/requests';
+import {ServerBase} from '../../globals/globals';
 
-const EditBioScreen = ({navigation, loginCB}) => {
+const EditBioScreen = ({navigation}) => {
+
   const {seller, setSeller} = useContext(SellerContext);
-  const [name, setName] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [phone, setPhone] = useState('');
-  const [description, setDescription] = useState('');
-  const [tagList, setTagList] = useState([]);
-  const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
+
+  useEffect(() => {
+    send_get_request("users/me/seller")
+      .then(data => {setSeller(data);})
+      .catch(err => {console.log(err);});
+  },[]);
+
+  const [name, setName] = useState(seller.kitchen.bio.name);
+  const [street, setStreet] = useState(seller.kitchen.bio.street);
+  const [city, setCity] = useState(seller.kitchen.bio.city);
+  const [phone, setPhone] = useState(seller.kitchen.bio.phone);
+  const [description, setDescription] = useState(seller.kitchen.bio.description);
+  const [tagList, setTagList] = useState(seller.kitchen.bio.tags);
+  const [image, setImage] = useState(seller.kitchen.bio.coverImage);
   const [firstTime, setfirstTime] = useState(true);
   const [categories, setCategories] = useState([]);
+
+  const [didImageChange,setDidImageChange] = useState(false);
   
+  const get_tags = () => {
+    send_get_request('tags/list',false)
+    .then(data => setCategories(data.tags))
+    .catch(err => {console.log(err);setCategories([])});
+  }
+
+  useEffect(get_tags, []);
 
   const addTag = (text) => {
     setTagList([...tagList, text])
@@ -35,7 +54,20 @@ const EditBioScreen = ({navigation, loginCB}) => {
           <BackButton onClick={navigation.goBack}/>
           <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
           <Button2
-            onClick={() => {setSeller({...seller, ...{kitchen: {...seller.kitchen, ...{bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}}});navigation.navigate("MyKitchenInternal");}} //here use global args from all forms and send to DB
+            onClick={() => {
+              send_post_request("users/seller/edit/bio",{id: seller.kitchen._id, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList}})
+                .then(() => {
+                  setSeller({...seller, ...{kitchen: {...seller.kitchen, bio: {...seller.kitchen.bio, name: name,street: street,city: city,phone: phone,description: description,tags: tagList}}}});
+                  if (didImageChange) {
+                    upload_image(image, 'coverImg', seller.kitchen._id)
+                      .then(() => {navigation.navigate("MyKitchenInternal");})
+                      .catch(err => {console.log(err);})
+                  }else{
+                    navigation.navigate("MyKitchenInternal");
+                  }
+                })
+                .catch(err => {console.log(err);});
+            }}
             borderColor = "black"
             fillColor = "white"
             text ="Done"
@@ -117,59 +149,20 @@ const EditBioScreen = ({navigation, loginCB}) => {
 
         <ShadowCard2>
           <Text style={{fontSize: 18, marginLeft: 8}}>Tags:</Text>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
-            <Tag
-              text ="Bakery"
-              textColor = "black"
-              stateInit = {tagList.includes("Bakery")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Cakes"
-              textColor = "black"
-              stateInit = {tagList.includes("Cakes")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Special Events"
-              textColor = "black"
-              stateInit = {tagList.includes("Special Events")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Meat"
-              textColor = "black"
-              stateInit = {tagList.includes("Meat")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-          </View>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
-            <Tag
-              text ="Delivery"
-              textColor = "black"
-              stateInit = {tagList.includes("Delivery")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Home Food"
-              textColor = "black"
-              stateInit = {tagList.includes("Home Food")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-            <Tag
-              text ="Vegan"
-              textColor = "black"
-              stateInit = {tagList.includes("Vegan")}
-              add = {addTag}
-              remove = {removeTag}
-            />
-          </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: 4}}>
+            {
+              categories.map(category =>
+                <Tag
+                  key = {category.name}
+                  text = {category.name}
+                  textColor = "black"
+                  stateInit = {tagList.includes(category.name)}
+                  add = {addTag}
+                  remove = {removeTag}
+                />
+              )
+            }
+          </ScrollView>
         </ShadowCard2>
 
         <BlankDivider height={16}/>
@@ -177,7 +170,7 @@ const EditBioScreen = ({navigation, loginCB}) => {
         <ShadowCard2>
           <View style={{flexDirection:'row',marginLeft: 8}}>
             <Text style={{fontSize: 18}}>Add Cover Photo:</Text>
-            <ImUp image= {image} setImage= {setImage}/>
+            <ImUp image= {didImageChange? image : `${ServerBase}/images/${image}`} /* not showing before change.. TODO */ setImage= {(im) => {setDidImageChange(true);setImage(im);}}/>
           </View>
         </ShadowCard2>
 

@@ -46,8 +46,12 @@ const OrderScreen = ({navigation, route}) => {
   const items = route.params.params.itemCounts;
   const kitchen = route.params.params.kitchen;
   //const items = [{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120}]
-  var totalPrice = 0;
-  kitchen.menu.map(dish => {totalPrice = totalPrice + items[dish._id].price;});
+  const [totalPrice, setTotalPrice] = useState(0);
+  useEffect(() => {
+    let sum = 0;
+    kitchen.menu.map(dish => {sum = sum + items[dish._id].price*items[dish._id].count});
+    setTotalPrice(sum);
+    }, [route]);
 
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
@@ -77,7 +81,7 @@ const OrderScreen = ({navigation, route}) => {
   const get_items = () => {
     let new_items = [];
     kitchen.menu.forEach(dish => {
-      new_items = [...new_items,{"name": dish.name ,"quantity": items[dish._id].count}]
+      if (items[dish._id].count > 0){new_items = [...new_items,{"name": dish.name ,"quantity": items[dish._id].count}]}
     });
     
     return new_items;
@@ -117,7 +121,7 @@ const OrderScreen = ({navigation, route}) => {
       <ShadowCard>
         <View style={{paddingHorizontal: 8}}>
           {
-            kitchen.menu.map((dish,idx) => SingleOrder(`${dish.name}`,items[dish._id].count,items[dish._id].price))
+            kitchen.menu.map((dish,idx) => items[dish._id].count > 0? SingleOrder(`${dish.name}`,items[dish._id].count,items[dish._id].price) : null)
           }
           <View style={[styles.rowView, {justifyContent: 'space-between'}]}>
             <Text style={styles.totalPrice}>Total</Text>
