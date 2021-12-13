@@ -51,7 +51,7 @@ const SellerOrdersScreen = ({ navigation }) => {
         style={styles.scroll}
         refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}>
         {
-          Items.filter(item => tagList.includes(item.status) || tagList.length == 0).map((item, index) => {
+          Items.reverse().filter(item => tagList.includes(item.status) || tagList.length == 0).map((item, index) => {
             return (
                 <View style={styles.order} key={index}>
                   <OrderCard

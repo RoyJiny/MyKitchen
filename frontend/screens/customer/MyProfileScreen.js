@@ -90,10 +90,11 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
   const [navigationState, setNavigationState] = useState('');
   const [addresses, setAddresses] = useState([...user.addresses]);
   const [orderList, setOrderList] = useState([])
+  const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
 
   useEffect(() => {
     send_get_request("orders/customer/get_orders")
-      .then(data => {setOrderList(data);})
+      .then(data => {setOrderList(data);setFetchOrdersDone(true);})
       .catch(err => {console.log(err);});
   },[]);
 
@@ -374,11 +375,15 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.length == 0 ? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> :
-          orderList.filter(t => t.status !== 'Done').map((item, index) => {
-            return (
-              <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
-          )})
+          orderList.length == 0 ? 
+            fetchOrdersDone? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> 
+            :
+            <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>Loading your orders...</Text> 
+          :
+            orderList.reverse().filter(t => t.status !== 'Done').map((item, index) => {
+              return (
+                <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
+            )})
         }
         
         <BlankDivider height={32}/>
@@ -400,7 +405,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           
           <View>
             {
-              orderList.filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
+              orderList.reverse().filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
                 return (
                   <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
               )})
