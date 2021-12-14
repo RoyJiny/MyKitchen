@@ -6,7 +6,7 @@ const ImageWithIndicator = ({imageStyle,imgLink}) => {
     return (
         <View>
           <Image style={{ ...imageStyle, display: isLoading ? 'none' : 'flex' }} source={{uri:imgLink}} onLoadEnd={ ()=>{{setIsLoading(false);}}}/>
-          <ActivityIndicator style={{ ...imageStyle, display: isLoading ? 'flex' : 'none' }} color="black" />
+          {isLoading ? <ActivityIndicator style={{ ...imageStyle }} color="black" /> : null}
         </View>
 
     );

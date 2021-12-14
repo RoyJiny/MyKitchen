@@ -1,5 +1,6 @@
 import React,{useState,useContext} from 'react'
 import {View,StyleSheet,Text,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
+import { Banner } from 'react-native-paper';
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';

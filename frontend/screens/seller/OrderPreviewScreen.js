@@ -92,7 +92,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
           <View style={{flexDirection:'row'}}>
             <BackButton onClick={navigation.goBack} />
-            <Text style={styles.orderNum}>{"Order #" + item._id}</Text>
+            <Text numberOfLines={1} style={styles.orderNum}>{"Order #" + item._id}</Text>
           </View>
 
           <Text style={styles.date}>{item.date}</Text>
@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
   orderNum: {
     fontSize: 32,
     marginLeft: 16,
+    width: 200
   },
   title: {
     fontSize: 20,
