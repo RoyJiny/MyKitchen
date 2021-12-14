@@ -1,5 +1,5 @@
 import React,{useState,useContext} from 'react'
-import {View,StyleSheet,Text,Image,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
+import {View,StyleSheet,Text,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
@@ -9,7 +9,7 @@ import { LocationContext } from '../../contexts/LocationContext';
 import { send_post_request } from '../../utils/requests';
 
 import Modal from 'react-native-modal';
-import  {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider} from '../../components';
+import {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider,ImageWithIndicator} from '../../components';
 
 const KitchenPageScreen = ({route,navigation}) => {
   const {kitchen} = route.params;
@@ -79,9 +79,9 @@ const KitchenPageScreen = ({route,navigation}) => {
             alignItems: 'center',
             marginHorizontal: 30
           }}>
-            <View style={{width: 80, height: 80, borderRadius: 10, alignContent:"center"}}>
-              <Image style={{width: 80,height:80, borderRadius: 10}} source={{uri: modalState.img}} />
-            </View>
+            
+            <ImageWithIndicator imageStyle={{width: 80,height:80, borderRadius: 10}} imgLink={modalState.img}/>
+
             <View style={{
               flexDirection:'column',
               justifyContent:'space-between',
@@ -110,7 +110,7 @@ const KitchenPageScreen = ({route,navigation}) => {
     
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.imageWrapper}>
-        <Image style={[{width: Dimensions.get('window').width},styles.image]} source={{uri: kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}}/>
+        <ImageWithIndicator imageStyle={{width: Dimensions.get('window').width, height: 150}} imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}/>
       </View>
 
       <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>

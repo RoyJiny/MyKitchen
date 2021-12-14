@@ -10,7 +10,7 @@ import { send_post_request, send_get_request } from '../../utils/requests';
 import { SellerContext } from "../../contexts/SellerContext";
 
 import Modal from 'react-native-modal';
-import  {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider} from '../../components';
+import {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider,ImageWithIndicator} from '../../components';
 
 const KitchenPreviewScreen = ({navigation}) => {
 
@@ -88,9 +88,9 @@ const KitchenPreviewScreen = ({navigation}) => {
             alignItems: 'center',
             marginHorizontal: 30
           }}>
-            <View style={{width: 80, height: 80, borderRadius: 10, alignContent:"center"}}>
-              <Image style={{width: 80,height:80, borderRadius: 10}} source={{uri: modalState.img}} />
-            </View>
+
+            <ImageWithIndicator imageStyle={{width: 80,height:80, borderRadius: 10}} imgLink={modalState.img}/>
+
             <View style={{
               flexDirection:'column',
               justifyContent:'space-between',
@@ -119,7 +119,7 @@ const KitchenPreviewScreen = ({navigation}) => {
     
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.imageWrapper}>
-        <Image style={[{width: Dimensions.get('window').width},styles.image]} source={{uri: seller.kitchen.bio.coverImg ? `${ServerBase}/images/${seller.kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}}/>
+        <ImageWithIndicator imageStyle={{width: Dimensions.get('window').width, height: 150}} imgLink={seller.kitchen.bio.coverImg ? `${ServerBase}/images/${seller.kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}/>
       </View>
 
       <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>

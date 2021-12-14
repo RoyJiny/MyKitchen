@@ -1,16 +1,17 @@
 import React from 'react';
-import {Text,View,StyleSheet,TouchableOpacity,Image} from 'react-native';
+import {Text,StyleSheet,TouchableOpacity} from 'react-native';
 
 import Colors from '../globals/Colors';
 
 import ShadowCard from './ShadowCard';
 import BlankDivider from './BlankDivider'
+import  ImageWithIndicator from './ImageWithIndicator';
 
 const KitchenExploreCard = ({onClick,kitchenName,subtitle,imgLink}) => {
     return (
         <TouchableOpacity onPress={onClick}>
             <ShadowCard width={150}>
-                <Image style={styles.image} source={{ uri: imgLink }}/>
+                <ImageWithIndicator imageStyle={styles.image} imgLink={imgLink}/>
                 {subtitle === undefined ? <BlankDivider height={10} /> : null}
                 <Text style={styles.title}>{kitchenName}</Text>
                 {subtitle !== undefined ? <Text style={styles.subtitle}>{subtitle}</Text> : null}

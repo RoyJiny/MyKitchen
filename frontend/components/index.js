@@ -26,3 +26,4 @@ export {default as ShadowCard2} from './ShadowCard2';
 export {default as Tag} from './Tag';
 export {default as ToggleText} from './ToggleText';
 export {default as YesNoChoice} from './YesNoChoice';
+export {default as ImageWithIndicator} from './ImageWithIndicator';
