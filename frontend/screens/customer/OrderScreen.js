@@ -18,7 +18,7 @@ const SingleOrder = (name,count,price) => {
         <Text style={styles.itemName}>{name}</Text>
         <Text style={styles.count}>x{count}</Text>
       </View>
-      <Text style={styles.price}>₪{price}</Text>
+      <Text style={styles.price}>₪{price*count}</Text>
     </View>
     <View style={{
       borderColor: Colors.lightGray,

@@ -24,6 +24,7 @@ const KitchenPageScreen = ({route,navigation}) => {
     initial_item_counts[item._id] = {count: 0, price: item.price};
   }
   const [itemCounts, setItemCounts] = useState(initial_item_counts);
+  const [showBanner, setShowBanner] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
 
@@ -61,8 +62,29 @@ const KitchenPageScreen = ({route,navigation}) => {
     return 'Currently Closed';
   };
 
+  const hasItemsInOrder = () => Object.values(itemCounts).map(item => item.count).reduce((prev,curr) => prev+curr) > 0;
+
+  const alertBanner = (kitchenName) => {
+    function delay(time) {
+      return new Promise(resolve => setTimeout(resolve, time));
+    }
+    
+    delay(3000).then(() => setShowBanner(false));
+    
+    return <Banner
+      visible={showBanner}
+      actions={[]}
+      style={{
+        backgroundColor: Colors.black,
+      }}
+    >
+      <Text style={{color: 'white', fontWeight: 'bold'}}>{kitchenName} is Currenly Closed</Text>
+    </Banner>
+  }
+
   return (
     <View style={{flex:1}}>
+      {getCloseTimeDesc() == 'Currently Closed' ? alertBanner(kitchen.bio.name) : null}
       <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 40, backgroundColor: 'white', borderRadius: 10}}>
         <View style={{justifyContent: 'center'}}>
@@ -180,7 +202,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
+            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
             borderColor="black"
             fillColor="white"
             text="Order"

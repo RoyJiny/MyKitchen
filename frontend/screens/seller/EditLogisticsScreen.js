@@ -14,7 +14,7 @@ const EditLogisticsScreen = ({navigation}) => {
 
   useEffect(() => {
     send_get_request("users/me/seller")
-      .then(data => {console.log(data);setSeller(data);})
+      .then(data => {setSeller(data);})
       .catch(err => {console.log(err);});
   },[]);
 
@@ -127,25 +127,6 @@ const EditLogisticsScreen = ({navigation}) => {
                 <Text style={styles.validation}>Please add at least one payment method</Text>
               </Animatable.View>
             }
-            {/*<TouchableOpacity
-                onPress={() => {}}
-                style={{
-                    borderRadius: 24,
-                    borderColor: 'black',
-                    borderWidth: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 32,
-                    width: 120,
-                    alignSelf: 'center'
-                }}
-            >
-                {
-                  <Text style={{ textAlign:'center',color: 'black', fontSize: 16, }} >
-                          {"Add Another"}
-                  </Text>
-                }
-              </TouchableOpacity>*/}
           </ShadowCard2>
           
           <BlankDivider height={16}/>

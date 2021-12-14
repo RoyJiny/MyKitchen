@@ -1,10 +1,9 @@
-import React,{useState,useContext,useEffect} from 'react'
+import React,{useState,useContext} from 'react'
 import {View,StyleSheet,Text,Image,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
-import { UserContext } from '../../contexts/UserContext';
 import { LocationContext } from '../../contexts/LocationContext';
 import { send_post_request, send_get_request } from '../../utils/requests';
 import { SellerContext } from "../../contexts/SellerContext";
@@ -15,23 +14,12 @@ import {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider,I
 const KitchenPreviewScreen = ({navigation}) => {
 
   const {seller, setSeller} = useContext(SellerContext);
-  
-  useEffect(() => {
-    send_get_request("users/me/seller")
-      .then(data => {setSeller(data);})
-      .catch(err => {console.log(err);});
-  },[]);
-  
-  const {user,setUser} = useContext(UserContext);
+
   const {location} = useContext(LocationContext);
   const [expandTimes, setExpandTimes] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(user.favorites.filter(k => k._id === seller.kitchen._id).length > 0);
+  const [isFavorite, setIsFavorite] = useState(false);
   
-  const initial_item_counts = {};
-  for (const item of seller.kitchen.menu) {
-    initial_item_counts[item._id] = {count: 0, price: item.price};
-  }
-  const [itemCounts, setItemCounts] = useState(initial_item_counts);
+  const [itemCounts, setItemCounts] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
 
@@ -39,16 +27,27 @@ const KitchenPreviewScreen = ({navigation}) => {
   const [distance, setDistance] = useState(-1);
 
   if (isLoading) {
-    if (distance == -1) {
-      send_post_request('users/customer/getDistance',{
-        id: seller.kitchen._id,
-        location: location
+    send_get_request("users/me/seller")
+      .then(data => {
+        setSeller(data);
+        const initial_item_counts = {};
+        for (const item of data.kitchen.menu) {
+          initial_item_counts[item._id] = {count: 0, price: item.price};
+        }
+        setItemCounts(initial_item_counts);
+  
+        if (distance == -1) {
+          send_post_request('users/customer/getDistance',{
+            id: seller.kitchen._id,
+            location: location
+          })
+            .then(data => {setDistance(data.distance); setIsLoading(false);})
+            .catch(err => {console.log(err); setDistance(0); setIsLoading(false);});
+        } else {
+          setIsLoading(false);
+        }
       })
-      .then(data => {setDistance(data.distance); setIsLoading(false);})
-      .catch(err => {console.log(err); setDistance(0); setIsLoading(false);});
-    } else {
-      setIsLoading(false);
-    }
+      .catch(err => {console.log(err);});
     return <ActivityIndicator size={50} color='black'/>;
   }
 

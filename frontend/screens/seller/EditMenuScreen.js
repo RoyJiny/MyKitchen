@@ -5,7 +5,8 @@ import { SellerContext } from "../../contexts/SellerContext";
 import * as Animatable from 'react-native-animatable';
 
 import {BackButton,Button2,BlankDivider,Dish} from '../../components';
-import { send_post_request, send_get_request } from '../../utils/requests';
+import { send_post_request, send_get_request, upload_image } from '../../utils/requests';
+import { ServerBase } from '../../globals/globals';
 
 const EditMenuScreen = ({navigation}) => {
 
@@ -13,7 +14,7 @@ const EditMenuScreen = ({navigation}) => {
 
   useEffect(() => {
     send_get_request("users/me/seller")
-      .then(data => {console.log(data);setSeller(data);})
+      .then(data => {setSeller(data);})
       .catch(err => {console.log(err);});
   },[]);
 
@@ -28,7 +29,7 @@ const EditMenuScreen = ({navigation}) => {
         for (let j = 0; j < dishItems.length; j++) {
             if(dishItems[j].key==i){isIn=true}
         }
-        if(!isIn) {setDishItems([{key: i, name: '', description: '', price: '', imgLink: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}, ...dishItems]); break;}
+        if(!isIn) {setDishItems([{key: i, name: '', description: '', price: '', img: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}, ...dishItems]); break;}
     }
     if(dishItems.length >= 19 && !alerted) { Alert.alert(`Max amount of dishes reached, please delete older ones to add`); setAlerted(true);}
   }
@@ -71,12 +72,12 @@ const EditMenuScreen = ({navigation}) => {
 
   const changeDishImage = (index,url) => {
     let itemsCopy = [...dishItems];
-    itemsCopy[index].imgLink=url;
+    itemsCopy[index].img=url;
     setDishItems(itemsCopy)
   }
 
   const checkEmptyDish = () => {
-    let item = {key: 0, name: '', description: '', price: '', imgLink: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}
+    let item = {key: 0, name: '', description: '', price: '', img: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}
     let itemsCopy = [...dishItems];
     for (let i = 0; i < itemsCopy.length; i++) {
       item = itemsCopy[i]
@@ -88,13 +89,20 @@ const EditMenuScreen = ({navigation}) => {
   }
 
   const sendData = () => {
-    send_post_request("users/seller/edit/menu",{id: seller.kitchen._id, menu: dishItems})
-      .then(() => {
-        // upload images
+    var menu_to_send = dishItems.map(dish => {
+      if (dish.img.startsWith('file') || dish.img.startsWith('http')) {
+        let {img, ...dish_copy} = dish;
+        return dish_copy;
+      }
+      return dish
+    });
+    send_post_request("users/seller/edit/menu",{id: seller.kitchen._id, menu: menu_to_send})
+      .then(({dish_ids}) => {
         var upload_promises = dishItems.map(async (dish,idx) => {
-          await upload_image(dish.imgLink, 'dishImg', data.kitchen_id, data.dishes_ids[idx]);
+          if (dish.img.startsWith('file') || dish.img.startsWith('http')) {
+            await upload_image(dish.img, 'dishImg', seller.kitchen._id, dish_ids[idx]);
+          }
         });
-        // wait for all uploads
         Promise.all(upload_promises)
         .then(() => {
           setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});
@@ -173,7 +181,7 @@ const EditMenuScreen = ({navigation}) => {
                   deleteFunc= {() => deleteDish(index)} 
                   moveUp= {() => moveUp(index)} 
                   moveDown= {() => moveDown(index)} 
-                  imgLink= {item.imgLink}
+                  imgLink= {item.img.startsWith('file')||item.img.startsWith('https') ? item.img : `${ServerBase}/images/${item.img}`}
                   onChangeImage= {(url) => changeDishImage(index,url)}
                   name= {item.name}
                   onChangeName= {(text) => changeDishName(index,text)}
