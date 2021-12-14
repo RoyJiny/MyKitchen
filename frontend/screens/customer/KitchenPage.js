@@ -63,6 +63,8 @@ const KitchenPageScreen = ({route,navigation}) => {
     return 'Currently Closed';
   };
 
+  const hasItemsInOrder = () => Object.values(itemCounts).map(item => item.count).reduce((prev,curr) => prev+curr) > 0;
+
   const alertBanner = (kitchenName) => {
     function delay(time) {
       return new Promise(resolve => setTimeout(resolve, time));
@@ -201,7 +203,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
+            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
             borderColor="black"
             fillColor="white"
             text="Order"
