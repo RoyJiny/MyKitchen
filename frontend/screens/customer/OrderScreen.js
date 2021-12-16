@@ -34,8 +34,6 @@ const SingleOrder = (name,count,price) => {
 const get_address = async () => {
   try{
     const answer = await send_get_request('users/customer/addresses');
-    if (answer == undefined) throw new Error("Failed to send data");
-    
     return answer["addresses"];
   } catch(err){
     console.log(err);
@@ -45,7 +43,6 @@ const get_address = async () => {
 const OrderScreen = ({navigation, route}) => {
   const items = route.params.params.itemCounts;
   const kitchen = route.params.params.kitchen;
-  //const items = [{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120}]
   const [totalPrice, setTotalPrice] = useState(0);
   useEffect(() => {
     let sum = 0;
@@ -61,7 +58,6 @@ const OrderScreen = ({navigation, route}) => {
   const dateOptions = ["ASAP","Future Delivery"];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
-  const [selectedDate, setSelectedDate] = useState(null);
 
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);

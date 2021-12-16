@@ -55,8 +55,8 @@ const SellerOrdersScreen = ({ navigation }) => {
             return (
                 <View style={styles.order} key={index}>
                   <OrderCard
-                    onClick={() => navigation.navigate("OrderPreview", {item})}
-                    orderNumber={item._id}
+                    onClick={() => navigation.navigate("OrderPreview", {item, display_id: index+1})}
+                    orderNumber={index+1} // skip 0
                     orderStatus={item.status}
                     orderDate={item.date}
                     customer={item.customer.name}
