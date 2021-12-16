@@ -375,12 +375,12 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.reverse().filter(t => t.status !== 'Done').length == 0 ? 
+          orderList.slice().reverse().filter(t => t.status !== 'Done').length == 0 ? 
             fetchOrdersDone? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> 
             :
             <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>Loading your orders...</Text> 
           :
-            orderList.reverse().filter(t => t.status !== 'Done').map((item, index) => {
+            orderList.slice().reverse().filter(t => t.status !== 'Done').map((item, index) => {
               return (
                 <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
             )})
@@ -388,7 +388,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         
         <BlankDivider height={32}/>
 
-        { orderList.filter(t => t.status == 'Done').length > 0 ?
+        { orderList.slice().reverse().filter(t => t.status == 'Done').length > 0 ?
           (<><View style={{flexDirection:'row',justifyContent:'space-between'}}>
             <Text style={styles.subtitle}>Recent Orders</Text>
             <ExpantionArrow
@@ -405,7 +405,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           
           <View>
             {
-              orderList.reverse().filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
+              orderList.slice().reverse().filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
                 return (
                   <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
               )})

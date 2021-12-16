@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+
+import ImageWithIndicator from './ImageWithIndicator';
 
 export default function ImChange({isActive, image, setImage}) {
 
@@ -30,7 +32,7 @@ export default function ImChange({isActive, image, setImage}) {
 
   return (
     <TouchableOpacity onPress={isActive ? pickImage : () =>{}}>
-      {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
+      {image && <ImageWithIndicator imageStyle={styles.imageStyle} imgLink={image}/>}
     </TouchableOpacity>
   );
 }

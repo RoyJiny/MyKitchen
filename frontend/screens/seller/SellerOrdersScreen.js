@@ -51,12 +51,12 @@ const SellerOrdersScreen = ({ navigation }) => {
         style={styles.scroll}
         refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}>
         {
-          Items.reverse().filter(item => tagList.includes(item.status) || tagList.length == 0).map((item, index) => {
+          Items.slice().reverse().filter(item => tagList.includes(item.status) || tagList.length == 0).map((item, index) => {
             return (
                 <View style={styles.order} key={index}>
                   <OrderCard
-                    onClick={() => navigation.navigate("OrderPreview", {item})}
-                    orderNumber={item._id}
+                    onClick={() => navigation.navigate("OrderPreview", {item, display_id: index+1})}
+                    orderNumber={index+1} // skip 0
                     orderStatus={item.status}
                     orderDate={item.date}
                     customer={item.customer.name}

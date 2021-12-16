@@ -34,8 +34,6 @@ const SingleOrder = (name,count,price) => {
 const get_address = async () => {
   try{
     const answer = await send_get_request('users/customer/addresses');
-    if (answer == undefined) throw new Error("Failed to send data");
-    
     return answer["addresses"];
   } catch(err){
     console.log(err);
@@ -45,23 +43,21 @@ const get_address = async () => {
 const OrderScreen = ({navigation, route}) => {
   const items = route.params.params.itemCounts;
   const kitchen = route.params.params.kitchen;
-  //const items = [{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120},{name:'Birthday Cake',count: 2,price: 120}]
   const [totalPrice, setTotalPrice] = useState(0);
   useEffect(() => {
     let sum = 0;
     kitchen.menu.map(dish => {sum = sum + items[dish._id].price*items[dish._id].count});
     setTotalPrice(sum);
-    }, [route]);
+  }, [route]);
 
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
   const [addresses, setAddresses] = useState([]);
   useEffect(() => get_address().then(address => setAddresses(address)).catch(error => console.log(error)), []);
-  const deliveryOptions =  [...addresses.map(a => a.name),"Pickup"];
+  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup"}];
   const dateOptions = ["ASAP","Future Delivery"];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
-  const [selectedDate, setSelectedDate] = useState(null);
 
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);
@@ -148,14 +144,18 @@ const OrderScreen = ({navigation, route}) => {
       </View>
 
       {showDelivery
-        ? deliveryOptions.map(delivery =>
-          <View key={delivery} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+        ? deliveryOptions.map((delivery,index) =>
+          <View key={index} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton
-              status={ selectedDelivery == delivery ? 'checked' : 'unchecked' }
+              status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
               color="black"
-              onPress= {() => setSelectedDelivery(delivery)}
+              onPress= {() => setSelectedDelivery(delivery.name)}
             />
-            <Text>{delivery}</Text>
+            <Text>{delivery.name}</Text>
+            {delivery.name !== "Pickup"
+              ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
+              : null
+            }
           </View>
         )
         : null

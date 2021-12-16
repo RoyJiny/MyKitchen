@@ -154,6 +154,7 @@ const AddDishesScreen = ({navigation}) => {
         <BlankDivider height={16}/>
         <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
         <Button2
+          treatAsAsync={false}
           onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, menu: dishItems}}); navigation.navigate("Logistics");}}
           fillColor = "white"
           text ="Next"

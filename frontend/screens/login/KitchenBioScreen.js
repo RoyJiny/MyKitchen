@@ -142,6 +142,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <BlankDivider height={16}/>
         <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
+          treatAsAsync={false}
           onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");}}
           borderColor = "black"
           fillColor = "white"

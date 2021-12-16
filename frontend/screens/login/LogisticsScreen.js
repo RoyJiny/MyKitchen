@@ -36,10 +36,6 @@ const LogisticsScreen = ({navigation,loginCB}) => {
     setSeller(newSellerData);
   };
 
-  const register = (newSellerData) => {
-    submit_data(newSellerData).then(() => loginCB(true)).catch(err => console.log(err));
-  }
-
   const setPreorderOnly = (value) => {
     setOperatingDays({...operatingDays, preorderOnly: value})
   }
@@ -142,12 +138,13 @@ const LogisticsScreen = ({navigation,loginCB}) => {
           <BlankDivider height={16}/>
           <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
           <Button2
-            onClick={() => {
+            onClick={async () => {
               var logistics_obj = {operationDays: [{day:"Sunday",...operatingDays.Sunday},{day:"Monday",...operatingDays.Monday},{day:"Thuesday",...operatingDays.Thuesday},{day:"Wednesday",...operatingDays.Wednesday},{day:"Thursday",...operatingDays.Thursday},{day:"Friday",...operatingDays.Friday},{day:"Saturday",...operatingDays.Saturday}], isSupportDelivery: delivery.support, paymentLinks: payLinks, isOnlyFutureDelivery: operatingDays.preorderOnly}
               if (delivery.support) logistics_obj.maxDeliveryDistance = parseInt(delivery.distance);
               const newSellerData = {...seller, kitchen: {...seller.kitchen, logistics: logistics_obj} };
-              register(newSellerData);
+              await submit_data(newSellerData);
             }}
+            asyncCB={() => loginCB(true)}
             borderColor = "black"
             fillColor = "white"
             text ="Finish"

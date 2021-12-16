@@ -58,13 +58,19 @@ const EditLogisticsScreen = ({navigation}) => {
             <BackButton onClick={navigation.goBack}/>
             <TouchableOpacity onPress={()=>{console.log(payLinks), setfirstTime(false)}}>
             <Button2
-              onClick={() => {
+              onClick={async () => {
                 var logistics_obj = {operationDays: operationDays, isSupportDelivery: isSupportDelivery, paymentLinks: payLinks, isOnlyFutureDelivery: isOnlyFutureDelivery}
                 if (isSupportDelivery) logistics_obj.maxDeliveryDistance = parseInt(distance);
-                console.log(logistics_obj);
-                send_post_request("users/seller/edit/logistics",{id: seller.kitchen._id, logistics: logistics_obj})
-                .then(() => {setSeller({...seller, kitchen: {...seller.kitchen, logistics: logistics_obj}});navigation.navigate("MyKitchenInternal");})
-                .catch(err => {console.log(err);});
+                await send_post_request("users/seller/edit/logistics",{id: seller.kitchen._id, logistics: logistics_obj});
+              }}  
+              asyncCB = {() => {
+                var logistics_obj = {operationDays: operationDays, isSupportDelivery: isSupportDelivery, paymentLinks: payLinks, isOnlyFutureDelivery: isOnlyFutureDelivery}
+                if (isSupportDelivery) logistics_obj.maxDeliveryDistance = parseInt(distance);
+                setSeller({
+                  ...seller,
+                  kitchen: {...seller.kitchen, logistics: logistics_obj}
+                });
+                navigation.navigate("MyKitchenInternal");
               }}
               borderColor = "black"
               fillColor = "white"
