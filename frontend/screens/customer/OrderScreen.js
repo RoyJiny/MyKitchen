@@ -48,13 +48,13 @@ const OrderScreen = ({navigation, route}) => {
     let sum = 0;
     kitchen.menu.map(dish => {sum = sum + items[dish._id].price*items[dish._id].count});
     setTotalPrice(sum);
-    }, [route]);
+  }, [route]);
 
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
   const [addresses, setAddresses] = useState([]);
   useEffect(() => get_address().then(address => setAddresses(address)).catch(error => console.log(error)), []);
-  const deliveryOptions =  [...addresses.map(a => a.name),"Pickup"];
+  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup"}];
   const dateOptions = ["ASAP","Future Delivery"];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
@@ -144,14 +144,18 @@ const OrderScreen = ({navigation, route}) => {
       </View>
 
       {showDelivery
-        ? deliveryOptions.map(delivery =>
-          <View key={delivery} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+        ? deliveryOptions.map((delivery,index) =>
+          <View key={index} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton
-              status={ selectedDelivery == delivery ? 'checked' : 'unchecked' }
+              status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
               color="black"
-              onPress= {() => setSelectedDelivery(delivery)}
+              onPress= {() => setSelectedDelivery(delivery.name)}
             />
-            <Text>{delivery}</Text>
+            <Text>{delivery.name}</Text>
+            {delivery.name !== "Pickup"
+              ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
+              : null
+            }
           </View>
         )
         : null
