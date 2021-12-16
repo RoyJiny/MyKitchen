@@ -3,8 +3,7 @@ import {View,StyleSheet,Dimensions} from 'react-native'
 import {MaterialIcons, Ionicons, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons'
 import { SellerContext } from "../../contexts/SellerContext";
 
-import { deleteAuthToken } from '../../api/async_storage';
-import { send_post_request, send_get_request } from '../../utils/requests';
+import { send_get_request } from '../../utils/requests';
 
 import {Backdrop,KitchenCard,Button} from '../../components';
  
