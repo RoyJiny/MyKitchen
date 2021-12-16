@@ -1,16 +1,16 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 
 import Colors from '../globals/Colors';
 import {ServerBase} from '../globals/globals';
+import ImageWithIndicator from './ImageWithIndicator';
 
 const OrderCustomer = ({order,setRatingState,setShowRating, setLinksState,setShowLinks,setNavigationState,setShowNavigation}) => {
     return (
       <View style={{flex: 1}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8}}>
         <View style={{flexDirection: 'row'}}>
-          <Image style={{ height: 80, width: 80, borderRadius: 10, marginRight: 16}} source={{uri: `${ServerBase}/images/${order.kitchen.bio.coverImg}`}}/>
-          
+          <ImageWithIndicator imageStyle={{height: 80, width: 80, borderRadius: 10, marginRight: 16}} imgLink={`${ServerBase}/images/${order.kitchen.bio.coverImg}`}/>
           <View style={{ /* decide width? or make more robust */}}>
             <Text numberOfLines={1} style={{width: 150, fontSize: 18}}>{order.kitchen.bio.name}</Text>
             {order.status != 'Pending Approval' && order.status != 'Done'? 

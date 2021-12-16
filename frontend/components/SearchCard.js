@@ -1,10 +1,11 @@
 import React from 'react';
-import {Text,View,StyleSheet,TouchableOpacity,Image,Dimensions} from 'react-native';
+import {Text,View,StyleSheet,TouchableOpacity,Dimensions} from 'react-native';
 
 import Colors from '../globals/Colors';
 
 import ShadowCard from './ShadowCard';
 import BlankDivider from './BlankDivider'
+import ImageWithIndicator from './ImageWithIndicator';
 
 const SearchCard = ({onClick,OrderName,description,imgLink,distance}) => {
   return (
@@ -13,7 +14,7 @@ const SearchCard = ({onClick,OrderName,description,imgLink,distance}) => {
         <View style={{flexDirection:"row", justifyContent:"space-between"}}>
           <View style={{flexDirection:"row", alignItems:"center"}}>
             <View>
-              <Image style={styles.image} source={{ uri: imgLink }}/>
+              <ImageWithIndicator imageStyle={styles.image} imgLink={imgLink}/>
             </View>
             <View style={{marginLeft:16}}>
               <Text style={styles.name}>{OrderName}</Text>

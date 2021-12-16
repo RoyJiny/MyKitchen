@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Image, View, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import ImageWithIndicator from './ImageWithIndicator';
 
 export default function ImUp({image, setImage}) {
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function ImUp({image, setImage}) {
         underlayColor="blue"
         onPress={pickImage}>
       </Icon>
-      {image && <Image source={{ uri: image }} style={{ width: 64, height: 64 ,marginLeft: 16, borderRadius: 8}} />}
+      {image && <ImageWithIndicator imageStyle={{width: 64, height: 64 ,marginLeft: 16, borderRadius: 8}} imgLink={image}/>}
     </View>
   );
 }
