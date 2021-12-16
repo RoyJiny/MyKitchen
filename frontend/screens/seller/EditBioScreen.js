@@ -54,19 +54,18 @@ const EditBioScreen = ({navigation}) => {
           <BackButton onClick={navigation.goBack}/>
           <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
           <Button2
-            onClick={() => {
-              send_post_request("users/seller/edit/bio",{id: seller.kitchen._id, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList}})
-                .then(() => {
-                  setSeller({...seller, ...{kitchen: {...seller.kitchen, bio: {...seller.kitchen.bio, name: name,street: street,city: city,phone: phone,description: description,tags: tagList}}}});
-                  if (didImageChange) {
-                    upload_image(image, 'coverImg', seller.kitchen._id)
-                      .then(() => {navigation.navigate("MyKitchenInternal");})
-                      .catch(err => {console.log(err);})
-                  }else{
-                    navigation.navigate("MyKitchenInternal");
-                  }
-                })
-                .catch(err => {console.log(err);});
+            onClick={async () => {
+              await send_post_request("users/seller/edit/bio",{id: seller.kitchen._id, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList}})
+            }}  
+            asyncCB={() => {
+              setSeller({...seller, ...{kitchen: {...seller.kitchen, bio: {...seller.kitchen.bio, name: name,street: street,city: city,phone: phone,description: description,tags: tagList}}}});
+              if (didImageChange) {
+                upload_image(image, 'coverImg', seller.kitchen._id)
+                  .then(() => {navigation.navigate("MyKitchenInternal");})
+                  .catch(err => {console.log(err);})
+              } else {
+                navigation.navigate("MyKitchenInternal");
+              }
             }}
             borderColor = "black"
             fillColor = "white"

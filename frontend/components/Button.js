@@ -3,7 +3,6 @@ import { Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 const Button = ({onClick, fillColor, text, textColor, height=50,width=300,additionalStyle={}}) => {
     const [isLoading, setIsLoading] = useState(false);
-    
     return (
         <TouchableOpacity
             onPress={() => {
@@ -20,11 +19,10 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300,additi
                 shadowOpacity: 0,
                 shadowRadius: 10,
                 borderRadius: 5,
-                elevation: 10,
+                elevation: 6,
                 backgroundColor: fillColor,
                 alignItems: 'center',
                 justifyContent: 'center',
-                // marginTop: 20,
                 height: height,
                 width: width,
                 alignSelf: 'center',

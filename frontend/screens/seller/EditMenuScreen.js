@@ -88,7 +88,7 @@ const EditMenuScreen = ({navigation}) => {
     return true
   }
 
-  const sendData = () => {
+  const sendData = async () => {
     var menu_to_send = dishItems.map(dish => {
       if (dish.img.startsWith('file') || dish.img.startsWith('http')) {
         let {img, ...dish_copy} = dish;
@@ -96,21 +96,15 @@ const EditMenuScreen = ({navigation}) => {
       }
       return dish
     });
-    send_post_request("users/seller/edit/menu",{id: seller.kitchen._id, menu: menu_to_send})
-      .then(({dish_ids}) => {
-        var upload_promises = dishItems.map(async (dish,idx) => {
-          if (dish.img.startsWith('file') || dish.img.startsWith('http')) {
-            await upload_image(dish.img, 'dishImg', seller.kitchen._id, dish_ids[idx]);
-          }
-        });
-        Promise.all(upload_promises)
-        .then(() => {
-          setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});
-          navigation.navigate("MyKitchenInternal");
-        })
-        .catch(err => {console.log(err);});
-      })
-      .catch(err => {console.log(err);});
+    
+    const {dish_ids} = await send_post_request("users/seller/edit/menu",{id: seller.kitchen._id, menu: menu_to_send});
+      
+    var upload_promises = dishItems.map(async (dish,idx) => {
+      if (dish.img.startsWith('file') || dish.img.startsWith('http')) {
+        await upload_image(dish.img, 'dishImg', seller.kitchen._id, dish_ids[idx]);
+      }
+    });
+    await Promise.all(upload_promises);
   }
 
   return (
@@ -122,6 +116,10 @@ const EditMenuScreen = ({navigation}) => {
           <TouchableOpacity onPress={()=>{setfirstTime(false),setcheckValid(true)}}>
           <Button2
             onClick={sendData}
+            asyncCB={() => {
+              setSeller({...seller, ...{kitchen: {...seller.kitchen, menu: dishItems}}});
+              navigation.navigate("MyKitchenInternal");
+            }}
             fillColor = "white"
             text ="Done"
             textColor = "black"

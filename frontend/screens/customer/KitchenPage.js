@@ -1,6 +1,5 @@
 import React,{useState,useContext} from 'react'
 import {View,StyleSheet,Text,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
-import { Banner } from 'react-native-paper';
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
@@ -65,27 +64,8 @@ const KitchenPageScreen = ({route,navigation}) => {
 
   const hasItemsInOrder = () => Object.values(itemCounts).map(item => item.count).reduce((prev,curr) => prev+curr) > 0;
 
-  const alertBanner = (kitchenName) => {
-    function delay(time) {
-      return new Promise(resolve => setTimeout(resolve, time));
-    }
-    
-    delay(3000).then(() => setShowBanner(false));
-    
-    return <Banner
-      visible={showBanner}
-      actions={[]}
-      style={{
-        backgroundColor: Colors.black,
-      }}
-    >
-      <Text style={{color: 'white', fontWeight: 'bold'}}>{kitchenName} is Currenly Closed</Text>
-    </Banner>
-  }
-
   return (
     <View style={{flex:1}}>
-      {getCloseTimeDesc() == 'Currently Closed' ? alertBanner(kitchen.bio.name) : null}
       <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
         <View style={{marginHorizontal: 40, backgroundColor: 'white', borderRadius: 10}}>
         <View style={{justifyContent: 'center'}}>
