@@ -55,9 +55,9 @@ const OrderScreen = ({navigation, route}) => {
   const [addresses, setAddresses] = useState([]);
   useEffect(() => get_address().then(address => setAddresses(address)).catch(error => console.log(error)), []);
   const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup"}];
-  const dateOptions = ["ASAP","Future Delivery"];
+  const dateOptions = route.params.params.isClosed? ["Future Delivery"] : ["ASAP","Future Delivery"];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
-  const [selectedDateOption, setSelectedDateOption] = useState("ASAP");
+  const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
 
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);

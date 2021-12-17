@@ -226,7 +226,7 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
 
         new_rating = {value: (kitchen.rating.value * kitchen.rating.count + rating)/(kitchen.rating.count + 1), count: (kitchen.rating.count + 1)}
 
-        await Kitchen.findByIdAndUpdate(order_data.kitchen, {rating: new_rating})
+        await Kitchen.findByIdAndUpdate(req.order.kitchen, {rating: new_rating})
         await Order.findByIdAndUpdate(req.order._id, {rated: true})
 
         res.send("Processed Successfuly");

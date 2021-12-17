@@ -29,6 +29,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
 
   const [isLoading, setIsLoading] = useState(true);
+  let isClosed = false;
 
   if (isLoading) {
     if (kitchen.distance === undefined) {
@@ -59,6 +60,7 @@ const KitchenPageScreen = ({route,navigation}) => {
         return `Closing at ${day.endTime}`
       }
     }
+    isClosed = true
     return 'Currently Closed';
   };
 
@@ -149,7 +151,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
             {
               kitchen.logistics.isOnlyFutureDelivery
-               ? <Text style={styles.details}>Future Devileries Only</Text>
+               ? <Text style={styles.details}>Future Deliveries Only</Text>
                : <View style={{flexDirection: 'row',alignItems:'center'}}>
                   <Text style={styles.details}>{getCloseTimeDesc()}</Text>
                   <ExpantionArrow
@@ -183,7 +185,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
+            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})}
             borderColor="black"
             fillColor="white"
             text="Order"
