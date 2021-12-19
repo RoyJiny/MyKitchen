@@ -6,7 +6,6 @@ import Colors from '../../globals/Colors';
 
 import {BackButton,ShadowCard,MultilineInput,ExpantionArrow,Button,BlankDivider,PickerDate} from '../../components';
 import {send_post_request} from '../../utils/requests';
-import { send_get_request } from '../../utils/requests';
 import { UserContext } from '../../contexts/UserContext';
 
 
@@ -31,15 +30,6 @@ const SingleOrder = (name,count,price) => {
   );
 };
 
-const get_address = async () => {
-  try{
-    const answer = await send_get_request('users/customer/addresses');
-    return answer["addresses"];
-  } catch(err){
-    console.log(err);
-  }
-}
-
 const OrderScreen = ({navigation, route}) => {
   const items = route.params.params.itemCounts;
   const kitchen = route.params.params.kitchen;
@@ -53,9 +43,11 @@ const OrderScreen = ({navigation, route}) => {
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
   const [addresses, setAddresses] = useState([]);
-  useEffect(() => get_address().then(address => setAddresses(address)).catch(error => console.log(error)), []);
-  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup"}];
-  const dateOptions = route.params.params.isClosed? ["Future Delivery"] : ["ASAP","Future Delivery"];
+  useEffect(() => 
+    send_post_request('users/customer/addressesWithCanDeliver', {kitchenID: kitchen._id})
+      .then(answer => setAddresses(answer["adderessesWithCanDeliver"]))
+      .catch(error => console.log(error)), []);
+  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true}];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
 
@@ -150,14 +142,20 @@ const OrderScreen = ({navigation, route}) => {
               status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
               color="black"
               onPress= {() => setSelectedDelivery(delivery.name)}
+              disabled={!delivery.canDeliver}
             />
-            <Text>{delivery.name}</Text>
+            <Text style={{color: delivery.canDeliver? 'black' : Colors.lightGray}}>{delivery.name}</Text>
             {delivery.name !== "Pickup"
               ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
               : null
             }
+            {delivery.canDeliver
+            ? null
+            : <Text style={{color: Colors.lightGray, textAlign:'center'}}> - too far for delivery</Text>
+          }
           </View>
         )
+        // add option to add one time delivery address - pressing send order will need to validate the distance of this address TODO
         : null
       }
 
@@ -172,21 +170,28 @@ const OrderScreen = ({navigation, route}) => {
       </View>
 
       {showDate
-        ? dateOptions.map(opt =>
-          <View key={opt} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+        ? <>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton
-              status={ selectedDateOption == opt ? 'checked' : 'unchecked' }
+              status={ selectedDateOption == 'ASAP' ? 'checked' : 'unchecked' }
               color="black"
-              onPress= {() => setSelectedDateOption(opt)}
+              onPress= {() => setSelectedDateOption('ASAP')}
+              disabled={route.params.params.isClosed}
             />
-            <Text style={{marginRight : 10}}>{opt}</Text>
+            <Text style={{marginRight: 10, color: route.params.params.isClosed? Colors.lightGray : 'black'}}>{route.params.params.isClosed? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+            <RadioButton
+              status={ selectedDateOption == 'Future Delivery' ? 'checked' : 'unchecked' }
+              color="black"
+              onPress= {() => setSelectedDateOption('Future Delivery')}
+            />
+            <Text style={{marginRight: 10}}>{'Future Delivery'}</Text>
             <View>
-              {
-                opt == "Future Delivery" ? <PickerDate date={date} setDate={setDate} textColor="black" isActive={true}/> : null
-              }
+              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true}/>
             </View>
           </View>
-        )
+          </>
         : null
       }
 

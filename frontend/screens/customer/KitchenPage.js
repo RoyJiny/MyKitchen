@@ -27,6 +27,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   const [showBanner, setShowBanner] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
+  const [showAlert, setShowAlert] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   let isClosed = false;
@@ -112,6 +113,12 @@ const KitchenPageScreen = ({route,navigation}) => {
           </TouchableOpacity>
         </View>
       </Modal>
+      
+      <Modal isVisible={showAlert} onBackdropPress={() => {setShowAlert(false);}}>
+        <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+          <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Please add items to your orders.</Text>
+        </View>
+      </Modal>
     
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.imageWrapper}>
@@ -185,7 +192,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})}
+            onClick={() => {if (hasItemsInOrder()){navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})} else {setShowAlert(true)}}}
             borderColor="black"
             fillColor="white"
             text="Order"

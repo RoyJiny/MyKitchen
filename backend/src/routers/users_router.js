@@ -301,6 +301,27 @@ router.post("/users/customer/getDistance", auth, async (req,res) => {
     }
 });
 
+router.post("/users/customer/addressesWithCanDeliver", auth, async (req,res) => {
+    try {
+        addresses = req.user.addresses;
+        console.log(addresses);
+        let kitchen = await Kitchen.findById(req.body.kitchenID);
+        if (!kitchen) throw new Error('Unknown kitchen');
+
+        adderessesWithCanDeliver = addresses.map(address => {
+        return {
+            name: address.name,
+            address: address.address,
+            canDeliver: (kitchen.logistics.isSupportDelivery && kitchen.logistics.maxDeliveryDistance >= calculate_distance(kitchen.bio.coordinates, {latitude: address.latitude, longitude: address.longitude}))
+        }
+        });
+        res.status(200).send({adderessesWithCanDeliver})
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+    }
+});
+
 // Customer requests - END
 
 module.exports = router;

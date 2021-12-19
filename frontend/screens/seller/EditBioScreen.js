@@ -3,7 +3,7 @@ import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFee
 import { SellerContext } from "../../contexts/SellerContext";
 import * as Animatable from 'react-native-animatable';
 
-import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
+import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp,ImChange} from '../../components';
 import { send_post_request, send_get_request, upload_image } from '../../utils/requests';
 import {ServerBase} from '../../globals/globals';
 
@@ -167,9 +167,9 @@ const EditBioScreen = ({navigation}) => {
         <BlankDivider height={16}/>
 
         <ShadowCard2>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
+          <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal: 8}}>
             <Text style={{fontSize: 18}}>Add Cover Photo:</Text>
-            <ImUp image= {didImageChange ? image : `${ServerBase}/images/${image}`} setImage= {(im) => {setDidImageChange(true);setImage(im);}}/>
+            <ImChange isActive={true} image={didImageChange ? image : `${ServerBase}/images/${image}`} setImage={(im) => {setDidImageChange(true);setImage(im);}}/>
           </View>
         </ShadowCard2>
 
