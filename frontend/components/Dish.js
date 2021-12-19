@@ -32,7 +32,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
                 <>
                 <View  style={{flexDirection:'row'}}>
                     <ImChange isActive={true} image={imgLink} setImage={onChangeImage}/>
-                    <View style={{}}>
+                    <View style={{marginLeft:16}}>
                         <TextInput 
                             style={{
                                 color: 'black', 

@@ -1,42 +1,21 @@
-import React, {useState} from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React from 'react'
+import { Text, TextInput, View } from 'react-native'
+import { RadioButton } from 'react-native-paper';
 
 import Colors from '../globals/Colors';
 
 const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumber, isSelected, setIsSelected}) => {
     
     return (
-        <View style={{marginLeft: 12, marginTop: 5,}}>
+        <View style={{marginLeft: 16, marginTop: 5,}}>
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                <TouchableOpacity
-                    onPress={() => {
-                        setIsSelected(true);
-                    }}
-                    style={{
-                        height: 18,
-                        width: 18,
-                        borderRadius: 18,
-                        borderColor: isSelected ? "black" : Colors.lightGray,
-                        borderWidth: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginHorizontal: 5,
-                    }}
-                >
-                    {
-                        <View
-                            style={{
-                            height: 13,
-                            width: 13,
-                            borderRadius: 13,
-                            backgroundColor: isSelected ? "black" : Colors.lightGray,
-                            opacity: Number(isSelected)
-                        }} >
-                        </View>
-                    }
-                    
-                </TouchableOpacity>
+                <RadioButton
+                    status={ isSelected ? 'checked' : 'unchecked' }
+                    color="black"
+                    uncheckedColor={Colors.lightGray}
+                    onPress= {() => setIsSelected(true)}
+                />
                 <Text 
                     style={{
                         textAlign:'center',
@@ -61,7 +40,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumbe
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 <Text 
                     style={{
-                        marginLeft: 32,
+                        marginLeft: 16,
                         textAlign:'center',
                         color: isSelected ? "black" : Colors.lightGray,
                         fontSize: 14,
@@ -97,34 +76,12 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumbe
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                <TouchableOpacity
-                    onPress={() => {
-                        setIsSelected(false);
-                    }}
-                    style={{
-                        height: 18,
-                        width: 18,
-                        borderRadius: 18,
-                        borderColor: isSelected ? Colors.lightGray : "black",
-                        borderWidth: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginHorizontal: 5,
-                    }}
-                >
-                    {
-                        <View
-                            style={{
-                            height: 13,
-                            width: 13,
-                            borderRadius: 13,
-                            backgroundColor: isSelected ? Colors.lightGray : "black",
-                            opacity: Number(!isSelected)
-                        }} >
-                        </View>
-                    }
-                    
-                </TouchableOpacity>
+                <RadioButton
+                    status={ !isSelected ? 'checked' : 'unchecked' }
+                    color="black"
+                    uncheckedColor={Colors.lightGray}
+                    onPress= {() => setIsSelected(false)}
+                />
                 <Text 
                     style={{
                         textAlign:'center',

@@ -27,8 +27,10 @@ const KitchenPageScreen = ({route,navigation}) => {
   const [showBanner, setShowBanner] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
+  const [showAlert, setShowAlert] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+  let isClosed = false;
 
   if (isLoading) {
     if (kitchen.distance === undefined) {
@@ -59,6 +61,7 @@ const KitchenPageScreen = ({route,navigation}) => {
         return `Closing at ${day.endTime}`
       }
     }
+    isClosed = true
     return 'Currently Closed';
   };
 
@@ -110,6 +113,12 @@ const KitchenPageScreen = ({route,navigation}) => {
           </TouchableOpacity>
         </View>
       </Modal>
+      
+      <Modal isVisible={showAlert} onBackdropPress={() => {setShowAlert(false);}}>
+        <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+          <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Please add items to your orders.</Text>
+        </View>
+      </Modal>
     
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.imageWrapper}>
@@ -149,7 +158,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
             {
               kitchen.logistics.isOnlyFutureDelivery
-               ? <Text style={styles.details}>Future Devileries Only</Text>
+               ? <Text style={styles.details}>Future Deliveries Only</Text>
                : <View style={{flexDirection: 'row',alignItems:'center'}}>
                   <Text style={styles.details}>{getCloseTimeDesc()}</Text>
                   <ExpantionArrow
@@ -183,7 +192,7 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
         <Text style={styles.smallTitle}>Menu</Text>
           <Button
-            onClick={() => hasItemsInOrder() && navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen}})}
+            onClick={() => {if (hasItemsInOrder()){navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})} else {setShowAlert(true)}}}
             borderColor="black"
             fillColor="white"
             text="Order"
