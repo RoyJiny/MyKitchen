@@ -71,7 +71,7 @@ const OpenURLButton = ({ url, text, addLine }) => {
 
 const MyProfileScreen = ({navigation,signoutCB}) => {
   const {user, setUser} = useContext(UserContext);
-  const [expandRecentOrders, setExpandRecentOrders] = useState(true);
+  const [expandRecentOrders, setExpandRecentOrders] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,name: "", address: ""})
 
@@ -341,10 +341,13 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
         </View>
         
         <BlankDivider height={16}/>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
-          {user.phone == ''? <Text style={styles.subtitle}>Add Phone Number</Text>
-            :<View style={{flexDirection: 'row'}}><Text style={styles.subtitle}>Phone Number:  </Text><Text style={styles.phone}>{user.phone}</Text></View>}
-          <TouchableOpacity onPress={() => {setWaitingCode(false);setPhoneState(user.phone);setShowPhone(true);}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 16}}>
+          {
+            user.phone === ''
+            ? <Text style={{fontSize: 18}}>Add Phone Number</Text>
+            : <Text style={{fontSize: 18}}>Phone Number:  {user.phone}</Text>
+          }
+          <TouchableOpacity style={{marginLeft: 8}} onPress={() => {setWaitingCode(false);setPhoneState(user.phone);setShowPhone(true);}}>
             <Icons.Feather name={user.phone == ''? 'plus':'edit'} size={20} color={addresses.length <= 2 ? 'black' : 'gray'}/>
           </TouchableOpacity>
         </View>
@@ -390,7 +393,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
 
         { orderList.slice().reverse().filter(t => t.status == 'Done').length > 0 ?
           (<><View style={{flexDirection:'row',justifyContent:'space-between'}}>
-            <Text style={styles.subtitle}>Recent Orders</Text>
+            <Text style={styles.subtitle}>Order History</Text>
             <ExpantionArrow
               onClick={() => {
                 if (!expandRecentOrders){
@@ -399,7 +402,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
                 }
                 setExpandRecentOrders(!expandRecentOrders);
               }}
-              isInitaialyExpanded={true}
+              isInitaialyExpanded={false}
             />
           </View>
           
@@ -413,7 +416,7 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           </View></>) : null
         }
 
-        <BlankDivider height={16}/>
+        <BlankDivider height={24}/>
 
         <Button
           onClick={signoutCB}
@@ -440,11 +443,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  phone: {
-    fontSize: 20
+    fontSize: 18,
+    marginBottom: 4
   },
   contentContainer: {
     marginHorizontal: 16

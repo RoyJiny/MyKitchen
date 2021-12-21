@@ -1,6 +1,7 @@
 import React,{useState, useContext, useEffect} from 'react'
 import {View,StyleSheet,ScrollView,Text} from 'react-native'
 import { UserContext } from "../../contexts/UserContext";
+import { generalContext } from "../../contexts/generalContext";
 
 import { ServerBase } from '../../globals/globals';
 import Colors from '../../globals/Colors';
@@ -12,6 +13,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 const ExploreScreen = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
+  const {generalData, setGeneralData} = useContext(generalContext);
   const [pastKitchens, setPastKitchens] = useState([]);
   const [categories, setCategories] = useState([]);
   
@@ -26,6 +28,13 @@ const ExploreScreen = ({navigation}) => {
   }
   
   useEffect(get_data_from_server, []);
+
+  useEffect(() => {
+    if (generalData.notification_data !== undefined) {
+      navigation.navigate('MyProfile',{orderData: generalData.notification_data.order});
+      setGeneralData({...generalData, notification_data: undefined});
+    }
+  },[]);
 
   return (
     <View style={{flex:1}}>

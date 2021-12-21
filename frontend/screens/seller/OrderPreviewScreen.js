@@ -54,8 +54,6 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     get_data_from_server();
   }
 
- 
-
   const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
@@ -92,7 +90,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:16,alignItems:'center'}}>
           <View style={{flexDirection:'row'}}>
             <BackButton onClick={navigation.goBack} />
-            <Text numberOfLines={1} style={styles.orderNum}>{"Order #" + display_id}</Text>
+            {display_id
+              ? <Text numberOfLines={1} style={styles.orderNum}>Order #{display_id}</Text>
+              : <Text numberOfLines={1} style={styles.orderNum}>New Order</Text>
+            }
           </View>
 
           <Text style={styles.date}>{item.date}</Text>
@@ -112,8 +113,6 @@ const OrderPreviewScreen = ({ navigation, route }) => {
             }
           </ScrollView>
 
-          <BlankDivider height={16} />
-          
           {item.comments !== "" && <Text style={styles.textStyle}>Comments: {item.comments}</Text>}
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />

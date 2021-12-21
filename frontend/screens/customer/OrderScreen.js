@@ -196,9 +196,9 @@ const OrderScreen = ({navigation, route}) => {
         borderColor="black"
         fillColor="white"
         text="Send Order"
-        textColor="#7CC0FA"
-        height={30}
-        width={100}
+        textColor={Colors.lightGray}
+        height={35}
+        width={120}
       />
       <BlankDivider height={24}/>
       </ScrollView>

@@ -69,7 +69,7 @@ const EditBioScreen = ({navigation}) => {
             }}
             borderColor = "black"
             fillColor = "white"
-            text ="Done"
+            text ="Save"
             textColor = "black"
             disable = { name.length > 0 && street.length > 0 && city.length > 0 && phone.length > 0 && description.length > 0 ? false : true }
           />
@@ -77,7 +77,7 @@ const EditBioScreen = ({navigation}) => {
         </View>
 
         <BlankDivider height={8}/>
-        <Text style={{fontSize: 20, marginLeft: 24}}>Tell Us About Your Kitchen</Text>
+        <Text style={{fontSize: 20, marginLeft: 24}}>Edit your kitchen's bio:</Text>
         <BlankDivider height={8}/>
 
         <ShadowCard2>
@@ -168,7 +168,7 @@ const EditBioScreen = ({navigation}) => {
 
         <ShadowCard2>
           <View style={{flexDirection:'row',marginLeft: 8}}>
-            <Text style={{fontSize: 18}}>Add Cover Photo:</Text>
+            <Text style={{fontSize: 18}}>Cover Photo:</Text>
             <ImUp image= {didImageChange ? image : `${ServerBase}/images/${image}`} setImage= {(im) => {setDidImageChange(true);setImage(im);}}/>
           </View>
         </ShadowCard2>

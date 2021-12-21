@@ -74,14 +74,14 @@ const EditLogisticsScreen = ({navigation}) => {
               }}
               borderColor = "black"
               fillColor = "white"
-              text ="Done"
+              text ="Save"
               textColor = "black"
               disable = { payLinks[0].length > 0 ? false : true }
             />
             </TouchableOpacity>
           </View>
           <BlankDivider height={8}/>
-          <Text style={{fontSize: 20, marginLeft: 24}}>And Now Some Logistics</Text>
+          <Text style={{fontSize: 20, marginLeft: 24}}>Edit your kitchen's Logistics:</Text>
           <BlankDivider height={8}/>
 
           <ShadowCard2>
