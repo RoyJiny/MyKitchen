@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import Modal from 'react-native-modal';
 
 import Colors from '../../globals/Colors';
 import {BlankDivider,ItemPreview,BackButton,Button} from '../../components';
@@ -9,6 +10,7 @@ import { send_get_request,send_post_request } from '../../utils/requests';
 const OrderPreviewScreen = ({ navigation, route }) => {
   const { item,display_id } = route.params;
   const [st, setStatus] = useState(item.status);
+  const [showModal, setShowModal] = useState(false);
 
   const getButton = (i) => {
     var j = getJ(st);
@@ -69,6 +71,15 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         updateStatusDB("Ready for Customer");
         break;
       case "Ready for Customer":
+        if (item.dueDate !== 'ASAP'){
+          var currDate = new Date();
+          var arr = item.dueDate.split('/')
+          var dueDate = new Date(arr[2], arr[1], arr[0], 0, 0)
+          if (currDate < dueDate){
+            setShowModal(true);
+            break;
+          }
+        }
         setStatus("Done");
         updateStatusDB("Done");
         break;
@@ -84,6 +95,13 @@ const OrderPreviewScreen = ({ navigation, route }) => {
   }
 
   return (
+    <>
+    <Modal isVisible={showModal} onBackdropPress={() => {setShowModal(false);}}>
+      <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>You will be able to move the order status to Done only when the delivery date arrives</Text>
+      </View>
+    </Modal>
+
     <ScrollView showsVerticalScrollIndicator={false}>
       <BlankDivider height={12} />
       <View>
@@ -195,6 +213,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         <BlankDivider height={12} />
       </View>
     </ScrollView>
+    </>
   )
 };
 const getJ = (stat) => {

@@ -132,9 +132,9 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <BlankDivider height={16}/>
 
         <ShadowCard2>
-          <View style={{flexDirection:'row',marginLeft: 8}}>
+          <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal: 8}}>
             <Text style={{fontSize: 18}}>Add Cover Photo:</Text>
-            <ImUp image= {image} setImage= {setImage}/>
+            <ImChange isActive={true} image={image} setImage={setImage}/>
           </View>
         </ShadowCard2>
         

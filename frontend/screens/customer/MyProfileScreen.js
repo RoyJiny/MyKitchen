@@ -7,7 +7,6 @@ import { UserContext } from "../../contexts/UserContext";
 import { Rating } from 'react-native-ratings';
 
 import Colors from '../../globals/Colors';
-import { deleteAuthToken } from '../../api/async_storage';
 
 import {Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
 
@@ -69,7 +68,7 @@ const OpenURLButton = ({ url, text, addLine }) => {
           )
 };
 
-const MyProfileScreen = ({navigation,signoutCB}) => {
+const MyProfileScreen = ({signoutCB}) => {
   const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -110,31 +109,6 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
     }
     send_post_request("users/customer/addresses/add",{address: {name: modalState.name, address: modalState.address}})
       .then(() => {setModalState({id: 0,name: "", address: ""});setShowModal(false);})
-      .catch(err => {console.log(err);});
-  }
-
-  const sendRating = () => {
-    console.log(ratingState);
-    for (let i=0; i< orderList.length; i++){
-      if(orderList[i]._id == ratingState.id){
-        let orderCopy = [...orderList];
-        orderCopy[i].rated=true;
-        setOrderList(orderCopy)
-        break
-      }
-    }
-
-    send_post_request("users/customer/rate_kitchen",{id: ratingState.id, rating: ratingState.rating})
-      .then(() => {
-        for (let i=0; i< orderList.length; i++){
-          if(orderList[i]._id == ratingState.id){
-            let orderCopy = [...orderList];
-            orderCopy[i].rated=true;
-            setOrderList(orderCopy)
-            break
-          }
-        }
-      })
       .catch(err => {console.log(err);});
   }
 
@@ -307,7 +281,21 @@ const MyProfileScreen = ({navigation,signoutCB}) => {
           <Rating startingValue={3} onFinishRating={(rating) => {setRatingState({...ratingState ,rating: rating});}}/>
           <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
           <TouchableOpacity
-              onPress={() => {sendRating();setShowRating(false)}}
+              onPress={() => {
+                send_post_request("users/customer/rate_kitchen",{id: ratingState.id, rating: ratingState.rating})
+                  .then(() => {
+                    for (let i=0; i< orderList.length; i++){
+                      if(orderList[i]._id == ratingState.id){
+                        let orderCopy = [...orderList];
+                        orderCopy[i].rated=true;
+                        setOrderList(orderCopy)
+                        break
+                      }
+                    }
+                    setShowRating(false);
+                  })
+                  .catch(err => {console.log(err);});
+              }}
               style={{alignItems: 'center', marginBottom: 8}}
           >
             <Text>Send Rating</Text>

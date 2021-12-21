@@ -1,5 +1,6 @@
-import React, {useState} from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import React from 'react'
+import { Text, View } from 'react-native'
+import { RadioButton } from 'react-native-paper';
 import PickerT from './PickerT';
 
 import Colors from '../globals/Colors';
@@ -9,34 +10,12 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
     return (
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 5,}}>
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                <TouchableOpacity
-                    onPress={() => {
-                        setIsSelected(!isSelected);
-                    }}
-                    style={{
-                        height: 18,
-                        width: 18,
-                        borderRadius: 18,
-                        borderColor: isSelected ? "black" : Colors.lightGray,
-                        borderWidth: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginHorizontal: 5,
-                    }}
-                >
-                    {
-                        <View
-                            style={{
-                            height: 13,
-                            width: 13,
-                            borderRadius: 13,
-                            backgroundColor: isSelected ? "black" : 'transparent',
-                            opacity: isSelected ? 1 : 0
-                        }} >
-                        </View>
-                    }
-                    
-                </TouchableOpacity>
+                <RadioButton
+                    status={ isSelected ? 'checked' : 'unchecked' }
+                    color="black"
+                    uncheckedColor={Colors.lightGray}
+                    onPress= {() => setIsSelected(!isSelected)}
+                />
                 <Text 
                     style={{
                         textAlign:'center',
