@@ -32,7 +32,7 @@ export default function ImUp({image, setImage}) {
 
   return (
     <View style={{ flex: 1, flexDirection:'row', alignItems: 'center', justifyContent: 'center' }}>
-      <Icon style={{marginLeft: 80, alignSelf: 'center'}}
+      <Icon style={{alignSelf: 'center'}}
         name="upload"
         size={20}
         color="black"
