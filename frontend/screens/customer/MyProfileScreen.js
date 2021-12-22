@@ -67,7 +67,7 @@ const OpenURLButton = ({ url, text, addLine }) => {
           )
 };
 
-const MyProfileScreen = ({signoutCB}) => {
+const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -89,7 +89,10 @@ const MyProfileScreen = ({signoutCB}) => {
 
   useEffect(() => {
     send_get_request("orders/customer/get_orders")
-      .then(data => {setOrderList(data);setFetchOrdersDone(true);})
+      .then(data => {
+        setOrderList(data);
+        setFetchOrdersDone(true);
+      })
       .catch(err => {console.log(err);});
   },[]);
 
@@ -134,6 +137,11 @@ const MyProfileScreen = ({signoutCB}) => {
       console.log(err);
       setWrongCode(true);
     }
+  }
+
+  if (route.params && route.params.orderData) {
+    setSliderState({show: true,data: route.params.orderData});
+    route.params.orderData = undefined;
   }
 
   return (

@@ -42,6 +42,7 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
     
     const order = await Order.findByIdAndUpdate(req.body.id, {"status":updated_status}).populate('customer').populate('kitchen');
     if (!order) throw new Error("Couldn't find order");
+    order.status = updated_status;
 
     if (updated_status !== "Pending Approval") {
       var description = "";
