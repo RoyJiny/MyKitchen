@@ -7,6 +7,7 @@ import * as Animatable from 'react-native-animatable';
 import {BackButton,Button2,BlankDivider,Dish} from '../../components';
 import { send_post_request, send_get_request, upload_image } from '../../utils/requests';
 import { ServerBase } from '../../globals/globals';
+import Colors from '../../globals/Colors';
 
 const EditMenuScreen = ({navigation}) => {
 
@@ -121,7 +122,7 @@ const EditMenuScreen = ({navigation}) => {
               navigation.navigate("MyKitchenInternal");
             }}
             fillColor = "white"
-            text ="Done"
+            text ="Save"
             textColor = "black"
             disable = { checkEmptyDish()==true && dishItems.length > 0 ? false : true }
           />
@@ -130,7 +131,7 @@ const EditMenuScreen = ({navigation}) => {
 
         <BlankDivider height={16}/>
         <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <Text style={{fontSize: 20, marginLeft: 24}}>Let's Add Some Dishes</Text>
+          <Text style={{fontSize: 20, marginLeft: 24}}>Edit your kitchen's menu:</Text>
           <TouchableOpacity
             onPress={() => {handleAdd(),setcheckValid(false)}}
             style={{
@@ -154,7 +155,7 @@ const EditMenuScreen = ({navigation}) => {
             disabled={dishItems.length >= 20}
           >
               {
-                <Text style={{ textAlign:'center',color: (dishItems.length >= 20) ? 'gray' : '#7CC0FA', fontSize: 24}} >
+                <Text style={{ textAlign:'center',color: Colors.lightGray, fontSize: 24}} >
                   {'+'}
                 </Text>
               }

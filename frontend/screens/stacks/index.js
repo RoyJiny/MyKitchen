@@ -109,13 +109,13 @@ export const CustomerTabsNavigator = (signoutCB) => {
       barStyle={{
         backgroundColor: Colors.black,
         shadowColor: 'transparent',
-          shadowOpacity: 0,
-          shadowRadius: 0,
-          shadowOffset: {
-            height: 0,
-            width: 0,
-          },
-          elevation: 0,
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        },
+        elevation: 0,
       }}
       screenOptions={({route}) => ({
         headerShown: false,
