@@ -5,7 +5,7 @@ import * as Icons from '@expo/vector-icons'
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
 import { UserContext } from '../../contexts/UserContext';
-import { LocationContext } from '../../contexts/LocationContext';
+import { generalContext } from '../../contexts/generalContext';
 import { send_post_request } from '../../utils/requests';
 
 import Modal from 'react-native-modal';
@@ -15,7 +15,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   const {kitchen} = route.params;
   
   const {user,setUser} = useContext(UserContext);
-  const {location} = useContext(LocationContext);
+  const {generalData: {location}} = useContext(generalContext);
   const [expandTimes, setExpandTimes] = useState(false);
   const [isFavorite, setIsFavorite] = useState(user.favorites.filter(k => k._id === kitchen._id).length > 0);
   
@@ -152,7 +152,7 @@ const KitchenPageScreen = ({route,navigation}) => {
         <ShadowCard>
           {kitchen.rating.value !== 0 && <View style={styles.rowView}>
             <Icons.FontAwesome name="star" size={16} color="black"/>
-            <Text style={styles.details}>{kitchen.rating.value}</Text>
+            <Text style={styles.details}>{kitchen.rating.value.toFixed(1)}</Text>
           </View>}
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
@@ -196,7 +196,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             borderColor="black"
             fillColor="white"
             text="Order"
-            textColor="#7CC0FA"
+            textColor={Colors.lightGray}
             height={30}
             width={100}
           />

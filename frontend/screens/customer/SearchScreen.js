@@ -9,11 +9,11 @@ import {Input,SearchCard} from '../../components';
 
 import {send_post_request} from '../../utils/requests';
 import { UserContext } from '../../contexts/UserContext';
-import { LocationContext } from '../../contexts/LocationContext';
+import { generalContext } from '../../contexts/generalContext';
 
 const SearchScreen = ({ route, navigation }) => {
   const {user,SetUser} = useContext(UserContext);
-  const {location} = useContext(LocationContext);
+  const {generalData:{location}} = useContext(generalContext);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 

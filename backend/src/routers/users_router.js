@@ -219,7 +219,7 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
         rating = req.body.rating;
         
         if(req.order.rated == true){
-            res.status(400).send('Order was already rated');
+            res.status(400).send({message: 'Order was already rated'});
         }
 
         const kitchen = await Kitchen.findById(req.order.kitchen);
@@ -304,7 +304,6 @@ router.post("/users/customer/getDistance", auth, async (req,res) => {
 router.post("/users/customer/addressesWithCanDeliver", auth, async (req,res) => {
     try {
         addresses = req.user.addresses;
-        console.log(addresses);
         let kitchen = await Kitchen.findById(req.body.kitchenID);
         if (!kitchen) throw new Error('Unknown kitchen');
 

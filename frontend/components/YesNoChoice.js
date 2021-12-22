@@ -5,7 +5,6 @@ import { RadioButton } from 'react-native-paper';
 import Colors from '../globals/Colors';
 
 const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumber, isSelected, setIsSelected}) => {
-    
     return (
         <View style={{marginLeft: 16, marginTop: 5,}}>
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
@@ -60,7 +59,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumbe
                     }}
                     editable={isSelected}
                     onChangeText={onChangeNumber}
-                    value={number}
+                    value={number !== 'undefined' ? number : ''}
                     keyboardType="numeric"
                 />
                 <Text 
