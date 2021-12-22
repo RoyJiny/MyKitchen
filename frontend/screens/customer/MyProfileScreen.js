@@ -1,14 +1,13 @@
 import React,{useState,useRef,useCallback, useContext, useEffect } from 'react'
-import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking, ScrollView} from 'react-native'
+import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking,Dimensions,ScrollView,Button as RNButton} from 'react-native'
 import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
-import { UserContext } from "../../contexts/UserContext";
-import { Rating } from 'react-native-ratings';
 
+import { UserContext } from "../../contexts/UserContext";
 import Colors from '../../globals/Colors';
 
-import {Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
+import {OrderSlider,Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
 
 import { send_post_request, send_get_request } from '../../utils/requests';
 
@@ -83,13 +82,10 @@ const MyProfileScreen = ({signoutCB}) => {
 
   const [showLinks, setShowLinks] = useState(false);
   const [linksState, setLinksState] = useState([]);
-  const [showRating, setShowRating] = useState(false);
-  const [ratingState, setRatingState] = useState({id: 0,rating: 0});
-  const [showNavigation, setShowNavigation] = useState(false);
-  const [navigationState, setNavigationState] = useState('');
   const [addresses, setAddresses] = useState([...user.addresses]);
   const [orderList, setOrderList] = useState([])
   const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
+  const [sliderState, setSliderState] = useState({show:false, data: {}});
 
   useEffect(() => {
     send_get_request("orders/customer/get_orders")
@@ -145,11 +141,10 @@ const MyProfileScreen = ({signoutCB}) => {
       <Backdrop text='My Profile' height={80}/>
       
       <Modal isVisible={showModal} onBackdropPress={() => {setModalState({id: 0,name: "", address: ""});setShowModal(false);}}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+        <View style={{marginHorizontal: 24, backgroundColor: 'white', borderRadius: 10}}>
           <TextInput
             style={{
               height: 45,
-              width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
               fontSize: 16,
@@ -159,12 +154,11 @@ const MyProfileScreen = ({signoutCB}) => {
               setModalState({...modalState, name: txt});
             }}
             value={modalState.name}
-            placeholder={"Address Name"}
+            placeholder={"Address Name (e.g. Home)"}
           />
           <TextInput
             style={{
               height: 45,
-              width: 200,
               paddingVertical: 5,
               paddingHorizontal: 10,
               fontSize: 16,
@@ -174,7 +168,7 @@ const MyProfileScreen = ({signoutCB}) => {
               setModalState({...modalState, address: txt});
             }}
             value={modalState.address}
-            placeholder={"Address"}
+            placeholder={"Address (e.g. 1 Hashalim, Tel Aviv)"}
           />
           <TouchableOpacity
             onPress={() => {
@@ -182,13 +176,13 @@ const MyProfileScreen = ({signoutCB}) => {
                 modalOnSubmit();
               }
             }}
-            style={{alignItems: 'center', marginVertical: 8}}
+            style={{alignItems: 'center', paddingVertical: 12}}
           >
             <Text>Done</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setShowModal(false)}
-            style={{alignItems: 'center', marginVertical: 8}}
+            style={{alignItems: 'center', paddingVertical: 12}}
           >
             <Text>Cancel</Text>
           </TouchableOpacity>
@@ -276,47 +270,6 @@ const MyProfileScreen = ({signoutCB}) => {
         </View>
       </Modal>
 
-      <Modal isVisible={showRating} onBackdropPress={() => setShowRating(false)}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10, paddingTop: 10}}>
-          <Rating startingValue={3} onFinishRating={(rating) => {setRatingState({...ratingState ,rating: rating});}}/>
-          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5, marginVertical: 8}}/>
-          <TouchableOpacity
-              onPress={() => {
-                send_post_request("users/customer/rate_kitchen",{id: ratingState.id, rating: ratingState.rating})
-                  .then(() => {
-                    for (let i=0; i< orderList.length; i++){
-                      if(orderList[i]._id == ratingState.id){
-                        let orderCopy = [...orderList];
-                        orderCopy[i].rated=true;
-                        setOrderList(orderCopy)
-                        break
-                      }
-                    }
-                    setShowRating(false);
-                  })
-                  .catch(err => {console.log(err);});
-              }}
-              style={{alignItems: 'center', marginBottom: 8}}
-          >
-            <Text>Send Rating</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-
-      <Modal isVisible={showNavigation} onBackdropPress={() => setShowNavigation(false)}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
-          <Text style={{alignSelf: 'center', marginVertical: 8}}>{navigationState}</Text>
-          <OpenURLButton url={'https://waze.com/ul?q='+navigationState} text={'Navigate'} addLine={false}/>
-          <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/>
-          <TouchableOpacity
-              onPress={() => setShowNavigation(false)}
-              style={{alignItems: 'center', marginVertical: 8}}
-          >
-            <Text>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-
       <ScrollView
         ref={ScrollViewRef}
         onScroll={event => scroll_position = event.nativeEvent.contentOffset.y}
@@ -373,7 +326,9 @@ const MyProfileScreen = ({signoutCB}) => {
           :
             orderList.slice().reverse().filter(t => t.status !== 'Done').map((item, index) => {
               return (
-                <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
+                <TouchableOpacity key={index} onPress={() => {setSliderState({show:false,data:{}}); setSliderState({show:true, data:item})}}>
+                  <OrderCustomer order={item}/>
+                </TouchableOpacity>
             )})
         }
         
@@ -398,7 +353,9 @@ const MyProfileScreen = ({signoutCB}) => {
             {
               orderList.slice().reverse().filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
                 return (
-                  <OrderCustomer key={index} order={item} setRatingState={setRatingState} setShowRating={setShowRating} setLinksState={setLinksState} setShowLinks={setShowLinks} setNavigationState={setNavigationState} setShowNavigation={setShowNavigation}/>
+                  <TouchableOpacity key={index} onPress={() => {setSliderState({show:false,data:{}});setSliderState({show:true, data:item})}}>
+                    <OrderCustomer order={item}/>
+                  </TouchableOpacity>  
               )})
             }
           </View></>) : null
@@ -417,6 +374,8 @@ const MyProfileScreen = ({signoutCB}) => {
         <BlankDivider height={16}/>
       </View>
       </ScrollView>
+
+      {sliderState.show && <OrderSlider order={sliderState.data} close={() => setSliderState({show:false,data:{}})}/>}
     </View>
   )
 };

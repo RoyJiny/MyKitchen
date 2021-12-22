@@ -42,6 +42,7 @@
     "react-native-vector-icons": "^9.0.0",
     "react-native-web": "0.17.1",
     "react-navigation": "^4.4.4",
+    "rn-sliding-up-panel": "^2.4.5",
     "toggle-switch-react-native": "^3.3.0"
   },
   "devDependencies": {
