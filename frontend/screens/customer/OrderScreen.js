@@ -57,7 +57,43 @@ const OrderScreen = ({navigation, route}) => {
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
-  const [date, setDate] = useState(new Date());
+  var dayMap = {
+    Monday: 1,
+    Thuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+    Sunday: 7,
+  };
+  const getInactiveDays = () => {
+    let arr = [];
+    kitchen.logistics.operationDays.forEach((day) => {
+      if (!day.isActive){
+        arr.push(dayMap[day.day]);
+      }
+    });
+    return arr;
+  };
+  const inactiveDays = kitchen.logistics.isOnlyFutureDelivery? [] : getInactiveDays();
+  const current_date = new Date();
+  const getFirstValidDate = () => {
+    let date = current_date;
+    for (let i = 0; i < 7; i++) {
+      if (date.getDay() == 0){
+        if (!inactiveDays.includes(7)){
+          return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+        }
+      }else{
+        if (!inactiveDays.includes(date.getDay())){
+          return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+        }
+      }
+      date.setDate(date.getDate() + 1)
+    }
+    return current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear();
+  };
+  const [date, setDate] = useState(getFirstValidDate());
 
   const get_address_delivery = (name) => {
     var selected_address = "Pickup";
@@ -80,7 +116,6 @@ const OrderScreen = ({navigation, route}) => {
 
   const send_order = async () => {
     try{
-      const current_date = new Date();
       const new_order = {
         "kitchen": kitchen._id,
         "price": totalPrice,
@@ -91,7 +126,7 @@ const OrderScreen = ({navigation, route}) => {
         "status": "Pending Approval",
         "items": get_items(),
         "date": current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
-        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
+        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date
       }
       const answer = await send_post_request('order/submit',new_order);
       if (answer == undefined) throw new Error("Failed to send data");
@@ -204,7 +239,7 @@ const OrderScreen = ({navigation, route}) => {
             />
             <Text style={{marginRight: 10}}>{'Future Delivery'}</Text>
             <View>
-              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true}/>
+              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true} inactiveDays={inactiveDays}/>
             </View>
           </View>
           </>
