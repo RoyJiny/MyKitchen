@@ -19,6 +19,8 @@ import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/st
 import { getAuthToken, deleteAuthToken } from './api/async_storage';
 import { send_get_request,send_post_request } from './utils/requests';
 
+import ChatScreen from './ChatScreen';
+
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 
@@ -195,21 +197,6 @@ export default APP = () => {
               .then(user_data => {
                 setIsLoading(false);
                 setUser({...user, ...user_data});
-                // if (navigateFromNotification && navigationRef.current) {
-                //   console.log('should now navigate');
-                //   if (!user_data.isSeller) {
-                //     navigationRef.current.navigate(
-                //       'MyProfile',
-                //       {order: navigateFromNotification.data.order}
-                //     );
-                //   } else {
-                //     navigationRef.current.navigate(
-                //       'Orders',
-                //       {screen: 'OrderPreview', params: {item: navigateFromNotification.data.order}}
-                //     );
-                //   }
-                //   setNavigateFromNotification(undefined);
-                // }
                 loginCB(user_data.isSeller);
               })
               .catch(err => {console.log(err);setIsLoading(false);})
@@ -237,7 +224,8 @@ export default APP = () => {
       <generalContext.Provider value={{generalData, setGeneralData}}>
         <NavigationContainer theme={AppTheme} ref={navigationRef}>
           {state.isLoggedIn
-            ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
+            // ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
+            ? <ChatScreen />
             : LoginStack(loginCB)
           }
         </NavigationContainer>
