@@ -195,21 +195,6 @@ export default APP = () => {
               .then(user_data => {
                 setIsLoading(false);
                 setUser({...user, ...user_data});
-                // if (navigateFromNotification && navigationRef.current) {
-                //   console.log('should now navigate');
-                //   if (!user_data.isSeller) {
-                //     navigationRef.current.navigate(
-                //       'MyProfile',
-                //       {order: navigateFromNotification.data.order}
-                //     );
-                //   } else {
-                //     navigationRef.current.navigate(
-                //       'Orders',
-                //       {screen: 'OrderPreview', params: {item: navigateFromNotification.data.order}}
-                //     );
-                //   }
-                //   setNavigateFromNotification(undefined);
-                // }
                 loginCB(user_data.isSeller);
               })
               .catch(err => {console.log(err);setIsLoading(false);})

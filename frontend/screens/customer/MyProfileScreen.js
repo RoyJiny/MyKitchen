@@ -383,7 +383,11 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
       </View>
       </ScrollView>
 
-      {sliderState.show && <OrderSlider order={sliderState.data} close={() => setSliderState({show:false,data:{}})}/>}
+      {sliderState.show && <OrderSlider
+        order={sliderState.data}
+        close={() => setSliderState({show:false,data:{}})}
+        navigateToChat={() => navigation.navigate('Chat',{customer_id: user._id,customer_name:user.name, kitchen_id: sliderState.data.kitchen._id,kitchen_name:sliderState.data.kitchen.bio.name, isCustomer: true})}
+      />}
     </View>
   )
 };

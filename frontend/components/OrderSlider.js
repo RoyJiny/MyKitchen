@@ -12,7 +12,7 @@ import { send_post_request } from "../utils/requests";
 const HEADER_HEIGHT = 100;
 const BACKGROUND = Colors.black;
 
-const OrderSlider = ({order, close}) => {
+const OrderSlider = ({order, close,navigateToChat}) => {
   const ref = useRef();
   const [showRating, setShowRating] = useState(!order.rated && order.status == "Done" );
   const [didRate,setDidRate] = useState(false);
@@ -124,6 +124,10 @@ const OrderSlider = ({order, close}) => {
               <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.kitchen.bio.phone}`)} style={{alignItems: 'center'}}>
                 <Icons.FontAwesome name='phone' size={24} color='white' />
                 <Text style={styles.subtext}>Call</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={navigateToChat} style={{alignItems: 'center'}}>
+                <Icons.Entypo name='chat' size={24} color='white' />
+                <Text style={styles.subtext}>Message</Text>
               </TouchableOpacity>
               {order.status !== 'Pending Approval' &&
                 <TouchableOpacity style={{alignItems: 'center'}} onPress={() => Linking.openURL(`https://waze.com/ul?q=${order.kitchen.bio.street}, ${order.kitchen.bio.city}`)}>
