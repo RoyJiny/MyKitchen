@@ -164,6 +164,23 @@ router.get("/users/me/seller", auth, async (req,res) => {
 
 // Users Registration, info and editing - END
 
+router.post("/seller/populate_usernames",auth, async (req,res) => {
+    try { 
+        const users = req.body.users || [];
+        const new_users = [];
+        for (const u of users) {
+            const user = await User.findById(u.user_id)
+            if (user) {
+                new_users.push({...u,username: user.name});
+            }
+        };
+        res.send({users: new_users});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: "Server Error"});
+    }
+});
+
 // Customer Addresses - START
 router.get("/users/customer/addresses", auth, async (req,res) => {
     try {
@@ -219,7 +236,7 @@ router.post("/users/customer/rate_kitchen", [auth, matchUserOrder], async (req,r
         rating = req.body.rating;
         
         if(req.order.rated == true){
-            res.status(400).send('Order was already rated');
+            res.status(400).send({message: 'Order was already rated'});
         }
 
         const kitchen = await Kitchen.findById(req.order.kitchen);
@@ -304,7 +321,6 @@ router.post("/users/customer/getDistance", auth, async (req,res) => {
 router.post("/users/customer/addressesWithCanDeliver", auth, async (req,res) => {
     try {
         addresses = req.user.addresses;
-        console.log(addresses);
         let kitchen = await Kitchen.findById(req.body.kitchenID);
         if (!kitchen) throw new Error('Unknown kitchen');
 

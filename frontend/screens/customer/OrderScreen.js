@@ -34,19 +34,22 @@ const OrderScreen = ({navigation, route}) => {
   const items = route.params.params.itemCounts;
   const kitchen = route.params.params.kitchen;
   const [totalPrice, setTotalPrice] = useState(0);
+  
   useEffect(() => {
     let sum = 0;
     kitchen.menu.map(dish => {sum = sum + items[dish._id].price*items[dish._id].count});
     setTotalPrice(sum);
   }, [route]);
+  
+  useEffect(() => 
+    send_post_request('users/customer/addressesWithCanDeliver', {kitchenID: kitchen._id})
+      .then(answer => setAddresses(answer["adderessesWithCanDeliver"]))
+      .catch(error => console.log(error))
+  , []);
 
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
   const [addresses, setAddresses] = useState([]);
-  useEffect(() => 
-    send_post_request('users/customer/addressesWithCanDeliver', {kitchenID: kitchen._id})
-      .then(answer => setAddresses(answer["adderessesWithCanDeliver"]))
-      .catch(error => console.log(error)), []);
   const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true}];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
@@ -54,7 +57,43 @@ const OrderScreen = ({navigation, route}) => {
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
-  const [date, setDate] = useState(new Date());
+  var dayMap = {
+    Monday: 1,
+    Thuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+    Sunday: 7,
+  };
+  const getInactiveDays = () => {
+    let arr = [];
+    kitchen.logistics.operationDays.forEach((day) => {
+      if (!day.isActive){
+        arr.push(dayMap[day.day]);
+      }
+    });
+    return arr;
+  };
+  const inactiveDays = kitchen.logistics.isOnlyFutureDelivery? [] : getInactiveDays();
+  const current_date = new Date();
+  const getFirstValidDate = () => {
+    let date = current_date;
+    for (let i = 0; i < 7; i++) {
+      if (date.getDay() == 0){
+        if (!inactiveDays.includes(7)){
+          return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+        }
+      }else{
+        if (!inactiveDays.includes(date.getDay())){
+          return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+        }
+      }
+      date.setDate(date.getDate() + 1)
+    }
+    return current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear();
+  };
+  const [date, setDate] = useState(getFirstValidDate());
 
   const get_address_delivery = (name) => {
     var selected_address = "Pickup";
@@ -77,7 +116,6 @@ const OrderScreen = ({navigation, route}) => {
 
   const send_order = async () => {
     try{
-      const current_date = new Date();
       const new_order = {
         "kitchen": kitchen._id,
         "price": totalPrice,
@@ -88,7 +126,7 @@ const OrderScreen = ({navigation, route}) => {
         "status": "Pending Approval",
         "items": get_items(),
         "date": current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
-        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
+        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date
       }
       const answer = await send_post_request('order/submit',new_order);
       if (answer == undefined) throw new Error("Failed to send data");
@@ -96,7 +134,7 @@ const OrderScreen = ({navigation, route}) => {
       console.log(err);
     }
   };
-  
+
   return (
     <View style={{flex:1}}>
       <View style={[styles.rowView, {marginBottom: 32}]}>
@@ -136,26 +174,39 @@ const OrderScreen = ({navigation, route}) => {
       </View>
 
       {showDelivery
-        ? deliveryOptions.map((delivery,index) =>
-          <View key={index} style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
-            <RadioButton
-              status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
-              color="black"
-              onPress= {() => setSelectedDelivery(delivery.name)}
-              disabled={!delivery.canDeliver}
-            />
-            <Text style={{color: delivery.canDeliver? 'black' : Colors.lightGray}}>{delivery.name}</Text>
-            {delivery.name !== "Pickup"
-              ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
-              : null
-            }
-            {delivery.canDeliver
-            ? null
-            : <Text style={{color: Colors.lightGray, textAlign:'center'}}> - too far for delivery</Text>
-          }
-          </View>
-        )
-        // add option to add one time delivery address - pressing send order will need to validate the distance of this address TODO
+        ? kitchen.logistics.isSupportDelivery // if doesnt support delivery - show only pickup option
+          ? deliveryOptions.map((delivery,index) =>
+              <View key={index} style={{marginHorizontal: 28}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <RadioButton
+                    status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
+                    color="black"
+                    onPress= {() => setSelectedDelivery(delivery.name)}
+                    disabled={!delivery.canDeliver}
+                  />
+                  <Text style={{color: delivery.canDeliver? 'black' : Colors.lightGray}}>{delivery.name}</Text>
+                  {delivery.name !== "Pickup"
+                    ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
+                    : null
+                  }                
+                </View>
+                {delivery.canDeliver
+                  ? null
+                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>Beyond delivery distance</Text>
+                }
+              </View>
+            )
+          : <>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+                <RadioButton
+                  status={ selectedDelivery == "Pickup" ? 'checked' : 'unchecked' }
+                  color="black"
+                  onPress= {() => setSelectedDelivery("Pickup")}
+                />
+                <Text style={{color:'black'}}>Pickup</Text>
+              </View>
+              <Text style={{color: Colors.lightGray, alignSelf: 'center'}}>{kitchen.bio.name} doesn't support delivery</Text>
+            </>
         : null
       }
 
@@ -188,7 +239,7 @@ const OrderScreen = ({navigation, route}) => {
             />
             <Text style={{marginRight: 10}}>{'Future Delivery'}</Text>
             <View>
-              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true}/>
+              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true} inactiveDays={inactiveDays}/>
             </View>
           </View>
           </>
@@ -201,9 +252,9 @@ const OrderScreen = ({navigation, route}) => {
         borderColor="black"
         fillColor="white"
         text="Send Order"
-        textColor="#7CC0FA"
-        height={30}
-        width={100}
+        textColor={Colors.lightGray}
+        height={35}
+        width={120}
       />
       <BlankDivider height={24}/>
       </ScrollView>

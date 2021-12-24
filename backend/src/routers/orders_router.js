@@ -16,11 +16,14 @@ router.post("/order/submit", auth, async (req,res) => {
 
     const kitchen = await Kitchen.findOne({_id: order_data.kitchen}).populate('seller');
     if (!kitchen) { throw new Error(); }
-
+    
     const order = new Order(order_data);
     await order.save();
+    
+    const populated_order_data = await Order.findById(order._id).populate('customer');
+    if (!populated_order_data) { throw new Error(); }
 
-    send_notification_to_user(kitchen.seller,'New Order','You have received a new order');
+    send_notification_to_user(kitchen.seller,'New Order','You have received a new order', extra_data={order: populated_order_data});
     
     res.status(200).send("Processed Successfuly");
   } catch (err) {
@@ -39,6 +42,7 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
     
     const order = await Order.findByIdAndUpdate(req.body.id, {"status":updated_status}).populate('customer').populate('kitchen');
     if (!order) throw new Error("Couldn't find order");
+    order.status = updated_status;
 
     if (updated_status !== "Pending Approval") {
       var description = "";
@@ -56,7 +60,7 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
           description = `Your order from ${order.kitchen.bio.name} was delivered successfuly`;
           break;
       } 
-      send_notification_to_user(order.customer,"Order Update",description,{orderId:order._id});
+      send_notification_to_user(order.customer,"Order Update",description,extra_data={order});
     }
     
     res.send("Processed Successfuly");

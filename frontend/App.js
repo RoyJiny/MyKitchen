@@ -3,12 +3,15 @@ import {StatusBar, View, I18nManager, ActivityIndicator} from 'react-native';
 
 import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+
 import * as Notifications from 'expo-notifications';
+import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
+
 
 import { UserContext } from "./contexts/UserContext";
 import { SellerContext } from "./contexts/SellerContext";
-import { LocationContext } from "./contexts/LocationContext";
+import { generalContext } from "./contexts/generalContext";
 
 import Colors from './globals/Colors';
 import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/stacks'
@@ -24,8 +27,10 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true
-  })
+  }),
+  handleError: err => console.log(`notification handling error: ${err}`)
 });
+
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -54,23 +59,26 @@ const registerForPushNotificationsAsync = async () => {
 }
 
 export default APP = () => {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
   I18nManager.allowRTL(false);
-  I18nManager.forceRTL(false);  
-
-  const [location, setLocation] = useState({
-    longitude: 34.798571,
-    latitude: 32.059999
-  });
-
+  I18nManager.forceRTL(false);
+  
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const responseListener = useRef();
+  const navigationRef = useRef();
   const [user, setUser] = useState({});
   const [seller, setSeller] = useState({});
+  const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
+  const [isLoading, setIsLoading] = useState(true);
+  const [generalData, setGeneralData] = useState({
+    location: {
+      longitude: 34.798571,
+      latitude: 32.059999
+    },
+    notification_data: undefined
+  });
 
-  const init_contexts = () => {
+
+  const init_user_contexts = () => {
     setUser({
       email: '',
       name: '',
@@ -94,52 +102,75 @@ export default APP = () => {
     });
   }
 
-  useEffect(() => {
-    init_contexts();
+  const handleNotificationData = data => {
+    if (state.isLoggedIn && navigationRef.current) {
+      if (state.isCustomer) {
+        navigationRef.current.navigate('MyProfile',{orderData: data.order})
+      } else {
+        navigationRef.current.navigate('Orders',{
+          screen: 'OrderPreview',
+          params: {item: data.order}
+        })
+      }
+    } else {
+      setGeneralData({...generalData, notification_data: data});
+    }
+  }
 
+  useEffect(() => {
+    init_user_contexts();
+    
     Location.requestForegroundPermissionsAsync()
       .then(data => {
         if (data.status !== 'granted') {
           console.log('Permission to access location was denied');
         } else {
           Location.getCurrentPositionAsync({})
-            .then(loc => setLocation({latitude: loc.coords.latitude, longitude: loc.coords.longitude}))
+            .then(loc => setGeneralData({
+              ...generalData
+              ,location: {
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude
+            }}))
             .catch(err => console.log(err))
         }
       })
       .catch(err => console.log(err))
+      
+    const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
+    TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error, executionInfo }) => {
+      handleNotificationData(data)
+    });
+    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
+  },[]);
+  
+  useEffect(() => {
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('response:',response);
+      handleNotificationData(response.notification.request.content.data)
     });
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
     };
-  }, []);
-
-  const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
-  const [isLoading, setIsLoading] = useState(true);
+  },[state]);
 
   const loginCB = (isSeller) => {
-    if (expoPushToken != '') {
+    if (expoPushToken !== '') {
       send_post_request('users/notification_token',{expo_token: expoPushToken})
         .then(()=>{})
         .catch(err => console.log("Failed to send notification token:",err));
     }
     setState({isLoggedIn: true, isCustomer: !isSeller});
   };
+
   const signoutCB = () => {
     send_get_request("users/signout")
       .then(() => {
         deleteAuthToken()
           .then(() => {
             setState({isLoggedIn: false, isCustomer: true});
-            init_contexts();
+            init_user_contexts();
           })
           .catch(err => console.log(err))       
       })
@@ -158,24 +189,24 @@ export default APP = () => {
 
   if (isLoading) {
     getAuthToken()
-    .then(auth_token => {
-      if (auth_token) {
-          send_get_request('users/me')
-            .then(user_data => {
-              setUser({...user, ...user_data});
-              loginCB(user_data.isSeller);
-              setIsLoading(false);
-            })
-            .catch(err => {console.log(err);setIsLoading(false);})
-        }
-      else{setIsLoading(false);}
-      })
+      .then(auth_token => {
+        if (auth_token) {
+            send_get_request('users/me')
+              .then(user_data => {
+                setIsLoading(false);
+                setUser({...user, ...user_data});
+                loginCB(user_data.isSeller);
+              })
+              .catch(err => {console.log(err);setIsLoading(false);})
+          }
+        else{setIsLoading(false);}
+        })
       .catch(err => {
         console.log(err);
         setIsLoading(false);
       });
   }
-  
+
   if (isLoading) {
     return <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator color='black' style={{alignSelf: 'center'}} size={50}/>
@@ -188,14 +219,14 @@ export default APP = () => {
       <ExpoStatusBar style="light" />
       <UserContext.Provider value={{user, setUser}}>
       <SellerContext.Provider value={{seller, setSeller}}>
-      <LocationContext.Provider value={{location, setLocation}}>
-        <NavigationContainer theme={AppTheme}>
+      <generalContext.Provider value={{generalData, setGeneralData}}>
+        <NavigationContainer theme={AppTheme} ref={navigationRef}>
           {state.isLoggedIn
             ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
             : LoginStack(loginCB)
           }
         </NavigationContainer>
-      </LocationContext.Provider>
+      </generalContext.Provider>
       </SellerContext.Provider>
       </UserContext.Provider>
     </View>

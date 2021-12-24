@@ -15,7 +15,7 @@ const OrderCard = ({ onClick, orderNumber, orderStatus, orderDate, price }) => {
                     <Text style={styles.date}>{orderDate}</Text>
                 </View>
                 <View>
-                    <Text style={styles.price}>{"$" + price}</Text>
+                    <Text style={styles.price}>₪{price}</Text>
                 </View>
                 <View style={{ flex: 1 }}></View>
                 <Icon

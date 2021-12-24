@@ -23,6 +23,8 @@ import OrderPreviewScreen from '../seller/OrderPreviewScreen';
 import EditBioScreen from '../seller/EditBioScreen';
 import EditMenuScreen from '../seller/EditMenuScreen';
 import EditLogisticsScreen from '../seller/EditLogisticsScreen';
+import SellerChatsScreen from '../seller/SellerChatsScreen';
+import ChatScreen from '../common/ChatScreen';
 
 const Stack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
@@ -40,6 +42,8 @@ const getTabIcon = (route,color) => {
       return <Icons.FontAwesome5 name='clipboard-list' size={size} color={color}/>
     case 'Search':
       return <Icons.Feather name='search' size={size} color={color}/>
+    case 'Messages':
+      return <Icons.Entypo name='chat' size={size} color={color}/>
     default:
       return null
   }
@@ -80,6 +84,7 @@ const CustomerSearchStack = () => {
     >
       <Stack.Screen name="SearchInternal" component={SearchScreen}/>
       <Stack.Screen name="KitchenPage" component={KitchenPageScreen}/>
+      <Stack.Screen name="Chat" component={ChatScreen}/>
       <Stack.Screen name="Order" component={OrderScreen}/>
     </Stack.Navigator>
   );
@@ -95,7 +100,24 @@ const CustomerExploreStack = () => {
     >
       <Stack.Screen name="ExploreInternal" component={ExploreScreen}/>
       <Stack.Screen name="KitchenPage" component={KitchenPageScreen}/>
+      <Stack.Screen name="Chat" component={ChatScreen}/>
       <Stack.Screen name="Order" component={OrderScreen}/>
+    </Stack.Navigator>
+  );
+};
+
+const CustomerProfileStack = (signoutCB) => {
+  return (
+    <Stack.Navigator
+      initialRouteName="MyProfileInternal"
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen name="Chat" component={ChatScreen}/>
+      <Stack.Screen name="MyProfileInternal">
+      {props => <MyProfileScreen signoutCB={signoutCB} {...props}/>}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -109,13 +131,13 @@ export const CustomerTabsNavigator = (signoutCB) => {
       barStyle={{
         backgroundColor: Colors.black,
         shadowColor: 'transparent',
-          shadowOpacity: 0,
-          shadowRadius: 0,
-          shadowOffset: {
-            height: 0,
-            width: 0,
-          },
-          elevation: 0,
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        },
+        elevation: 0,
       }}
       screenOptions={({route}) => ({
         headerShown: false,
@@ -126,7 +148,7 @@ export const CustomerTabsNavigator = (signoutCB) => {
       <Tabs.Screen name="Search" component={CustomerSearchStack} />
       <Tabs.Screen name="Explore" component={CustomerExploreStack} />
       <Tabs.Screen name="MyProfile" options={{tabBarLabel: 'My Profile'}}>
-        {props => <MyProfileScreen signoutCB={signoutCB} {...props}/>}
+        {props => <CustomerProfileStack signoutCB={signoutCB} {...props}/>}
       </Tabs.Screen>
     </Tabs.Navigator>
   );
@@ -167,6 +189,20 @@ const SellerOrdersStack = () => {
   );
 };
 
+const SellerChatsStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ChatsInternal"
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen name="ChatsInternal" component={SellerChatsScreen}/>
+      <Stack.Screen name="Chat" component={ChatScreen}/>
+    </Stack.Navigator>
+  );
+};
+
 export const SellerTabsNavigator = (signoutCB) => {
   return (
     <Tabs.Navigator
@@ -193,6 +229,7 @@ export const SellerTabsNavigator = (signoutCB) => {
         {props => <SellerKitchenStack signoutCB={signoutCB} {...props}/>}
       </Tabs.Screen>
       <Tabs.Screen name="Orders" component={SellerOrdersStack} />
+      <Tabs.Screen name="Messages" component={SellerChatsStack} />
     </Tabs.Navigator>
   );
 };

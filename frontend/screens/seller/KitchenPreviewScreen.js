@@ -4,7 +4,7 @@ import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
-import { LocationContext } from '../../contexts/LocationContext';
+import { generalContext } from '../../contexts/generalContext';
 import { send_post_request, send_get_request } from '../../utils/requests';
 import { SellerContext } from "../../contexts/SellerContext";
 
@@ -15,7 +15,7 @@ const KitchenPreviewScreen = ({navigation}) => {
 
   const {seller, setSeller} = useContext(SellerContext);
 
-  const {location} = useContext(LocationContext);
+  const {generalData:{location}} = useContext(generalContext);
   const [expandTimes, setExpandTimes] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   
@@ -181,18 +181,7 @@ const KitchenPreviewScreen = ({navigation}) => {
         </ShadowCard>
       </View>
 
-      <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
-        <Text style={styles.smallTitle}>Menu</Text>
-          <Button
-            onClick={() =>{}}
-            borderColor="black"
-            fillColor="white"
-            text="Order"
-            textColor="#7CC0FA"
-            height={30}
-            width={100}
-          />
-      </View>
+      <Text style={styles.smallTitle}>Menu</Text>
 
       {
         seller.kitchen.menu.map(dish =>
@@ -234,7 +223,8 @@ const styles = StyleSheet.create({
   smallTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 16
+    marginLeft: 24,
+    marginBottom: 16
   },
   rowView: {
     flexDirection: 'row',

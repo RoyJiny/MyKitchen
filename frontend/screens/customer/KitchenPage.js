@@ -5,7 +5,7 @@ import * as Icons from '@expo/vector-icons'
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
 import { UserContext } from '../../contexts/UserContext';
-import { LocationContext } from '../../contexts/LocationContext';
+import { generalContext } from '../../contexts/generalContext';
 import { send_post_request } from '../../utils/requests';
 
 import Modal from 'react-native-modal';
@@ -15,7 +15,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   const {kitchen} = route.params;
   
   const {user,setUser} = useContext(UserContext);
-  const {location} = useContext(LocationContext);
+  const {generalData: {location}} = useContext(generalContext);
   const [expandTimes, setExpandTimes] = useState(false);
   const [isFavorite, setIsFavorite] = useState(user.favorites.filter(k => k._id === kitchen._id).length > 0);
   
@@ -130,29 +130,39 @@ const KitchenPageScreen = ({route,navigation}) => {
           <BackButton onClick={navigation.goBack}/>
           <Text style={styles.title}>{kitchen.bio.name}</Text>
         </View>
-        <Icons.FontAwesome 
-          name={isFavorite ? 'star' : 'star-o'}
-          style={{marginRight: 16}}
-          size={32}
-          color={isFavorite ? 'gold' : 'black'} 
-          onPress={() => {
-            if (!isFavorite) {
-              send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
-                .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
-                .catch(err => console.log(err));
-            } else {
-              send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
-                .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
-                .catch(err => console.log(err));
-            }
-          }} />
+        <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>
+          <Icons.Entypo
+            name='chat'
+            style={{marginRight: 16}}
+            size={32}
+            onPress={() => {
+              navigation.navigate('Chat',{customer_id: user._id,customer_name:user.name, kitchen_id: kitchen._id,kitchen_name:kitchen.bio.name, isCustomer: true})
+            }}
+          />
+          <Icons.FontAwesome 
+            name={isFavorite ? 'star' : 'star-o'}
+            style={{marginRight: 16}}
+            size={32}
+            color={isFavorite ? 'gold' : 'black'} 
+            onPress={() => {
+              if (!isFavorite) {
+                send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
+                  .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
+                  .catch(err => console.log(err));
+              } else {
+                send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
+                  .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
+                  .catch(err => console.log(err));
+              }
+            }} />
+          </View>
       </View>
 
       <View style={{marginHorizontal: 16}}>
         <ShadowCard>
           {kitchen.rating.value !== 0 && <View style={styles.rowView}>
             <Icons.FontAwesome name="star" size={16} color="black"/>
-            <Text style={styles.details}>{kitchen.rating.value}</Text>
+            <Text style={styles.details}>{kitchen.rating.value.toFixed(1)}</Text>
           </View>}
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
@@ -196,7 +206,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             borderColor="black"
             fillColor="white"
             text="Order"
-            textColor="#7CC0FA"
+            textColor={Colors.lightGray}
             height={30}
             width={100}
           />
