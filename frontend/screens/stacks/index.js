@@ -106,7 +106,7 @@ const CustomerExploreStack = () => {
   );
 };
 
-const CustomerProfileStack = (signoutCB) => {
+const CustomerProfileStack = ({signoutCB}) => {
   return (
     <Stack.Navigator
       initialRouteName="MyProfileInternal"
