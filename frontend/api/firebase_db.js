@@ -1,22 +1,17 @@
-import * as firebase from 'firebase';
-import 'firebase/auth';
-import 'firebase/firestore';
+import * as firebase from 'firebase/app';
+import {getFirestore} from 'firebase/firestore';
 
-var firebaseConfig = {
-    apiKey: "your_api_key",
-    projectId: "your_project_id",
-    storageBucket: "your_storage_bucket",
-    messagingSenderId: "your_meddage_sender_id",
-    appId: "your_app_id"
+const firebaseConfig = {
+  apiKey: "AIzaSyA0QX4L5UzV4kWnlXQ_KtRv8xJaFARzXaY",
+  authDomain: "workshop-6b826.firebaseapp.com",
+  databaseURL: "https://workshop-6b826-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "workshop-6b826",
+  storageBucket: "workshop-6b826.appspot.com",
+  messagingSenderId: "225045444277",
+  appId: "1:225045444277:web:927779f3c6ca6fac7970fc"
 };
 
-let app;
-if (firebase.apps.length === 0) {
-    app = firebase.initializeApp(firebaseConfig);
-} else {
-    app = firebase.app();
-}
+firebase.initializeApp(firebaseConfig);
+const firestore = getFirestore();
 
-const db = app.firestore();
-
-export { db };
+export {firestore};

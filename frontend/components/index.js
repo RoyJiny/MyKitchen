@@ -28,3 +28,5 @@ export {default as ToggleText} from './ToggleText';
 export {default as YesNoChoice} from './YesNoChoice';
 export {default as ImageWithIndicator} from './ImageWithIndicator';
 export {default as OrderSlider} from './OrderSlider';
+export {default as Chat} from './Chat';
+export {default as ChatPreview} from './ChatPreview';

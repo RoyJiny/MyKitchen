@@ -19,8 +19,6 @@ import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/st
 import { getAuthToken, deleteAuthToken } from './api/async_storage';
 import { send_get_request,send_post_request } from './utils/requests';
 
-import ChatScreen from './ChatScreen';
-
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 
@@ -224,8 +222,7 @@ export default APP = () => {
       <generalContext.Provider value={{generalData, setGeneralData}}>
         <NavigationContainer theme={AppTheme} ref={navigationRef}>
           {state.isLoggedIn
-            // ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
-            ? <ChatScreen />
+            ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
             : LoginStack(loginCB)
           }
         </NavigationContainer>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect,useContext} from 'react'
 import { View, StyleSheet, ScrollView, RefreshControl, Dimensions,ActivityIndicator } from 'react-native';
 import { generalContext } from "../../contexts/generalContext";
+import { SellerContext } from "../../contexts/SellerContext";
 
 import {Tag,Backdrop,OrderCard,BlankDivider} from '../../components';
 import Colors from '../../globals/Colors';
@@ -9,6 +10,7 @@ import { send_get_request } from '../../utils/requests';
 
 const SellerOrdersScreen = ({ navigation }) => {
   const {generalData, setGeneralData} = useContext(generalContext);
+  const {seller, setSeller} = useContext(SellerContext);
 
   const [tagList, setTagList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +38,12 @@ const SellerOrdersScreen = ({ navigation }) => {
       navigation.navigate('OrderPreview',{item: data.order});
       setGeneralData({...generalData, notification_data: undefined});
     }
+  },[]);
+
+  useEffect(() => {
+    send_get_request("users/me/seller")
+      .then(data => {setSeller(data);})
+      .catch(err => {console.log(err);});
   },[]);
 
   const [Refreshing, setRefreshing] = useState(false)

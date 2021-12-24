@@ -130,22 +130,32 @@ const KitchenPageScreen = ({route,navigation}) => {
           <BackButton onClick={navigation.goBack}/>
           <Text style={styles.title}>{kitchen.bio.name}</Text>
         </View>
-        <Icons.FontAwesome 
-          name={isFavorite ? 'star' : 'star-o'}
-          style={{marginRight: 16}}
-          size={32}
-          color={isFavorite ? 'gold' : 'black'} 
-          onPress={() => {
-            if (!isFavorite) {
-              send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
-                .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
-                .catch(err => console.log(err));
-            } else {
-              send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
-                .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
-                .catch(err => console.log(err));
-            }
-          }} />
+        <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems:'center'}}>
+          <Icons.Entypo
+            name='chat'
+            style={{marginRight: 16}}
+            size={32}
+            onPress={() => {
+              navigation.navigate('Chat',{customer_id: user._id,customer_name:user.name, kitchen_id: kitchen._id,kitchen_name:kitchen.bio.name, isCustomer: true})
+            }}
+          />
+          <Icons.FontAwesome 
+            name={isFavorite ? 'star' : 'star-o'}
+            style={{marginRight: 16}}
+            size={32}
+            color={isFavorite ? 'gold' : 'black'} 
+            onPress={() => {
+              if (!isFavorite) {
+                send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
+                  .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
+                  .catch(err => console.log(err));
+              } else {
+                send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
+                  .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
+                  .catch(err => console.log(err));
+              }
+            }} />
+          </View>
       </View>
 
       <View style={{marginHorizontal: 16}}>

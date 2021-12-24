@@ -164,6 +164,23 @@ router.get("/users/me/seller", auth, async (req,res) => {
 
 // Users Registration, info and editing - END
 
+router.post("/seller/populate_usernames",auth, async (req,res) => {
+    try { 
+        const users = req.body.users || [];
+        const new_users = [];
+        for (const u of users) {
+            const user = await User.findById(u.user_id)
+            if (user) {
+                new_users.push({...u,username: user.name});
+            }
+        };
+        res.send({users: new_users});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: "Server Error"});
+    }
+});
+
 // Customer Addresses - START
 router.get("/users/customer/addresses", auth, async (req,res) => {
     try {
