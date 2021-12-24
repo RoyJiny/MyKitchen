@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity} from 'react-native';
+import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity,TextInput} from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import Modal from 'react-native-modal';
+import Colors from '../../globals/Colors';
 
-import { send_get_request } from '../../utils/requests';
+import { send_post_request, send_get_request } from '../../utils/requests';
 import { SellerContext } from "../../contexts/SellerContext";
-import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImUp} from '../../components';
+import {BackButton,Tag,Button2,FormInput,ShadowCard2,BlankDivider,ImChange} from '../../components';
 
 const KitchenBioScreen = ({navigation, loginCB}) => {
   const {seller, setSeller} = useContext(SellerContext);
@@ -14,10 +16,16 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   const [phone, setPhone] = useState('');
   const [description, setDescription] = useState('');
   const [tagList, setTagList] = useState([]);
-  const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png");
+  const [image, setImage] = useState("https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png");
   const [firstTime, setfirstTime] = useState(true);
   const [categories, setCategories] = useState([]);
   
+  const [showPhone, setShowPhone] = useState(false);
+  const [waitingCode, setWaitingCode] = useState(false);
+  const [codeState, setCodeState] = useState('');
+  const [wrongCode, setWrongCode] = useState(false);
+  const [wrongPhone, setWrongPhone] = useState(false);
+
   const get_tags = () => {
     send_get_request('tags/list',false)
     .then(data => setCategories(data.tags))
@@ -25,7 +33,6 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   }
 
   useEffect(get_tags, []);
-
 
   const addTag = (text) => {
     setTagList([...tagList, text])
@@ -35,8 +42,101 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
     setTagList(tagList.filter(t => t !== text))
   }
 
+  const sendPhone = (phone) => {
+    send_get_request('verify/request_verification/bio/?phone='+phone)
+      .then(() => {
+        setCodeState('');
+        setWrongPhone(false);
+        setWaitingCode(true);
+      })
+      .catch(err => {console.log(err);setWrongPhone(true);});
+  }
+
+  const sendCode = async (code,phone) => {
+    send_post_request("verify/submit_code/bio/",{code: code, phone: phone})
+      .then(() => {
+        setWaitingCode(false);
+        setWrongCode(false);
+        setWrongPhone(false);
+        setShowPhone(false);
+        setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");
+      })
+      .catch(err => {console.log(err);setWrongCode(true);});
+  }
+
   return (
     <ScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
+      <Modal isVisible={showPhone} onBackdropPress={() => setShowPhone(false)}>
+        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
+          <>
+          <Text style={{fontSize: 20, alignSelf: 'center', marginTop: 6}}>Phone Verification</Text>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setPhone(txt);
+            }}
+            value={phone}
+            placeholder={"Enter Phone Number"}
+            keyboardType="numeric"
+            autoFocus={true}
+            onSubmitEditing={() => sendPhone(phone)}
+          />
+          { wrongPhone==false ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Invalid phone number</Text>
+            </Animatable.View>
+          }
+          </>
+          {waitingCode? 
+          <>
+          <TextInput
+            style={{
+              height: 45,
+              width: 200,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              fontSize: 16,
+              margin: 4
+            }}
+            onChangeText={txt => {
+              setCodeState(txt);
+            }}
+            value={codeState}
+            placeholder={"Enter Verification Code"}
+            keyboardType="numeric"
+            autoFocus={true}
+            onSubmitEditing={() => sendCode(codeState,phone)}
+          />
+          { wrongCode==false ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.validation}>Wrong code, try again</Text>
+            </Animatable.View>
+          }
+          </>
+          :null}
+          <TouchableOpacity
+            onPress={() => sendPhone(phone)}
+            style={{alignItems: 'center', marginVertical: 12}}
+          >
+            <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>{waitingCode? 'Resend Code' : 'Send Code'}</Text>
+          </TouchableOpacity>
+          {waitingCode? 
+          <TouchableOpacity
+            onPress={() => sendCode(codeState,phone)}
+            style={{alignItems: 'center', marginVertical: 12}}
+          >
+            <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>Submit Code</Text>
+          </TouchableOpacity>
+          : null}
+        </View>
+      </Modal>
       <KeyboardAvoidingView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
@@ -143,7 +243,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
           treatAsAsync={false}
-          onClick={() => {setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");}}
+          onClick={() => {setShowPhone(true);}}
           borderColor = "black"
           fillColor = "white"
           text ="Next"
