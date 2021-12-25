@@ -18,8 +18,8 @@ const OrderCustomer = ({order}) => {
         </View>
   
         <View style={{alignSelf: 'center', marginRight: 12}}>
-          <Text style={{textAlign: 'center', fontSize: 14}}>₪{order.price}</Text>
-          <Text style={{textAlign: 'center', fontSize: 14, color: Colors.lightGray}}>{order.dueDate}</Text>
+          <Text style={{textAlign: 'right', fontSize: 14}}>₪{order.price}</Text>
+          <Text style={{textAlign: 'right', fontSize: 14, color: Colors.lightGray}}>{order.dueDate}</Text>
         </View>
       </View>
   

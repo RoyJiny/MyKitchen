@@ -5,10 +5,12 @@ import { SellerContext } from "../../contexts/SellerContext";
 import {signin} from '../../api/google_signin';
 
 import {BackButton,LogoButton,BlankDivider} from '../../components';
+import Colors from '../../globals/Colors';
 
 const SellerSigninScreen = ({navigation}) => {
   const {seller, setSeller} = useContext(SellerContext);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   return (
     <View style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
@@ -35,7 +37,9 @@ const SellerSigninScreen = ({navigation}) => {
               () => {setIsLoadingGoogle(false);navigation.navigate("KitchenBio");},
               () => setIsLoadingGoogle(false),
               true,
-              (newData) => setSeller({...seller, user: {...seller.user, ...newData}})
+              (newData) => setSeller({...seller, user: {...seller.user, ...newData}}),
+              () => {setAlreadyRegistered(true);setIsLoadingGoogle(false);},
+              true
             );
           }}
           borderColor='black'
@@ -43,6 +47,8 @@ const SellerSigninScreen = ({navigation}) => {
           text='Sign in with Google'
           textColor='black'
         />
+
+        {alreadyRegistered && <Text style={styles.alert}>Oops, seems like you already have an account...{"\n"}Go back and sign in</Text>}
 
     </View>
   )
@@ -53,7 +59,13 @@ SellerSigninScreen.navigationOptions = (props) => {
 };
 
 const styles = StyleSheet.create({
-
-  })
+  alert: {
+    alignSelf: 'center',
+    fontSize: 16,
+    marginTop: 12,
+    textAlign: 'center',
+    color: Colors.alertRed
+  }
+})
 
 export default SellerSigninScreen;

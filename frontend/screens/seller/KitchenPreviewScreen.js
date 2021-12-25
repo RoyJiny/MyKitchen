@@ -144,7 +144,7 @@ const KitchenPreviewScreen = ({navigation}) => {
         <ShadowCard>
           {seller.kitchen.rating.value !== 0 && <View style={styles.rowView}>
             <Icons.FontAwesome name="star" size={16} color="black"/>
-            <Text style={styles.details}>{seller.kitchen.rating.value}</Text>
+            <Text style={styles.details}>{seller.kitchen.rating.value.toFixed(1)}</Text>
           </View>}
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
