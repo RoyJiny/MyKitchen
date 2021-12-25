@@ -283,21 +283,18 @@ const OrderScreen = ({navigation, route}) => {
       }
 
       <BlankDivider height={16}/>
-      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance ) ? 
-        (selectedCustomAddress !== "") ? <Animatable.View animation="fadeInLeft" duration={500}>
-        <Text style={styles.validation}>Your address is beyond delivery distance</Text>
-      </Animatable.View> :
+      { (checkValid == true && selectedDelivery === "Custom Address" && selectedCustomAddress === "" ) ? 
         <Animatable.View animation="fadeInLeft" duration={500}>
           <Text style={styles.validation}>Please enter your address</Text>
         </Animatable.View>
         : null
       }
-      {/* { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance) ? 
+      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress !== "") ? 
         <Animatable.View animation="fadeInLeft" duration={500}>
-          <Text style={styles.validation}>Your address is beyond delivery distance</Text>
+        <Text style={styles.validation}>Your address is beyond delivery distance</Text>
         </Animatable.View>
         : null
-      } */}
+      }
       <TouchableOpacity>
         <Button
           onClick={() => {if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))){send_order().then(() => navigation.navigate("ExploreInternal")).catch(error => console.log(error))};setCheckValid(true);}}
