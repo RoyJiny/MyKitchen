@@ -338,6 +338,24 @@ router.post("/users/customer/addressesWithCanDeliver", auth, async (req,res) => 
     }
 });
 
+
+router.post("/users/customer/addressCanDeliver", auth, async (req,res) => {
+    try {
+        address = req.body.address;
+        
+        let kitchen = await Kitchen.findById(req.body.kitchenID);
+        if (!kitchen) throw new Error('Unknown kitchen');
+
+        const coordinates = await get_coordinates(address);
+
+        canDeliver = kitchen.logistics.isSupportDelivery && kitchen.logistics.maxDeliveryDistance >= calculate_distance(kitchen.bio.coordinates, {latitude: coordinates.latitude, longitude: coordinates.longitude})
+        res.status(200).send(canDeliver);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+    }
+});
+
 // Customer requests - END
 
 module.exports = router;
