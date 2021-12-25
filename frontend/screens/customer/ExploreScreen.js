@@ -39,7 +39,8 @@ const ExploreScreen = ({navigation}) => {
       } else if (generalData.notification_data.type === 'Chat') {
         navigation.navigate('MyProfile',{
           screen: 'Chat',
-          params: {...generalData.notification_data.chatData}
+          params: {...generalData.notification_data.chatData},
+          initial: false
         })        
       } else {
         console.log('Error: bad notification type:',data.type);

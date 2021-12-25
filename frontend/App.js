@@ -120,7 +120,8 @@ export default APP = () => {
         if (state.isCustomer) {
           navigationRef.current.navigate('MyProfile',{
             screen: 'Chat',
-            params: {...data.chatData}
+            params: {...data.chatData},
+            initial: false
           })
         } else {
           navigationRef.current.navigate('Messages',{

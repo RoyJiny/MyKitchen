@@ -16,7 +16,7 @@ const ChatScreen = ({navigation,route}) => {
   return <View style={styles.container}>
     <View style={{alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginBottom: 4}}>
       <BackButton onClick={() => {
-        if (isCustomer) navigation.navigate('MyProfileInternal');
+        if (isCustomer) navigation.goBack();
         else navigation.navigate('ChatsInternal');
       }}/>
       <Text style={styles.title}>Chat with {isCustomer ? kitchen_name : customer_name}</Text>      
