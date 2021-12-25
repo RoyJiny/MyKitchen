@@ -35,7 +35,19 @@ const SellerOrdersScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (generalData.notification_data !== undefined) {
-      navigation.navigate('OrderPreview',{item: data.order});
+      if (generalData.notification_data.type === 'Order') {
+        navigation.navigate('Orders',{
+          screen: 'OrderPreview',
+          params: {item: generalData.notification_data.order}
+        });
+      } else if (generalData.notification_data.type === 'Chat') {
+        navigation.navigate('Messages',{
+          screen: 'Chat',
+          params: {...generalData.notification_data.chatData}
+        });
+      } else {
+        console.log('Error: bad notification type:',data.type);
+      }
       setGeneralData({...generalData, notification_data: undefined});
     }
   },[]);

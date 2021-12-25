@@ -80,7 +80,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
     <>
     <Modal isVisible={showModal} onBackdropPress={() => {setShowModal(false);}}>
       <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
-        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Set links so that customers will have an easy time paying to you.</Text>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Add payment options for your kitchens (links to Paybox or Bit)</Text>
       </View>
     </Modal>
     <KeyboardAwareScrollView style={{flex:1, paddingTop: 16, marginHorizontal: 8}}>
@@ -140,7 +140,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
             </View>
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <FormInput
-                placeholder="bit payment link"
+                placeholder="Bit payment link"
                 additionalStyle={{marginLeft: 16, marginRight: 8, width: 256}}
                 textInit={payLinks[0]}
                 setState={(text) => changePayLink(0,text)}

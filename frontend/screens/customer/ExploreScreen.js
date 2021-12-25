@@ -31,7 +31,19 @@ const ExploreScreen = ({navigation}) => {
 
   useEffect(() => {
     if (generalData.notification_data !== undefined) {
-      navigation.navigate('MyProfile',{orderData: generalData.notification_data.order});
+      if (generalData.notification_data.type === 'Order') {
+        navigation.navigate('MyProfile',{
+          screen: 'MyProfileInternal',
+          params: {orderData: generalData.notification_data.order}
+        })
+      } else if (generalData.notification_data.type === 'Chat') {
+        navigation.navigate('MyProfile',{
+          screen: 'Chat',
+          params: {...generalData.notification_data.chatData}
+        })        
+      } else {
+        console.log('Error: bad notification type:',data.type);
+      }      
       setGeneralData({...generalData, notification_data: undefined});
     }
   },[]);

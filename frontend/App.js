@@ -104,14 +104,33 @@ export default APP = () => {
 
   const handleNotificationData = data => {
     if (state.isLoggedIn && navigationRef.current) {
-      if (state.isCustomer) {
-        navigationRef.current.navigate('MyProfile',{orderData: data.order})
+      if (data.type === 'Order') {
+        if (state.isCustomer) {
+          navigationRef.current.navigate('MyProfile',{
+            screen: 'MyProfileInternal',
+            params: {orderData: data.order}
+          })
+        } else {
+          navigationRef.current.navigate('Orders',{
+            screen: 'OrderPreview',
+            params: {item: data.order}
+          })
+        }
+      } else if (data.type === 'Chat') {
+        if (state.isCustomer) {
+          navigationRef.current.navigate('MyProfile',{
+            screen: 'Chat',
+            params: {...data.chatData}
+          })
+        } else {
+          navigationRef.current.navigate('Messages',{
+            screen: 'Chat',
+            params: {...data.chatData}
+          })
+        }
       } else {
-        navigationRef.current.navigate('Orders',{
-          screen: 'OrderPreview',
-          params: {item: data.order}
-        })
-      }
+        console.log('Error: bad notification type:',data.type);
+      }      
     } else {
       setGeneralData({...generalData, notification_data: data});
     }
