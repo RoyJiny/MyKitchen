@@ -8,7 +8,7 @@ import { firestore } from '../api/firebase_db';
 import Colors from '../globals/Colors';
 
 
-const Chat = ({customer_id,kitchen_id,isCustomer}) => {
+const Chat = ({customer_id,kitchen_id,isCustomer,notify_on_message}) => {
   const chat_room = `room_${kitchen_id}_${customer_id}`;
 
   const [messages, setMessages] = useState([]);
@@ -21,7 +21,6 @@ const Chat = ({customer_id,kitchen_id,isCustomer}) => {
       .then(() => {})
       .catch(() => console.log(err));
     
-    
     const room_ref = doc(firestore,'chats',chat_room);
     setDoc(room_ref,{
       kitchen: kitchen_id,
@@ -30,6 +29,8 @@ const Chat = ({customer_id,kitchen_id,isCustomer}) => {
     },{merged: true})
       .then(() => {})
       .catch(() => console.log(err));
+
+    notify_on_message(messages[0].text); // tell the server to send notification to the other side
   };
 
   useEffect(() => {

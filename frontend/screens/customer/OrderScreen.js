@@ -1,6 +1,7 @@
 import React,{useState,useContext, useEffect} from 'react'
-import {View,StyleSheet,Text, ScrollView} from 'react-native'
+import {View,StyleSheet,Text, ScrollView, TextInput, TouchableOpacity} from 'react-native'
 import { RadioButton } from 'react-native-paper';
+import * as Animatable from 'react-native-animatable';
 
 import Colors from '../../globals/Colors';
 
@@ -50,9 +51,12 @@ const OrderScreen = ({navigation, route}) => {
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");
   const [addresses, setAddresses] = useState([]);
-  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true}];
+  const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true},{name: "Custom Address", address: "Custom Address", canDeliver: true}];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
+  const [selectedCustomAddress, setSelectedCustomAddress] = useState("");
   const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
+  const [checkValid, setCheckValid] = useState(false);
+  const [deliveryDistance, setDeliveryDistance] = useState(true);
 
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);
@@ -122,7 +126,7 @@ const OrderScreen = ({navigation, route}) => {
         "costumer":user._id,
         "comments": comments,
         "isPickup": selectedDelivery == "Pickup",
-        "deliveryAddress": get_address_delivery(selectedDelivery),
+        "deliveryAddress": selectedDelivery !== "Custom Address" ? get_address_delivery(selectedDelivery) : selectedCustomAddress,
         "status": "Pending Approval",
         "items": get_items(),
         "date": current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
@@ -133,6 +137,17 @@ const OrderScreen = ({navigation, route}) => {
     } catch(err){
       console.log(err);
     }
+  };
+
+  const checkCanDeliver = async () => {
+    const address = {
+      "address": selectedCustomAddress,
+      "kitchenID": kitchen._id
+    }
+
+    send_post_request('users/customer/addressCanDeliver', address)
+      .then(answer => setDeliveryDistance(answer))
+      .catch(error => console.log(error));
   };
 
   return (
@@ -181,18 +196,39 @@ const OrderScreen = ({navigation, route}) => {
                   <RadioButton
                     status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
                     color="black"
-                    onPress= {() => setSelectedDelivery(delivery.name)}
+                    onPress= {() => {setCheckValid(false); if(delivery.name !== "Custom Address"){setSelectedDelivery(delivery.name); setSelectedCustomAddress("");setDeliveryDistance(true)} else {setSelectedDelivery(delivery.name);}}}
                     disabled={!delivery.canDeliver}
                   />
                   <Text style={{color: delivery.canDeliver? 'black' : Colors.lightGray}}>{delivery.name}</Text>
-                  {delivery.name !== "Pickup"
+                  {delivery.name !== "Pickup" && delivery.name !== "Custom Address"
                     ? <Text style={{color: Colors.lightGray}}> ({delivery.address})</Text>
                     : null
-                  }                
+                  }
+                  {delivery.name === "Custom Address"
+                    ?
+                    <View style={styles.wrapper}>
+                      <TextInput
+                        style={styles.textInput}
+                        onChangeText={() => {}}
+                        placeholder={"Enter your address"}
+                        color={Colors.black}
+                        onChangeText={(address) => setSelectedCustomAddress(address)}
+                        onEndEditing={() => {
+                          console.log("txt1"+selectedCustomAddress+"2");
+                          checkCanDeliver();
+                        }}
+                      />
+                    </View>
+                    : null
+                  }
                 </View>
                 {delivery.canDeliver
                   ? null
                   : <Text style={{color: Colors.lightGray, marginLeft: 36}}>Beyond delivery distance</Text>
+                }
+                {!deliveryDistance && delivery.name === "Custom Address"
+                  ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>Beyond delivery distance</Text>
+                  : null
                 }
               </View>
             )
@@ -246,16 +282,31 @@ const OrderScreen = ({navigation, route}) => {
         : null
       }
 
-      <BlankDivider height={32}/>
-      <Button
-        onClick={() => {send_order().then(() => navigation.navigate("ExploreInternal")).catch(error => console.log(error));}}
-        borderColor="black"
-        fillColor="white"
-        text="Send Order"
-        textColor={Colors.lightGray}
-        height={35}
-        width={120}
-      />
+      <BlankDivider height={16}/>
+      { (checkValid == true && selectedDelivery === "Custom Address" && selectedCustomAddress === "" ) ? 
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.validation}>Please enter your address</Text>
+        </Animatable.View>
+        : null
+      }
+      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress !== "") ? 
+        <Animatable.View animation="fadeInLeft" duration={500}>
+        <Text style={styles.validation}>Your address is beyond delivery distance</Text>
+        </Animatable.View>
+        : null
+      }
+      <TouchableOpacity>
+        <Button
+          onClick={() => {if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))){send_order().then(() => navigation.navigate("ExploreInternal")).catch(error => console.log(error))};setCheckValid(true);}}
+          borderColor="black"
+          fillColor="white"
+          text="Send Order"
+          textColor={Colors.lightGray}
+          height={35}
+          width={120}
+          disabled = {selectedDelivery === "Custom Address" &&  (selectedCustomAddress == "" || !deliveryDistance) ? true : false}
+        />
+      </TouchableOpacity>
       <BlankDivider height={24}/>
       </ScrollView>
     </View>
@@ -302,7 +353,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginRight: 8
-  }
+  },
+  wrapper:{
+    borderWidth: 2,
+    borderRadius: 10,
+    marginTop: 0,
+    marginLeft:5,
+    borderColor: Colors.lightGray
+  },
+  textInput: {
+    height: 20,
+    width: 170,
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  validation: {
+    color: "red",
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginBottom: 2,
+  },
 });
 
 export default OrderScreen;

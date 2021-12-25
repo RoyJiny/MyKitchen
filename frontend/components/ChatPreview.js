@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Text,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,Text,StyleSheet,TouchableOpacity,Dimensions} from 'react-native';
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../globals/Colors';
@@ -11,7 +11,7 @@ const ChatPreview = ({username,last_message,navigateToChat}) => {
       <View style={styles.row}>
         <View>
           <Text style={styles.title}>{username}</Text>
-          <Text style={styles.message}>
+          <Text style={styles.message} numberOfLines={1}>
             {last_message.isFromCustomer ? username : "You"}
             {":  " + last_message.text}
           </Text>
@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    color: Colors.lightGray
+    color: Colors.lightGray,
+    width: Dimensions.get('window').width * 0.7
   }
 });
 

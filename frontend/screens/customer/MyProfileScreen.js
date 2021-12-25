@@ -43,30 +43,6 @@ const AddressCard = (key,address,onEdit,onDelete) => {
   );
 };
 
-const OpenURLButton = ({ url, text, addLine }) => {
-  const handlePress = useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
-    const supported = await Linking.canOpenURL(url);
-
-    if (supported) {
-      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-      // by some browser in the mobile
-      await Linking.openURL(url);
-    } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
-    }
-  }, [url]);
-
-  return (
-          <>
-          <TouchableOpacity style={{paddingVertical: 8}} onPress={handlePress}>
-            <Text style={{textAlign: 'center', fontSize: 14, color:'#0066CC'}}>{text}</Text>
-          </TouchableOpacity>
-          {addLine == true? <View style={{height:1, borderColor: Colors.lightGray, borderWidth: 0.5}}/> : null}
-          </>
-          )
-};
-
 const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(false);
@@ -80,8 +56,6 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const [wrongCode, setWrongCode] = useState(false);
   const [wrongPhone, setWrongPhone] = useState(false);
 
-  const [showLinks, setShowLinks] = useState(false);
-  const [linksState, setLinksState] = useState([]);
   const [addresses, setAddresses] = useState([...user.addresses]);
   const [orderList, setOrderList] = useState([])
   const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
@@ -111,32 +85,26 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
       .catch(err => {console.log(err);});
   }
 
-  const sendPhone = async (phone) => {
-    try{
-      const answer = await send_get_request('verify/request_verification/?phone='+phone);
-      if (answer == undefined) throw new Error("Failed to send data");
-      setCodeState('');
-      setWrongPhone(false);
-      setWaitingCode(true);
-    } catch(err){
-      console.log(err);
-      setWrongPhone(true);
-    }
+  const sendPhone = (phone) => {
+    send_get_request('verify/request_verification/?phone='+phone)
+      .then(() => {
+        setCodeState('');
+        setWrongPhone(false);
+        setWaitingCode(true);
+      })
+      .catch(err => {console.log(err);setWrongPhone(true);});
   }
 
-  const sendCode = async (code,phone) => {
-    try{
-      const answer = await send_post_request("verify/submit_code/",{code: code, phone: phone});
-      if (answer == undefined) throw new Error("Failed to send data");
-      setWaitingCode(false);
-      setWrongCode(false);
-      setWrongPhone(false);
-      setShowPhone(false);
-      setUser({...user, phone: phoneState});
-    } catch(err){
-      console.log(err);
-      setWrongCode(true);
-    }
+  const sendCode = (code,phone) => {
+    send_post_request("verify/submit_code/",{code: code, phone: phone})
+      .then(() => {
+        setWaitingCode(false);
+        setWrongCode(false);
+        setWrongPhone(false);
+        setShowPhone(false);
+        setUser({...user, phone: phoneState});
+      })
+      .catch(err => {console.log(err);setWrongCode(true);});
   }
 
   if (route.params && route.params.orderData) {
@@ -265,16 +233,6 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
             <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>Submit Code</Text>
           </TouchableOpacity>
           : null}
-        </View>
-      </Modal>
-
-      <Modal isVisible={showLinks} onBackdropPress={() => setShowLinks(false)}>
-        <View style={{marginHorizontal: 32, backgroundColor: 'white', borderRadius: 10}}>
-          {linksState.map((item, index) => {
-              return (
-                <OpenURLButton key={index} url={item} text={'payment link '+(index+1)} addLine={index!=(linksState.length - 1)}/>
-              )
-          })}
         </View>
       </Modal>
 

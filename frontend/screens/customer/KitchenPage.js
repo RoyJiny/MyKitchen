@@ -1,5 +1,5 @@
 import React,{useState,useContext} from 'react'
-import {View,StyleSheet,Text,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator} from 'react-native'
+import {View,StyleSheet,Text,Dimensions,TouchableOpacity,Linking,ScrollView,ActivityIndicator,} from 'react-native'
 import * as Icons from '@expo/vector-icons'
 
 import Colors from '../../globals/Colors';
@@ -69,21 +69,17 @@ const KitchenPageScreen = ({route,navigation}) => {
 
   return (
     <View style={{flex:1}}>
-      <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
-        <View style={{marginHorizontal: 40, backgroundColor: 'white', borderRadius: 10}}>
-        <View style={{justifyContent: 'center'}}>
+      <Modal backdropColor='rgba(0,0,0,0.99)' isVisible={showModal} onBackdropPress={() => setShowModal(false) }>
+        <View style={{marginHorizontal: Dimensions.get('window').width*0.12, backgroundColor: 'white', borderRadius: 10}}>
         <View style={{
           flexDirection:'column',
-          justifyContent:'space-between',
-          marginHorizontal:4,
+          marginHorizontal:0,
           alignItems: 'center'
         }}>
           <BlankDivider height={8}/>
           <View style={{
             flexDirection:'row',
-            justifyContent:'space-between',
             alignItems: 'center',
-            marginHorizontal: 30
           }}>
             
             <ImageWithIndicator imageStyle={{width: 80,height:80, borderRadius: 10}} imgLink={modalState.img}/>
@@ -91,7 +87,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             <View style={{
               flexDirection:'column',
               justifyContent:'space-between',
-              marginHorizontal:16,
+              marginLeft: 16
             }}>
             <Text style={{textAlign:"left",fontWeight: 'bold', fontSize: 18}}>{modalState.name}</Text>
             <BlankDivider height={8}/>
@@ -103,11 +99,9 @@ const KitchenPageScreen = ({route,navigation}) => {
             <Text style={{marginHorizontal: 16 }}>{modalState.description}</Text>
           </View>
         </View>
-        <BlankDivider height={8}/>
-        </View>
           <TouchableOpacity
             onPress={() => setShowModal(false)}
-            style={{alignItems: 'center', marginVertical: 8}}
+            style={{alignItems: 'center', marginVertical: 4}}
           >
             <Text style={{fontWeight: 'bold'}}>Close</Text>
           </TouchableOpacity>

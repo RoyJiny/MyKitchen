@@ -34,8 +34,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textInput: {
-         // remove? todo
-        width: 256,
+        flex: 1,
         paddingVertical: 2,
         paddingHorizontal: 10,
         fontSize: 16,
