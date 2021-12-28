@@ -1,5 +1,4 @@
 var morgan = require('morgan');
-var fs = require('fs')
 
 const stdout_logger = morgan((tokens,req,res) => {
   var format = 'Handling new request:';
