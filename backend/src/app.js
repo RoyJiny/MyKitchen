@@ -1,5 +1,4 @@
 require('./db/mongoose');
-const ENV = require('../config/env');
 
 const express = require('express');
 
@@ -12,13 +11,17 @@ const imagesRouter = require('./routers/images_router');
 const verificationRouter = require('./routers/verification_router');
 const chatsRouter = require('./routers/chats_router');
 
-const logger = require('./utils/logger');
+const {stdout_logger,file_logger} = require('./utils/logger');
 
-const PORT = ENV.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 
-app.use(logger);
+app.use(stdout_logger);
+if (app.get('env') === 'production') {
+  const stream = fs.createWriteStream('/var/log/mykitchen-server.log', {flags: 'a'})  
+  app.use(file_logger(stream));
+}
 
 app.use(usersRouter);
 app.use(ordersRouter);
