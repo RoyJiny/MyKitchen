@@ -1,3 +1,4 @@
-app.yaml
-config
+node_modules
+.env
 uploads
+app.yaml

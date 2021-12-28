@@ -2,8 +2,6 @@ const axios = require('axios');
 const express = require("express");
 const router = new express.Router();
 
-const ENV = require('../../config/env');
-
 const User = require('../models/User');
 
 const auth = require('../middleware/auth');
@@ -23,7 +21,7 @@ router.get("/verify/request_verification/", auth, async (req,res) => {
         },
         {
           headers: {
-            "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+            "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
           }
         }
       );
@@ -51,7 +49,7 @@ router.post("/verify/submit_code/", auth, async (req,res) => {
             "verification_code": code
           },
           headers: {
-            "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+            "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
           }
         }
       );
@@ -89,7 +87,7 @@ router.get("/verify/request_verification/bio/", async (req,res) => {
       },
       {
         headers: {
-          "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+          "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
         }
       }
     );
@@ -117,7 +115,7 @@ router.post("/verify/submit_code/bio/", async (req,res) => {
           "verification_code": code
         },
         headers: {
-          "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+          "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
         }
       }
     );
@@ -153,7 +151,7 @@ router.get("/verify/request_verification/edit/", auth, async (req,res) => {
       },
       {
         headers: {
-          "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+          "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
         }
       }
     );
@@ -181,7 +179,7 @@ router.post("/verify/submit_code/edit/", auth, async (req,res) => {
           "verification_code": code
         },
         headers: {
-          "X-Authy-API-Key": ENV.TWILIO_AUTH_TOKEN
+          "X-Authy-API-Key": process.env.TWILIO_AUTH_TOKEN
         }
       }
     );

@@ -1,11 +1,9 @@
 const axios = require('axios');
 
-const ENV = require('../../config/env');
-
 const get_coordinates = async (address) => {
   const params = {
     q: address,
-    key: ENV.OPENCAGE_API_KEY
+    key: process.env.OPENCAGE_API_KEY
   }
 
   try {
