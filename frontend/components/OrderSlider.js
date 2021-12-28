@@ -1,5 +1,5 @@
 import React,{useRef,useState,useCallback} from "react";
-import { Text, View, Animated,StyleSheet,Dimensions,TouchableOpacity,Linking,Alert} from "react-native";
+import { Text, View, Animated,StyleSheet,Dimensions,TouchableOpacity,Linking,Alert, Clipboard} from "react-native";
 import SlidingUpPanel from "rn-sliding-up-panel";
 import { AirbnbRating } from 'react-native-ratings';
 import ImageWithIndicator from './ImageWithIndicator';
@@ -7,6 +7,7 @@ import ImageWithIndicator from './ImageWithIndicator';
 import Colors from "../globals/Colors";
 import * as Icons from '@expo/vector-icons';
 import Modal from 'react-native-modal';
+//import Clipboard from '@react-native-clipboard/clipboard'; // not working with expo...
 
 import BlankDivider from "./BlankDivider";
 import { send_post_request } from "../utils/requests";
@@ -24,7 +25,8 @@ const OpenURLButton = ({ url, text, img}) => {
       // by some browser in the mobile
       await Linking.openURL(url);
     } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
+      // for some reason title appears rtl so i am using only message text
+      Alert.alert('', `Failed to open link:\n${url}\n\nYou can copy it and try manually.`, [{text: 'close', onPress: () => {}}, {text: 'copy', onPress: () => {Clipboard.setString(url);}, style: 'cancel'}], { cancelable: true});
     }
   }, [url]);
 
