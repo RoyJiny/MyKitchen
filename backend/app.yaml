@@ -1,9 +1,0 @@
-runtime: nodejs14
-env_variables:
-        NODE_ENV='production'
-        PORT=8080
-        JWT_SECRET='ajriuihsf2348jk'
-        MONGODB_URL="mongodb+srv://mykitchen:mykitchen123@Cluster0.hlltg.mongodb.net/UsersDB?retryWrites=true&w=majority"
-        GOOGLE_API_KEY='AIzaSyDP0_QUd0Z0pxwhOb2oUzIseDiySKY82Yk'
-        OPENCAGE_API_KEY='c03640237692458c840adf1993524e08'
-        TWILIO_AUTH_TOKEN='F2NWrUoVqKMs47HIHKWucIxXQwL2Lwoi'
