@@ -54,7 +54,7 @@ const OrderScreen = ({navigation, route}) => {
   const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true},{name: "Custom Address", address: "Custom Address", canDeliver: true}];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedCustomAddress, setSelectedCustomAddress] = useState("");
-  const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
+  const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed ? "Future Delivery":"ASAP");
   const [checkValid, setCheckValid] = useState(false);
   const [deliveryDistance, setDeliveryDistance] = useState(true);
 
@@ -183,8 +183,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDelivery}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDelivery(!showDelivery)}/>
+          <ExpantionArrow
+            text={selectedDelivery}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDelivery(!showDelivery)}
+          />
         </View>
       </View>
 
@@ -214,7 +218,6 @@ const OrderScreen = ({navigation, route}) => {
                         color={Colors.black}
                         onChangeText={(address) => setSelectedCustomAddress(address)}
                         onEndEditing={() => {
-                          console.log("txt1"+selectedCustomAddress+"2");
                           checkCanDeliver();
                         }}
                       />
@@ -251,8 +254,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery Date</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDateOption}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDate(!showDate)}/>
+          <ExpantionArrow
+            text={selectedDateOption}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDate(!showDate)}
+          />
         </View>
       </View>
 
@@ -265,7 +272,7 @@ const OrderScreen = ({navigation, route}) => {
               onPress= {() => setSelectedDateOption('ASAP')}
               disabled={route.params.params.isClosed}
             />
-            <Text style={{marginRight: 10, color: route.params.params.isClosed? Colors.lightGray : 'black'}}>{route.params.params.isClosed? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
+            <Text style={{marginRight: 10, color: route.params.params.isClosed ? Colors.lightGray : 'black'}}>{route.params.params.isClosed ? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton

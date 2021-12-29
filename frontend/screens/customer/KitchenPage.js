@@ -164,8 +164,8 @@ const KitchenPageScreen = ({route,navigation}) => {
               kitchen.logistics.isOnlyFutureDelivery
                ? <Text style={styles.details}>Future Deliveries Only</Text>
                : <View style={{flexDirection: 'row',alignItems:'center'}}>
-                  <Text style={styles.details}>{getCloseTimeDesc()}</Text>
                   <ExpantionArrow
+                    text={getCloseTimeDesc()}
                     isInitaialyExpanded={expandTimes}
                     onClick={() => setExpandTimes(!expandTimes)}
                   />
@@ -214,7 +214,7 @@ const KitchenPageScreen = ({route,navigation}) => {
               price={dish.price}
               description={dish.description}
               count={itemCounts[dish._id].count}
-              setCount={diff => {setItemCounts({...itemCounts, [dish._id]: {count: Math.max(itemCounts[dish._id].count+diff,0), price: itemCounts[dish._id].price}})}}
+              setCount={diff => {setItemCounts({...itemCounts, [dish._id]: {count: Math.min(Math.max(itemCounts[dish._id].count+diff,0),9), price: itemCounts[dish._id].price}})}}
               imgLink={dish.img ? `${ServerBase}/images/${dish.img}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
             />
           </TouchableOpacity>

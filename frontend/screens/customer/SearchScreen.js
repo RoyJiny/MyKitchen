@@ -16,9 +16,16 @@ const SearchScreen = ({ route, navigation }) => {
   const {generalData:{location}} = useContext(generalContext);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const search_by_text = (text_query) => {
     setIsLoading(true);
+    setSearchTerm(text_query)
+    if (text_query === '') {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
     send_post_request('search/kitchen/text',{
       location: location,
       text_query: text_query
@@ -79,7 +86,7 @@ const SearchScreen = ({ route, navigation }) => {
                 isLoading
                 ? <ActivityIndicator size={30} color='black'/>
                 : results.length === 0
-                    ? <Text style={{alignSelf:'center'}}>No results</Text>
+                    ? (searchTerm !== '' ? <Text style={{alignSelf:'center'}}>No results</Text> : null)
                     : results.map(kitchen => <SearchCard
                         key={kitchen._id}
                         onClick={() => navigation.navigate("KitchenPage",{kitchen})}
