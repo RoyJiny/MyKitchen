@@ -262,6 +262,7 @@ const EditBioScreen = ({navigation}) => {
               textInit={description}
               setState={setDescription}
               multi={true}
+              maxLen={200}
             />
             { firstTime==true || description.length > 0 ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>

@@ -61,6 +61,7 @@ const YesNoChoice = ({category, units, Ycomment, Ncomment, number, onChangeNumbe
                     onChangeText={onChangeNumber}
                     value={number !== 'undefined' ? number : ''}
                     keyboardType="numeric"
+                    maxLength={10}
                 />
                 <Text 
                     style={{
