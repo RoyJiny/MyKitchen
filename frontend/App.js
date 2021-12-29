@@ -21,6 +21,7 @@ import { send_get_request,send_post_request } from './utils/requests';
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
+console.reportErrorsAsExceptions = false;
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -61,6 +62,7 @@ const registerForPushNotificationsAsync = async () => {
 export default APP = () => {
   I18nManager.allowRTL(false);
   I18nManager.forceRTL(false);
+  console.reportErrorsAsExceptions = false;
   
   const [expoPushToken, setExpoPushToken] = useState('');
   const responseListener = useRef();

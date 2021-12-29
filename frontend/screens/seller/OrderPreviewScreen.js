@@ -74,7 +74,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
         if (item.dueDate !== 'ASAP'){
           var currDate = new Date();
           var arr = item.dueDate.split('/')
-          var dueDate = new Date(arr[2], arr[1], arr[0], 0, 0)
+          var dueDate = new Date(arr[2], Number(arr[1])-1, arr[0], 0, 0)
           if (currDate < dueDate){
             setShowModal(true);
             break;

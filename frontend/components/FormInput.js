@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {StyleSheet,TextInput,View} from 'react-native';
+import {TextInput} from 'react-native';
 
 import Colors from '../globals/Colors';
 
@@ -7,38 +7,30 @@ const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false}) 
     const [isActive,setIsActive] = useState(false);
 
     return (
-        <View style={[styles.wrapper, additionalStyle, {borderWidth: isActive ? 2 : 1}]}>
-            <TextInput
-                style={styles.textInput}
-                onChangeText={txt => {
-                    setState(txt);
-                }}
-                value={textInit}
-                placeholder={placeholder}
-                placeholderTextColor={Colors.lightGray}
-                onFocus={() => {setIsActive(true)}}
-                onBlur={() => {setIsActive(false)}}
-                autoCorrect={false}
-                color={"black"}
-                multiline={multi}
-            />
-        </View>
+        <TextInput
+            style={{...{
+                borderWidth: isActive ? 2 : 1,
+                borderColor: "black",
+                borderRadius: 20,
+                marginTop: 15,
+                fontSize: 16,
+                paddingHorizontal: 10,
+                paddingVertical: 2,
+                color: "black"
+            },
+            ...additionalStyle
+            }}
+            onChangeText={txt => {
+                setState(txt);
+            }}
+            value={textInit}
+            placeholder={placeholder}
+            placeholderTextColor={Colors.lightGray}
+            onFocus={() => {setIsActive(true)}}
+            onBlur={() => {setIsActive(false)}}
+            multiline={multi}
+        />
     );
 };
-
-const styles = StyleSheet.create({
-    wrapper:{
-        borderRadius: 20,
-        marginTop: 15,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    textInput: {
-        flex: 1,
-        paddingVertical: 2,
-        paddingHorizontal: 10,
-        fontSize: 16,
-    }
-});
 
 export default FormInput;
