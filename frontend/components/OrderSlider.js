@@ -91,7 +91,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
   return (
     <View style={[styles.wrapper, {height: wrapperHeight}]}>
       <Modal isVisible={showLinks} onBackdropPress={() => setShowLinks(false)}>
-        <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+        <View style={{alignSelf:'center', width: Dimensions.get('window').width*0.8, backgroundColor: 'white', borderRadius: 10}}>
           <Text style={{fontSize: 24, alignSelf: 'center', marginVertical: 8}}>Payments Options</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
             {order.kitchen.logistics.paymentLinks[0] !== '' && 
@@ -107,10 +107,13 @@ const OrderSlider = ({order, close,navigateToChat}) => {
               style={{marginHorizontal: 8}}
               size={20}
             />
-            <Text style={{fontSize: 14, alignSelf: 'center', width: 250, color: 'gray'}}>{'You can also contact the seller directly,\nvia phone or chat to sort the payment.'}</Text>
+            <Text style={{fontSize: 14, alignSelf: 'center', color: 'gray', width: Dimensions.get('window').width*0.7}}>
+              {'You can also contact the seller directly, via phone or chat to sort the payment.'}
+            </Text>
           </View>
         </View>
       </Modal>
+
       <SlidingUpPanel
         ref={ref}
         draggableRange={draggableRange}
