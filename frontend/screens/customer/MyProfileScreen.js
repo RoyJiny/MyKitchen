@@ -1,5 +1,5 @@
-import React,{useState,useRef,useCallback, useContext, useEffect } from 'react'
-import {Alert,View,StyleSheet,TextInput,Text,Image,TouchableOpacity, Linking,Dimensions,ScrollView,Button as RNButton} from 'react-native'
+import React,{useState,useRef,useContext,useEffect } from 'react'
+import {View,StyleSheet,TextInput,Text,Image,TouchableOpacity,RefreshControl,ScrollView} from 'react-native'
 import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
@@ -61,14 +61,23 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
   const [sliderState, setSliderState] = useState({show:false, data: {}});
 
-  useEffect(() => {
+  const fetchData = () => {
     send_get_request("orders/customer/get_orders")
       .then(data => {
         setOrderList(data);
         setFetchOrdersDone(true);
       })
       .catch(err => {console.log(err);});
-  },[]);
+  };
+
+  const [Refreshing, setRefreshing] = useState(false)
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+    setRefreshing(false);
+  }
+
+  useEffect(fetchData,[]);
 
   let scroll_position = 0;
   const ScrollViewRef = useRef();
@@ -239,7 +248,8 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
       <ScrollView
         ref={ScrollViewRef}
         onScroll={event => scroll_position = event.nativeEvent.contentOffset.y}
-        showsVerticalScrollIndicator={false}  
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}
       >
       <View style={styles.contentContainer}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
