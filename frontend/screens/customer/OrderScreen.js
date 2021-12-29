@@ -54,7 +54,7 @@ const OrderScreen = ({navigation, route}) => {
   const deliveryOptions =  [...addresses, {name: "Pickup", address: "Pickup", canDeliver: true},{name: "Custom Address", address: "Custom Address", canDeliver: true}];
   const [selectedDelivery, setSelectedDelivery] = useState("Pickup");
   const [selectedCustomAddress, setSelectedCustomAddress] = useState("");
-  const [selectedDateOption, setSelectedDateOption] = useState(route.params.params.isClosed? "Future Delivery":"ASAP");
+  const [selectedDateOption, setSelectedDateOption] = useState((route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? "Future Delivery":"ASAP");
   const [checkValid, setCheckValid] = useState(false);
   const [deliveryDistance, setDeliveryDistance] = useState(true);
 
@@ -83,6 +83,7 @@ const OrderScreen = ({navigation, route}) => {
   const current_date = new Date();
   const getFirstValidDate = () => {
     let date = current_date;
+    date.setDate(date.getDate() + 1);
     for (let i = 0; i < 7; i++) {
       if (date.getDay() == 0){
         if (!inactiveDays.includes(7)){
@@ -93,7 +94,7 @@ const OrderScreen = ({navigation, route}) => {
           return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
         }
       }
-      date.setDate(date.getDate() + 1)
+      date.setDate(date.getDate() + 1);
     }
     return current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear();
   };
@@ -183,8 +184,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDelivery}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDelivery(!showDelivery)}/>
+          <ExpantionArrow
+            text={selectedDelivery}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDelivery(!showDelivery)}
+          />
         </View>
       </View>
 
@@ -214,7 +219,6 @@ const OrderScreen = ({navigation, route}) => {
                         color={Colors.black}
                         onChangeText={(address) => setSelectedCustomAddress(address)}
                         onEndEditing={() => {
-                          console.log("txt1"+selectedCustomAddress+"2");
                           checkCanDeliver();
                         }}
                       />
@@ -251,8 +255,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery Date</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDateOption}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDate(!showDate)}/>
+          <ExpantionArrow
+            text={selectedDateOption == 'ASAP' ? 'ASAP' : date}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDate(!showDate)}
+          />
         </View>
       </View>
 
@@ -263,9 +271,9 @@ const OrderScreen = ({navigation, route}) => {
               status={ selectedDateOption == 'ASAP' ? 'checked' : 'unchecked' }
               color="black"
               onPress= {() => setSelectedDateOption('ASAP')}
-              disabled={route.params.params.isClosed}
+              disabled={route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery}
             />
-            <Text style={{marginRight: 10, color: route.params.params.isClosed? Colors.lightGray : 'black'}}>{route.params.params.isClosed? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
+            <Text style={{marginRight: 10, color: (route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? Colors.lightGray : 'black'}}>{kitchen.logistics.isOnlyFutureDelivery? "ASAP - can't place ASAP order, only future orders" : route.params.params.isClosed? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton

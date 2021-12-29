@@ -22,7 +22,7 @@ router.post("/search/kitchen/text", auth, async (req,res) => {
         kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
         kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
 
-        res.send(kitchens);
+        res.send(kitchens.slice(0,20)); // limit to max of 20 result from search 
     } catch (err) {
         console.log(err);
         res.status(500).send({error: 'Server Error'});
@@ -41,7 +41,7 @@ router.post("/search/kitchen/tag", auth, async (req,res) => {
         kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
         kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
 
-        res.send(kitchens);
+        res.send(kitchens.slice(0,20)); // limit to max of 20 result from search
     } catch (err) {
         console.log(err);
         res.status(500).send({error: 'Server Error'});

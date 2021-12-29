@@ -5,7 +5,7 @@ import * as Icons from '@expo/vector-icons';
 import Colors from '../../globals/Colors';
 import { ServerBase } from '../../globals/globals';
 
-import {Input,SearchCard} from '../../components';
+import {Input,SearchCard,Button, BlankDivider} from '../../components';
 
 import {send_post_request} from '../../utils/requests';
 import { UserContext } from '../../contexts/UserContext';
@@ -16,9 +16,16 @@ const SearchScreen = ({ route, navigation }) => {
   const {generalData:{location}} = useContext(generalContext);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const search_by_text = (text_query) => {
     setIsLoading(true);
+    setSearchTerm(text_query)
+    if (text_query === '') {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
     send_post_request('search/kitchen/text',{
       location: location,
       text_query: text_query
@@ -26,6 +33,17 @@ const SearchScreen = ({ route, navigation }) => {
     .then(data => {setResults(data); setIsLoading(false)})
     .catch(err => {console.log(err); setResults([]); setIsLoading(false)});
   };
+
+  const search_nearby = () => {
+    setIsLoading(true);
+    send_post_request('search/kitchen/text',{
+      location: location,
+      text_query: ''
+    })
+    .then(data => {setResults(data); setIsLoading(false)})
+    .catch(err => {console.log(err); setResults([]); setIsLoading(false)});
+  };
+
   const search_by_tag = (tag) => {
     setIsLoading(true);
     send_post_request('search/kitchen/tag',{
@@ -46,6 +64,18 @@ const SearchScreen = ({ route, navigation }) => {
     return unsubscribe;
   },[route,navigation]);
 
+  const nearbyButton = () => {
+    return <Button
+      onClick={search_nearby}
+      fillColor='white'
+      text='Search Nearby Kitchens'
+      textColor='black'
+      height={40}
+      width={250}
+      additionalTextStyle={{fontWeight: 'normal'}}
+    />;
+  };
+
   return (
     <View style={{flex:1}}>
       <View style={{flex:1}}>
@@ -59,38 +89,32 @@ const SearchScreen = ({ route, navigation }) => {
             onSubmit={event => search_by_text(event.nativeEvent.text)}
           />
         </View>
-        <View style={{
-            height: 15,
-            backgroundColor: 'transparent'
-        }}/>
-        <View style={{
-            height: 15,
-            backgroundColor: 'transparent'
-        }}/>
+        
+        <BlankDivider height={30} />
+
         <View style={{flex:1}}>
-          <ScrollView>
-            <ScrollView
-                vertical={true}
-                showsHorizontalScrollIndicator={false}
-                automaticallyAdjustContentInsets = {true}
-                style={{marginBottom: 16, marginLeft: 8}}
-            >
-              {
-                isLoading
-                ? <ActivityIndicator size={30} color='black'/>
-                : results.length === 0
-                    ? <Text style={{alignSelf:'center'}}>No results</Text>
-                    : results.map(kitchen => <SearchCard
-                        key={kitchen._id}
-                        onClick={() => navigation.navigate("KitchenPage",{kitchen})}
-                        OrderName={kitchen.bio.name}
-                        description={kitchen.bio.description}
-                        imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
-                        distance={kitchen.distance.toFixed(1)}
-                      />)
-              }
-              
-            </ScrollView>
+          <ScrollView
+              vertical={true}
+              showsHorizontalScrollIndicator={false}
+              automaticallyAdjustContentInsets = {true}
+              style={{marginBottom: 16, marginLeft: 8}}
+          >
+            <BlankDivider height={12} />            
+            {
+              isLoading
+              ? <ActivityIndicator size={30} color='black'/>
+              : results.length === 0
+                  ? (searchTerm !== '' ? <Text style={{alignSelf:'center'}}>No results</Text> : nearbyButton())
+                  : results.map(kitchen => <SearchCard
+                      key={kitchen._id}
+                      onClick={() => navigation.navigate("KitchenPage",{kitchen})}
+                      OrderName={kitchen.bio.name}
+                      description={kitchen.bio.description}
+                      imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
+                      distance={kitchen.distance.toFixed(1)}
+                    />)
+            }
+            <BlankDivider height={24} />            
           </ScrollView>
         </View>
       </View>

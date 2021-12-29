@@ -16,14 +16,14 @@ const SellerChatsScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     const rooms_collection = collection(firestore,'chats');
     const q = query(rooms_collection, where("kitchen","==",seller.kitchen._id));
     const unsbscribe = onSnapshot(q,snapshot => {
       const users = snapshot.docs.map((doc) => {return {user_id: doc.data().customer, last_message:doc.data().last_message}});
+      setIsLoading(true);
       send_post_request("seller/populate_usernames", {users})
         .then(res => {setChats(res.users); setIsLoading(false);})
-        .catch(err => console.log(err));
+        .catch(err => {console.log(err); setIsLoading(false);});
     });
     return unsbscribe;
   },[]);

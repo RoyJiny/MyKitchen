@@ -6,6 +6,7 @@ const Order = require("../models/Order");
 
 const auth = require('../middleware/auth');
 const {send_notification_to_user} = require('../external_api/notifications');
+const {send_email} = require('../utils/mail_handler')
 
 router.post("/order/submit", auth, async (req,res) => {
   try {
@@ -61,6 +62,14 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
           break;
       } 
       send_notification_to_user(order.customer,"Order Update",description,extra_data={order,type: 'Order'});
+    }
+
+    if (updated_status === 'Done') {
+      send_email(
+        order.customer.email,
+        `Your receipt from ${order.kitchen.bio.name}`,
+        `Your order from ${order.kitchen.bio.name} was delivered successfuly!\n\nItems:\n${order.items.map(item => `${item.name}  x${item.quantity}`).join('\n')}\n\nTotal: ₪${order.price}\n\n\nThank You for using MyKitchen, hope to see you again :)`
+      )
     }
     
     res.send("Processed Successfuly");
