@@ -184,8 +184,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDelivery}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDelivery(!showDelivery)}/>
+          <ExpantionArrow
+            text={selectedDelivery}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDelivery(!showDelivery)}
+          />
         </View>
       </View>
 
@@ -215,7 +219,6 @@ const OrderScreen = ({navigation, route}) => {
                         color={Colors.black}
                         onChangeText={(address) => setSelectedCustomAddress(address)}
                         onEndEditing={() => {
-                          console.log("txt1"+selectedCustomAddress+"2");
                           checkCanDeliver();
                         }}
                       />
@@ -252,8 +255,12 @@ const OrderScreen = ({navigation, route}) => {
       <View style={[styles.rowView, {justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20}]}>
         <Text style={styles.deliveryTitle}>Delivery Date</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.deliveryTitle}>{selectedDateOption == 'ASAP' ? 'ASAP' : date}</Text>
-          <ExpantionArrow isInitaialyExpanded={false} onClick={() => setShowDate(!showDate)}/>
+          <ExpantionArrow
+            text={selectedDateOption == 'ASAP' ? 'ASAP' : date}
+            fontSize={18}
+            isInitaialyExpanded={false}
+            onClick={() => setShowDate(!showDate)}
+          />
         </View>
       </View>
 

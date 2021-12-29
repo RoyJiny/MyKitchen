@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
-const Button = ({onClick, fillColor, text, textColor, height=50,width=300,additionalStyle={}}) => {
+const Button = ({onClick, fillColor, text, textColor, height=50,width=300,additionalStyle={},additionalTextStyle={}}) => {
     const [isLoading, setIsLoading] = useState(false);
     return (
         <TouchableOpacity
@@ -32,13 +32,13 @@ const Button = ({onClick, fillColor, text, textColor, height=50,width=300,additi
             {
                 !isLoading
                 ? <Text 
-                    style={{
+                    style={[{
                         textAlign:'center',
                         color: textColor,
                         fontSize: 16,
                         fontWeight: 'bold',
                         padding: 2
-                    }}
+                    },additionalTextStyle]}
                 >
                         {text}
                 </Text>

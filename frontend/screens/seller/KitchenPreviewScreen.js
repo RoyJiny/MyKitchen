@@ -152,8 +152,8 @@ const KitchenPreviewScreen = ({navigation}) => {
               seller.kitchen.logistics.isOnlyFutureDelivery
                ? <Text style={styles.details}>Future Devileries Only</Text>
                : <View style={{flexDirection: 'row',alignItems:'center'}}>
-                  <Text style={styles.details}>{getCloseTimeDesc()}</Text>
                   <ExpantionArrow
+                    text={getCloseTimeDesc()}
                     isInitaialyExpanded={expandTimes}
                     onClick={() => setExpandTimes(!expandTimes)}
                   />

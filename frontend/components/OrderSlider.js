@@ -49,11 +49,10 @@ const OrderSlider = ({order, close,navigateToChat}) => {
   const [didRate,setDidRate] = useState(false);
   const [TOTAL_HEIGHT,setTOTAL_HEIGHT] = useState(400 + (showRating ? 100 : 0));
 
-  // const draggableRange = { top: TOTAL_HEIGHT, bottom: HEADER_HEIGHT };
   const [draggableRange, setDraggableRange] = useState({ top: TOTAL_HEIGHT, bottom: HEADER_HEIGHT });
   const { top, bottom } = draggableRange;
-  var draggedValue = new Animated.Value(HEADER_HEIGHT);
-  const [wrapperHeight,setWrapperHeight] = useState(HEADER_HEIGHT);
+  var draggedValue = new Animated.Value(TOTAL_HEIGHT);
+  const [wrapperHeight,setWrapperHeight] = useState(TOTAL_HEIGHT);
   draggedValue.addListener(({value}) => setWrapperHeight(value));
 
   const sendRating = (orderid,rating) => {
@@ -62,6 +61,13 @@ const OrderSlider = ({order, close,navigateToChat}) => {
         setDidRate(true);
       })
       .catch(err => {console.log(err);});
+  }
+
+  const handleHeightEvent = event => {
+    setDraggableRange({...draggableRange, top:100+event.nativeEvent.layout.height});
+    setTOTAL_HEIGHT(100+event.nativeEvent.layout.height);
+    draggedValue.setValue(100+event.nativeEvent.layout.height);
+    setWrapperHeight(100+event.nativeEvent.layout.height);
   }
 
   const textTranslateY = draggedValue.interpolate({
@@ -85,7 +91,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
   return (
     <View style={[styles.wrapper, {height: wrapperHeight}]}>
       <Modal isVisible={showLinks} onBackdropPress={() => setShowLinks(false)}>
-        <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+        <View style={{alignSelf:'center', width: Dimensions.get('window').width*0.8, backgroundColor: 'white', borderRadius: 10}}>
           <Text style={{fontSize: 24, alignSelf: 'center', marginVertical: 8}}>Payments Options</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
             {order.kitchen.logistics.paymentLinks[0] !== '' && 
@@ -101,10 +107,13 @@ const OrderSlider = ({order, close,navigateToChat}) => {
               style={{marginHorizontal: 8}}
               size={20}
             />
-            <Text style={{fontSize: 14, alignSelf: 'center', width: 250, color: 'gray'}}>{'You can also contact the seller directly,\nvia phone or chat to sort the payment.'}</Text>
+            <Text style={{fontSize: 14, alignSelf: 'center', color: 'gray', width: Dimensions.get('window').width*0.7}}>
+              {'You can also contact the seller directly, via phone or chat to sort the payment.'}
+            </Text>
           </View>
         </View>
       </Modal>
+
       <SlidingUpPanel
         ref={ref}
         draggableRange={draggableRange}
@@ -140,7 +149,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
                 </Animated.View>
               </View>
               <TouchableOpacity onPress={close}>
-                <Icons.AntDesign name="closecircleo" size={18} color="white"/>
+                <Icons.AntDesign name="closecircleo" size={24} color="white"/>
               </TouchableOpacity>
             </View>
             <View style={[styles.row, {marginTop: 8}]}>
@@ -150,14 +159,14 @@ const OrderSlider = ({order, close,navigateToChat}) => {
 
           </View>
           
-          <View style={styles.container} onLayout={(event) => setDraggableRange({...draggableRange, top:100+event.nativeEvent.layout.height}) && setTOTAL_HEIGHT(100+event.nativeEvent.layout.height)}>
+          <View style={styles.container} onLayout={(event) => handleHeightEvent(event)}>
             <Text style={styles.textBold}>Your Order:</Text>
             {order.items.map((item,idx) => <Text style={styles.subtext} key={idx}>{item.name}  x{item.quantity}</Text>)}
             <BlankDivider height={16}/>
             
             <View style={{marginBottom: 8, flexDirection: 'row'}}>
               <Text style={styles.textBold}>Delivery: </Text>
-              <Text style={styles.text}>{order.deliveryAddress}</Text>
+              <Text style={styles.text}>{order.deliveryAddress} ({order.dueDate})</Text>
             </View>
             <BlankDivider height={16}/>
             
