@@ -86,7 +86,7 @@ const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => 
         <Modal isVisible={show} onBackdropPress={() => setShow(false)}>
           <Calendar
             current={transformDate(date)}
-            minDate={now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()}
+            minDate={now.getFullYear()+"-"+(now.getMonth()+1)+"-"+(now.getDate()+1)}
             markedDates={markedDates}
             onDayPress={onChange}
             onMonthChange={(date) => {getDisabledDays(date.month - 1, date.year, inactiveDays);}}

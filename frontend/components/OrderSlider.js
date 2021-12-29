@@ -7,6 +7,7 @@ import ImageWithIndicator from './ImageWithIndicator';
 import Colors from "../globals/Colors";
 import * as Icons from '@expo/vector-icons';
 import Modal from 'react-native-modal';
+import * as Clipboard from 'expo-clipboard';
 
 import BlankDivider from "./BlankDivider";
 import { send_post_request } from "../utils/requests";
@@ -24,7 +25,8 @@ const OpenURLButton = ({ url, text, img}) => {
       // by some browser in the mobile
       await Linking.openURL(url);
     } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
+      // for some reason title appears rtl so i am using only message text
+      Alert.alert('', `Failed to open link:\n${url}\n\nYou can copy it and try manually.`, [{text: 'close', onPress: () => {}}, {text: 'copy', onPress: () => {Clipboard.setString(url);}, style: 'cancel'}], { cancelable: true});
     }
   }, [url]);
 
@@ -93,13 +95,13 @@ const OrderSlider = ({order, close,navigateToChat}) => {
               <OpenURLButton url={order.kitchen.logistics.paymentLinks[1]} text={'PayBox'} img={'data:image/png;base64,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'}/>
             }
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginVertical: 12}}>
+          <View style={{flexDirection: 'row', marginVertical: 12}}>
             <Icons.SimpleLineIcons
               name='info'
-              style={{marginLeft: 6}}
+              style={{marginHorizontal: 8}}
               size={20}
             />
-            <Text style={{fontSize: 14, alignSelf: 'center', marginRight: 6, color: 'gray'}}>You can also contact the seller directly via phone/chat to pay</Text>
+            <Text style={{fontSize: 14, alignSelf: 'center', width: 250, color: 'gray'}}>{'You can also contact the seller directly,\nvia phone or chat to sort the payment.'}</Text>
           </View>
         </View>
       </Modal>
