@@ -44,6 +44,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
             placeholder="Dish Name"
             onChangeText={onChangeName}
             value= {name}
+            maxLength={20}
           />          
           <View  style={{flexDirection:'row', alignItems: 'center', paddingTop: 8}}>
             <Text>₪ </Text>
@@ -60,6 +61,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
               value={pricing}
               keyboardType="numeric"
               placeholder="price"
+              maxLength={10}
             />
           </View>
         </View>
@@ -104,6 +106,7 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
           placeholder="Desciption"
           onChangeText={onChangeDesc}
           value= {desc}
+          maxLength={100}
         />
       </View>
     </View>

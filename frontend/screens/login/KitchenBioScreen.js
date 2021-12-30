@@ -138,7 +138,6 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         </View>
       </Modal>
       <KeyboardAvoidingView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
         <View style={{ flexDirection:'row'}}>
           <BackButton onClick={navigation.goBack}/>
@@ -201,6 +200,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               textInit={description}
               setState={setDescription}
               multi={true}
+              maxLen={200}
             />
             { firstTime==true || description.length > 0 ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>
@@ -254,7 +254,6 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         
         <BlankDivider height={32}/>
         </View>
-        </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     </ScrollView>
   )
