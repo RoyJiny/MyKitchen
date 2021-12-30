@@ -1,5 +1,6 @@
 import React,{useEffect,useContext,useState} from 'react';
-import {View,StyleSheet} from 'react-native';
+import {View,StyleSheet,Text} from 'react-native';
+import Colors from '../../globals/Colors';
 
 import {collection,onSnapshot,where,query} from 'firebase/firestore';
 import { firestore } from '../../api/firebase_db';
@@ -14,6 +15,7 @@ const SellerChatsScreen = ({navigation}) => {
   const {seller,setSeller} = useContext(SellerContext);
   const [chats,setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
     const rooms_collection = collection(firestore,'chats');
@@ -22,8 +24,8 @@ const SellerChatsScreen = ({navigation}) => {
       const users = snapshot.docs.map((doc) => {return {user_id: doc.data().customer, last_message:doc.data().last_message}});
       setIsLoading(true);
       send_post_request("seller/populate_usernames", {users})
-        .then(res => {setChats(res.users); setIsLoading(false);})
-        .catch(err => {console.log(err); setIsLoading(false);});
+        .then(res => {setChats(res.users); setIsLoading(false);setHasLoaded(true);})
+        .catch(err => {console.log(err); setIsLoading(false);setHasLoaded(true);});
     });
     return unsbscribe;
   },[]);
@@ -35,7 +37,8 @@ const SellerChatsScreen = ({navigation}) => {
       {isLoading
         ? <ActivityIndicator size={40} color='black'/>
         : <View style={styles.container}>
-          {chats.map(chat => <ChatPreview
+          {
+          chats.map(chat => <ChatPreview
             key={chat.user_id}
             username={chat.username}
             last_message={chat.last_message}
@@ -46,7 +49,12 @@ const SellerChatsScreen = ({navigation}) => {
               kitchen_name: seller.kitchen.bio.name, 
               isCustomer: false})
             }
-          />)}
+          />)
+          }
+          {chats.length == 0 && hasLoaded?
+            <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active chats at the moment</Text>
+            : null
+          }
         </View>
       }
     </View>

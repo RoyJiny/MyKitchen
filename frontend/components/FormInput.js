@@ -3,7 +3,7 @@ import {TextInput} from 'react-native';
 
 import Colors from '../globals/Colors';
 
-const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false}) => {
+const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false,maxLen = 20}) => {
     const [isActive,setIsActive] = useState(false);
 
     return (
@@ -29,6 +29,7 @@ const FormInput = ({textInit,placeholder,additionalStyle,setState,multi=false}) 
             onFocus={() => {setIsActive(true)}}
             onBlur={() => {setIsActive(false)}}
             multiline={multi}
+            maxLength={maxLen}
         />
     );
 };
