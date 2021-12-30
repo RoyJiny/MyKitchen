@@ -59,6 +59,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
     send_post_request("users/customer/rate_kitchen",{id: orderid, rating: rating})
       .then(() => {
         setDidRate(true);
+        order.rated = true;
       })
       .catch(err => {console.log(err);});
   }
