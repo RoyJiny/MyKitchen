@@ -215,7 +215,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
                 <AirbnbRating
                   size={30}
                   showRating={false}
-                  startingValue={3}
+                  startingValue={0}
                   onFinishRating={(value) => sendRating(order._id,value)}
                 />
                 <BlankDivider height={8} />
