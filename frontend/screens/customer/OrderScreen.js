@@ -299,7 +299,7 @@ const OrderScreen = ({navigation, route}) => {
       }
       { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress !== "") ? 
         <Animatable.View animation="fadeInLeft" duration={500}>
-        <Text style={styles.validation}>This address is beyond1 {kitchen.bio.name}'s delivery distance</Text>
+        <Text style={styles.validation}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
         </Animatable.View>
         : null
       }
