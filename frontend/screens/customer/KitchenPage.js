@@ -259,12 +259,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 16
   },
-  navigateText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 16,
-    color: "#7CC0FA",
-  },
   time: {
     fontSize: 14,
     color: Colors.lightGray,
