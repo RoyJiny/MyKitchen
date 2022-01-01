@@ -8,6 +8,7 @@ import ImageWithIndicator from './ImageWithIndicator';
 
 const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
   const [expend, setExpend] = useState(false);
+  const [numOfLines, setNumOfLines] = useState(2);
 
   return (
     <View style={{justifyContent: 'center'}}>
@@ -22,21 +23,13 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
 
       <View>
         <Text style={styles.title}>{itemName}</Text>
+        <Text numberOfLines={expend ? 0: 2} onTextLayout={e => setNumOfLines(e.nativeEvent.lines.length)} style={[styles.description,{ width: 150 }]}>{description}</Text>
         {
-          expend ? 
-          <Text style={[styles.description,{ width: 150 }]}>{description}</Text>
-          : 
-          <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
-        }
-        {
-          expend ? 
-          <TouchableOpacity onPress={() => {setExpend(false)}} >
-            <Text style={styles.expend}>Show Less</Text>
+          numOfLines > 2 ?
+          <TouchableOpacity onPress={() => {setExpend(e => !e)}} >
+            <Text style={styles.expend}>Show {expend ? 'Less' : 'More'}</Text>
           </TouchableOpacity>
-          :
-          <TouchableOpacity onPress={() => {setExpend(true)}} >
-            <Text style={styles.expend}>Show More</Text>
-          </TouchableOpacity>
+          : null
         }
       </View>
 
