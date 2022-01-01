@@ -215,7 +215,7 @@ const OrderScreen = ({navigation, route}) => {
                       <TextInput
                         style={styles.textInput}
                         onChangeText={() => {}}
-                        placeholder={"Enter your address"}
+                        placeholder={"e.g. 1 Hashalom, Tel Aviv"}
                         color={Colors.black}
                         onChangeText={(address) => setSelectedCustomAddress(address)}
                         onEndEditing={() => {
@@ -226,12 +226,12 @@ const OrderScreen = ({navigation, route}) => {
                     : null
                   }
                 </View>
-                {delivery.canDeliver
+                {delivery.canDeliver || selectedDelivery === "Custom Address"
                   ? null
-                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>Beyond delivery distance</Text>
+                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                 }
-                {!deliveryDistance && delivery.name === "Custom Address"
-                  ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>Beyond delivery distance</Text>
+                {!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address"
+                  ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                   : null
                 }
               </View>
@@ -299,7 +299,7 @@ const OrderScreen = ({navigation, route}) => {
       }
       { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress !== "") ? 
         <Animatable.View animation="fadeInLeft" duration={500}>
-        <Text style={styles.validation}>Your address is beyond delivery distance</Text>
+        <Text style={styles.validation}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
         </Animatable.View>
         : null
       }
@@ -370,10 +370,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.lightGray
   },
   textInput: {
-    height: 20,
-    width: 170,
+    height: 30,
+    width: 190,
     paddingHorizontal: 10,
-    fontSize: 14,
   },
   validation: {
     color: "red",
