@@ -53,7 +53,7 @@ const SearchScreen = ({ route, navigation }) => {
     .then(data => {setResults(data); setIsLoading(false);})
     .catch(err => {console.log(err); setResults([]); setIsLoading(false)});
   };
-  
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (route.params!==undefined && route.params.category!==undefined) {
