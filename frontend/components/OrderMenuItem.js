@@ -1,11 +1,14 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
 
 import Colors from '../globals/Colors';
 import ShadowCard from './ShadowCard';
 import ImageWithIndicator from './ImageWithIndicator';
 
+
 const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
+  const [expend, setExpend] = useState(false);
+
   return (
     <View style={{justifyContent: 'center'}}>
     <View style={{
@@ -19,7 +22,22 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
 
       <View>
         <Text style={styles.title}>{itemName}</Text>
-        <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
+        {
+          expend ? 
+          <Text style={[styles.description,{ width: 150 }]}>{description}</Text>
+          : 
+          <Text numberOfLines={2} style={[styles.description,{ width: 150 }]}>{description}</Text>
+        }
+        {
+          expend ? 
+          <TouchableOpacity onPress={() => {setExpend(false)}} >
+            <Text style={styles.expend}>Show Less</Text>
+          </TouchableOpacity>
+          :
+          <TouchableOpacity onPress={() => {setExpend(true)}} >
+            <Text style={styles.expend}>Show More</Text>
+          </TouchableOpacity>
+        }
       </View>
 
       <Text style={styles.price}>₪{price}</Text>
@@ -73,6 +91,11 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     color: Colors.lightGray
+  },
+  expend: {
+    fontSize: 12,
+    color: Colors.lightGray,
+    fontWeight: 'bold'
   }
 });
 
