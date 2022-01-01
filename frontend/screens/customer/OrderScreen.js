@@ -228,7 +228,7 @@ const OrderScreen = ({navigation, route}) => {
                 </View>
                 {delivery.canDeliver || selectedDelivery === "Custom Address"
                   ? null
-                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond1 {kitchen.bio.name}'s delivery distance</Text>
+                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                 }
                 {!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address"
                   ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
