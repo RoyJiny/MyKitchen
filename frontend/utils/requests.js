@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
 
 import { ServerBase } from '../globals/globals';
 import { getAuthToken } from '../api/async_storage';

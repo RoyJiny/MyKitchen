@@ -20,11 +20,17 @@ const ExploreScreen = ({navigation}) => {
   const get_data_from_server = () => {
     send_get_request('users/customer/pastKitchens')
       .then(data => setPastKitchens(data))
-      .catch(err => {console.log(err);setPastKitchens([])});
+      .catch(err => {
+        setPastKitchens([]);
+        if(err.response.status !== 401) setGeneralData({...generalData, networkError: true});
+      });
       
     send_get_request('tags/list',false)
     .then(data => setCategories(data.tags))
-    .catch(err => {console.log(err);setCategories([])});
+    .catch(err => {
+      setCategories([]);
+      if(err.response.status !== 401) setGeneralData({...generalData, networkError: true});
+    });
   }
   
   useEffect(get_data_from_server, []);
