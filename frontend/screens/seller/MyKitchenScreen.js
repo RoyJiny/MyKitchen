@@ -55,6 +55,8 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
 
         <Button
           onClick={signoutCB}
+          treatAsAsync={true}
+          asyncStopLoading={false}
           text="Sign Out"
           fillColor="white"
           textColor="black"

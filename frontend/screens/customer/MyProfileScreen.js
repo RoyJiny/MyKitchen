@@ -341,6 +341,8 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
 
         <Button
           onClick={signoutCB}
+          treatAsAsync={true}
+          asyncStopLoading={false}
           text="Sign Out"
           fillColor="white"
           textColor="black"

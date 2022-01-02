@@ -120,30 +120,25 @@ const OrderScreen = ({navigation, route}) => {
   }
 
   const send_order = async () => {
-    try{
-      const new_order = {
-        "kitchen": kitchen._id,
-        "price": totalPrice,
-        "costumer":user._id,
-        "comments": comments,
-        "isPickup": selectedDelivery == "Pickup",
-        "deliveryAddress": selectedDelivery !== "Custom Address" ? get_address_delivery(selectedDelivery) : selectedCustomAddress,
-        "status": "Pending Approval",
-        "items": get_items(),
-        "date": current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
-        "dueDate": selectedDateOption == "ASAP" ? "ASAP" : date
-      }
-      const answer = await send_post_request('order/submit',new_order);
-      if (answer == undefined) throw new Error("Failed to send data");
-    } catch(err){
-      console.log(err);
+    const new_order = {
+      kitchen: kitchen._id,
+      price: totalPrice,
+      costumer:user._id,
+      comments: comments,
+      isPickup: selectedDelivery == "Pickup",
+      deliveryAddress: selectedDelivery !== "Custom Address" ? get_address_delivery(selectedDelivery) : selectedCustomAddress,
+      status: "Pending Approval",
+      items: get_items(),
+      date: current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
+      dueDate: selectedDateOption == "ASAP" ? "ASAP" : date
     }
+    await send_post_request('order/submit',new_order);
   };
 
   const checkCanDeliver = async () => {
     const address = {
-      "address": selectedCustomAddress,
-      "kitchenID": kitchen._id
+      address: selectedCustomAddress,
+      kitchenID: kitchen._id
     }
 
     send_post_request('users/customer/addressCanDeliver', address)
@@ -305,7 +300,14 @@ const OrderScreen = ({navigation, route}) => {
       }
       <TouchableOpacity>
         <Button
-          onClick={() => {if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))){send_order().then(() => navigation.navigate("ExploreInternal")).catch(error => console.log(error))};setCheckValid(true);}}
+          onClick={async () => {
+            if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))) {
+              await send_order();
+              setCheckValid(true);
+            }
+          }}
+          treatAsAsync={true}
+          asyncCB={() => {navigation.navigate("ExploreInternal");}}
           borderColor="black"
           fillColor="white"
           text="Send Order"

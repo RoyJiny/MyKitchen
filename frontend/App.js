@@ -7,7 +7,7 @@ import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
-
+import axios from 'axios';
 
 import { UserContext } from "./contexts/UserContext";
 import { SellerContext } from "./contexts/SellerContext";
@@ -15,6 +15,7 @@ import { generalContext } from "./contexts/generalContext";
 
 import Colors from './globals/Colors';
 import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/stacks'
+import {NetworkErrorAlert} from './components';
 
 import { getAuthToken, deleteAuthToken } from './api/async_storage';
 import { send_get_request,send_post_request } from './utils/requests';
@@ -31,7 +32,6 @@ Notifications.setNotificationHandler({
   }),
   handleError: err => console.log(`notification handling error: ${err}`)
 });
-
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -76,7 +76,15 @@ export default APP = () => {
       longitude: 34.798571,
       latitude: 32.059999
     },
-    notification_data: undefined
+    notification_data: undefined,
+    networkError: false
+  });
+
+  axios.interceptors.response.use((response) => {
+    return response;
+  }, (err) => {
+    if(err.response.status !== 401) setGeneralData({...generalData, networkError: true})
+    return Promise.reject(err);
   });
 
 
@@ -186,18 +194,11 @@ export default APP = () => {
     setState({isLoggedIn: true, isCustomer: !isSeller});
   };
 
-  const signoutCB = () => {
-    send_get_request("users/signout")
-      .then(() => {
-        deleteAuthToken()
-          .then(() => {
-            setState({isLoggedIn: false, isCustomer: true});
-            init_user_contexts();
-          })
-          .catch(err => console.log(err))       
-      })
-      .catch(err => console.log(err));
-    ;
+  const signoutCB = async () => {
+    await send_get_request("users/signout");
+    await deleteAuthToken();      
+    setState({isLoggedIn: false, isCustomer: true});
+    init_user_contexts();
   };
 
   const AppTheme = {
@@ -219,7 +220,10 @@ export default APP = () => {
                 setUser({...user, ...user_data});
                 loginCB(user_data.isSeller);
               })
-              .catch(err => {console.log(err);setIsLoading(false);})
+              .catch(err => {
+                setIsLoading(false);
+                console.log(err);
+              })
           }
         else{setIsLoading(false);}
         })
@@ -237,7 +241,8 @@ export default APP = () => {
 
   return (
     <View style={{flex:1}}>
-      <View style={{ height: StatusBar.currentHeight, backgroundColor: Colors.black }} />
+      <View style={{ height: StatusBar.currentHeight, backgroundColor: generalData.networkError ? Colors.alertRed :Colors.black }} />
+      {generalData.networkError ? <NetworkErrorAlert dismiss={() => setGeneralData({...generalData, networkError: false})}/> : null}
       <ExpoStatusBar style="light" />
       <UserContext.Provider value={{user, setUser}}>
       <SellerContext.Provider value={{seller, setSeller}}>
