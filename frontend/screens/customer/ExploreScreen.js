@@ -22,14 +22,14 @@ const ExploreScreen = ({navigation}) => {
       .then(data => setPastKitchens(data))
       .catch(err => {
         setPastKitchens([]);
-        if(err.response.status !== 401) setGeneralData({...generalData, networkError: true});
+        console.log(err)
       });
       
     send_get_request('tags/list',false)
     .then(data => setCategories(data.tags))
     .catch(err => {
       setCategories([]);
-      if(err.response.status !== 401) setGeneralData({...generalData, networkError: true});
+      console.log(err)
     });
   }
   
