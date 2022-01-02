@@ -230,7 +230,7 @@ const OrderScreen = ({navigation, route}) => {
                   ? null
                   : <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                 }
-                {!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address"
+                {!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address" && selectedCustomAddress.length > 0
                   ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                   : null
                 }
@@ -297,7 +297,7 @@ const OrderScreen = ({navigation, route}) => {
         </Animatable.View>
         : null
       }
-      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress !== "") ? 
+      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress.length > 0) ? 
         <Animatable.View animation="fadeInLeft" duration={500}>
         <Text style={styles.validation}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
         </Animatable.View>

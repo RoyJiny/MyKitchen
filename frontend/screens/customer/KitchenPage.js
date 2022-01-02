@@ -141,11 +141,11 @@ const KitchenPageScreen = ({route,navigation}) => {
             onPress={() => {
               if (!isFavorite) {
                 send_post_request('users/customer/edit/favorites/add',{id: kitchen._id})
-                  .then(() => {user.favorites = [...user.favorites, kitchen]; setIsFavorite(true); setUser(user);})
+                  .then(() => {setIsFavorite(true);setUser({...user, favorites: [...user.favorites, kitchen]});})
                   .catch(err => console.log(err));
               } else {
                 send_post_request('users/customer/edit/favorites/remove',{id: kitchen._id})
-                  .then(() => {user.favorites = user.favorites.filter(k => k._id !== kitchen._id); setIsFavorite(false); setUser(user);})
+                  .then(() => {setIsFavorite(false);setUser({...user, favorites: user.favorites.filter(k => k._id !== kitchen._id)});})
                   .catch(err => console.log(err));
               }
             }} />
@@ -258,12 +258,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 16
-  },
-  navigateText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 16,
-    color: "#7CC0FA",
   },
   time: {
     fontSize: 14,
