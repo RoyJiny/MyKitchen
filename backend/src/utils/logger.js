@@ -3,7 +3,6 @@ var morgan = require('morgan');
 const stdout_logger = morgan((tokens,req,res) => {
   var format = 'Handling new request:';
   format += `\n  route:   ${tokens.url(req, res)}`;
-  format += `\n  ip:      ${tokens['remote-addr'](req, res)}`;
   
   if (req.user)
     format += `\n  user id: ${req.user._id}`;

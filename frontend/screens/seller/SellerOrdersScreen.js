@@ -1,5 +1,9 @@
 import React, { useState, useEffect,useContext} from 'react'
-import { View, StyleSheet, ScrollView, RefreshControl, Dimensions,ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Dimensions,ActivityIndicator,Text,TouchableOpacity } from 'react-native';
+import CheckBox from 'expo-checkbox';
+import {Calendar} from 'react-native-calendars';
+import Modal from 'react-native-modal';
+
 import { generalContext } from "../../contexts/generalContext";
 import { SellerContext } from "../../contexts/SellerContext";
 
@@ -11,7 +15,10 @@ import { send_get_request } from '../../utils/requests';
 const SellerOrdersScreen = ({ navigation }) => {
   const {generalData, setGeneralData} = useContext(generalContext);
   const {seller, setSeller} = useContext(SellerContext);
-
+  
+  const [useDateFilter, setUseDateFilter] = useState(false);
+  const [showDateSelector, setShowDateSelector] = useState(false);
+  const [dateFilter, setDateFilter] = useState((new Date()).getDate()+'/'+((new Date()).getMonth()+1)+'/'+(new Date()).getFullYear())
   const [tagList, setTagList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -65,8 +72,24 @@ const SellerOrdersScreen = ({ navigation }) => {
     setRefreshing(false);
   }
 
+  const parseDate = (stringDate) => new Date(parseInt(stringDate.split('/')[2]),parseInt(stringDate.split('/')[1])-1,parseInt(stringDate.split('/')[0]))
+
+  const onDateSelection = (date) => {
+    setDateFilter(String(date.day)+"/"+String(date.month)+"/"+String(date.year));
+    setShowDateSelector(false);
+    setUseDateFilter(true);
+  }
+
+  const transformStringDate = (date) => {
+    const dateInfo = date.split("/");
+    return dateInfo[2]+"-"+("0"+dateInfo[1]).slice(-2)+"-"+("0"+dateInfo[0]).slice(-2);
+  };
+  const transformDate = (date) => {
+    return date.getFullYear()+"-"+("0"+date.getMonth()+1).slice(-2)+"-"+("0"+date.getDate()).slice(-2);
+  };
+  
   return (
-    <View>
+    <View style={{flex: 1}}>
       <View>
         <Backdrop text='Orders' height={80} />
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.tags}>
@@ -76,36 +99,73 @@ const SellerOrdersScreen = ({ navigation }) => {
           <Tag text="Ready for Customer" textColor="black" add={addTag} remove={removeTag} />
           <Tag text="Done" textColor="black" add={addTag} remove={removeTag} />
         </ScrollView>
+        
+        <View style={{marginLeft: 12, flexDirection: 'row', alignItems: 'center', marginVertical: 8}}>
+          <CheckBox
+            value={useDateFilter}
+            onValueChange={setUseDateFilter}
+            color={useDateFilter ? Colors.black : Colors.lightGray}
+            style={{height: 18,  width: 18, marginRight: 8}}
+          />
+          <Text style={{color: useDateFilter ? 'black' : Colors.lightGray, fontSize: 14}}>Orders to fulfil by: </Text>
+          <TouchableOpacity
+            onPress={() => setShowDateSelector(true)}
+            style={{
+              borderRadius: 8,
+              borderBottomColor: useDateFilter ? Colors.black : Colors.lightGray,
+              borderBottomWidth: 1,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{fontSize: 14, paddingHorizontal: 12, color: useDateFilter ? Colors.black : Colors.lightGray}}>{dateFilter}</Text>
+          </TouchableOpacity>
+        </View>
+        <Modal isVisible={showDateSelector} onBackdropPress={() => setShowDateSelector(false)}>
+          <Calendar
+            current={transformStringDate(dateFilter)}
+            minDate={transformDate(new Date())}
+            onDayPress={onDateSelection}
+          />
+        </Modal>
+
       </View>
       { isLoading
         ? <ActivityIndicator size={40} color="black" style={{alignSelf: 'center'}}/>
-        : <ScrollView vertical={true}
+        : <ScrollView
+            style={{}}
+            vertical={true}
             showsHorizontalScrollIndicator={false}
-            automaticallyAdjustContentInsets={true}
-            style={styles.scroll}
-            refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}>
-            {
-              Items.slice().reverse().map((item, index) => {
-                if (tagList.includes(item.status) || tagList.length == 0) {
-                  return (
-                    <View style={styles.order} key={index}>
-                      <OrderCard
-                        onClick={() => navigation.navigate("OrderPreview", {item, display_id: Items.length-index})}
-                        orderNumber={Items.length-index}
-                        orderStatus={item.status}
-                        orderDate={item.date}
-                        customer={item.customer.name}
-                        price={item.price}
-                      />
-                      <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
-                    </View>
-                  )
-                }
-              })
-            }
-            <BlankDivider height={16}/>
+            refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}
+          >
+            <View style={styles.scroll}>
+              {
+                Items.slice().reverse().map((item, index) => {
+                  if (!useDateFilter
+                    || (item.dueDate === 'ASAP' && parseDate(item.date) <= parseDate(dateFilter))
+                    || (parseDate(item.dueDate) <= parseDate(dateFilter))
+                  ){
+                    if (tagList.includes(item.status) || tagList.length == 0) {
+                      return (
+                        <View key={index}>
+                          <OrderCard
+                            onClick={() => navigation.navigate("OrderPreview", {item, display_id: Items.length-index})}
+                            orderNumber={Items.length-index}
+                            orderStatus={item.status}
+                            orderDate={item.dueDate}
+                            customer={item.customer.name}
+                            price={item.price}
+                          />
+                          <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
+                        </View>
+                      )
+                    }
+                  }
+                })
+              }
+              <BlankDivider height={5}/>
+            </View>
           </ScrollView>
-      }      
+      }
     </View>
   )
 
@@ -124,7 +184,6 @@ const styles = StyleSheet.create({
 
   scroll: {
     paddingTop: 4,
-    maxHeight: Dimensions.get('window').height * 0.77,
     paddingHorizontal: 8,
   }
 

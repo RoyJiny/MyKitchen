@@ -129,7 +129,7 @@ const OrderScreen = ({navigation, route}) => {
       deliveryAddress: selectedDelivery !== "Custom Address" ? get_address_delivery(selectedDelivery) : selectedCustomAddress,
       status: "Pending Approval",
       items: get_items(),
-      date: current_date.getDate()+"/"+(current_date.getMonth()+1)+"/"+current_date.getFullYear(),
+      date: (new Date()).getDate()+"/"+((new Date()).getMonth()+1)+"/"+(new Date()).getFullYear(),
       dueDate: selectedDateOption == "ASAP" ? "ASAP" : date
     }
     await send_post_request('order/submit',new_order);

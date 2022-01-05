@@ -9,9 +9,11 @@ const Kitchen = require("../models/Kitchen");
 
 const auth = require('../middleware/auth');
 
+const LOCAL_UPLOAD_FOLDER = `${process.env.NODE_ENV === 'production' ? '/tmp' : '.'}/uploads/`
+
 const Storage = multer.diskStorage({
   destination(req, file, callback) {
-    callback(null, './uploads/');
+    callback(null, LOCAL_UPLOAD_FOLDER);
   },
   filename(req, file, callback) {
     callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
@@ -20,11 +22,10 @@ const Storage = multer.diskStorage({
 
 const multer_upload = multer({storage: Storage});
 
-// TODO: also add matchUserKitchen function to verify the user
 router.post("/upload/", auth, multer_upload.single('img'), async (req,res) => {
   try {
-    const file_path = './uploads/' + req.file.filename;
-      
+    const file_path = LOCAL_UPLOAD_FOLDER + req.file.filename;
+
     const image_obj = {
       img: {
         data: fs.readFileSync(file_path),
@@ -34,7 +35,7 @@ router.post("/upload/", auth, multer_upload.single('img'), async (req,res) => {
 
     const image = new Image(image_obj);
     await image.save();
-    fs.unlinkSync(file_path); // delete local file after upload to the db
+    fs.unlinkSync(file_path); // delete local file after uploaded to the db
     
     const kitchenId = req.body.kitchenId;
     const kitchen = await Kitchen.findById(kitchenId);
