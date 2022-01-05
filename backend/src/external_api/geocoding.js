@@ -13,7 +13,7 @@ const get_coordinates = async (address) => {
       latitude: res.data.results[0].geometry.lat,
     };
   } catch (err) {
-    console.log(err);
+    console.log('Failed to get coordinates:',err);
     return {
       longitude: 0,
       latitude: 0

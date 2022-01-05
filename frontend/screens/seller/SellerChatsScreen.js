@@ -1,5 +1,5 @@
 import React,{useEffect,useContext,useState} from 'react';
-import {View,StyleSheet,Text} from 'react-native';
+import {View,StyleSheet,Text,ScrollView} from 'react-native';
 import Colors from '../../globals/Colors';
 
 import {collection,onSnapshot,where,query} from 'firebase/firestore';
@@ -31,31 +31,33 @@ const SellerChatsScreen = ({navigation}) => {
   },[]);
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <Backdrop text='Messages' height={80} />
       
       {isLoading
         ? <ActivityIndicator size={40} color='black'/>
-        : <View style={styles.container}>
-          {
-          chats.map(chat => <ChatPreview
-            key={chat.user_id}
-            username={chat.username}
-            last_message={chat.last_message}
-            navigateToChat={() => navigation.navigate("Chat",{
-              customer_id: chat.user_id,
-              customer_name:chat.username,
-              kitchen_id: seller.kitchen._id,
-              kitchen_name: seller.kitchen.bio.name, 
-              isCustomer: false})
+        : <ScrollView showsVerticalScrollIndicator={false} >
+            <View style={styles.container}>
+            {
+              chats.map(chat => <ChatPreview
+                key={chat.user_id}
+                username={chat.username}
+                last_message={chat.last_message}
+                navigateToChat={() => navigation.navigate("Chat",{
+                  customer_id: chat.user_id,
+                  customer_name:chat.username,
+                  kitchen_id: seller.kitchen._id,
+                  kitchen_name: seller.kitchen.bio.name, 
+                  isCustomer: false})
+                }
+              />)
             }
-          />)
-          }
-          {chats.length == 0 && hasLoaded?
-            <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active chats at the moment</Text>
-            : null
-          }
-        </View>
+            {chats.length == 0 && hasLoaded?
+              <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active chats at the moment</Text>
+              : null
+            }
+          </View>
+        </ScrollView>
       }
     </View>
   );

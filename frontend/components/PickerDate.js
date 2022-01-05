@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {View, TouchableOpacity, Platform, Text, Dimensions} from 'react-native';
+import {View, TouchableOpacity, Text, Dimensions} from 'react-native';
 
 import {Calendar} from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import moment from 'moment';
 
 const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => {
-
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0,0,0,0);
   // for inactiveDays - 0 is monday and 7 is sunday
 
-  const now = new Date();
   const [show, setShow] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
   
@@ -23,17 +24,20 @@ const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => 
     );
   }, [date]);
 
-  const transformDate = (date) => {
+  const transformStringDate = (date) => {
     const dateInfo = date.split("/");
     return dateInfo[2]+"-"+("0"+dateInfo[1]).slice(-2)+"-"+("0"+dateInfo[0]).slice(-2);
+  };
+  const transformDate = (date) => {
+    return date.getFullYear()+"-"+("0"+date.getMonth()+1).slice(-2)+"-"+("0"+date.getDate()).slice(-2);
   };
 
   const getDisabledDays = (month, year, daysIndexes) => {
     let pivot = moment().month(month).year(year).startOf('month');
     const end = moment().month(month).year(year).endOf('month');
-    end.add(7, 'days'); // fixes last week updazte bug
+    end.add(7, 'days'); // fixes last week update bug
     let dates = {
-      [transformDate(date)]: {
+      [transformStringDate(date)]: {
         selected: true,
         disableTouchEvent: false,
       }
@@ -69,24 +73,22 @@ const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => 
   return (
     <View>
       <TouchableOpacity
-          onPress={showTimepicker}
-          style={{
-            paddingHorizontal: 4,
-            borderRadius: 8,
-            borderColor: textColor,
-            borderWidth: 1,
-            width: Dimensions.get('window').width*0.3,
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{fontSize: 16, color: textColor}}>{date}</Text>
-        </TouchableOpacity>
+        onPress={showTimepicker}
+        style={{
+          borderRadius: 8,
+          borderBottomColor: textColor,
+          borderBottomWidth: 1,
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{fontSize: 16, color: textColor,paddingHorizontal: 12}}>{date}</Text>
+      </TouchableOpacity>
 
       {show && (
         <Modal isVisible={show} onBackdropPress={() => setShow(false)}>
           <Calendar
-            current={transformDate(date)}
-            minDate={now.getFullYear()+"-"+(now.getMonth()+1)+"-"+(now.getDate()+1)}
+            current={transformStringDate(date)}
+            minDate={transformDate(tomorrow)}
             markedDates={markedDates}
             onDayPress={onChange}
             onMonthChange={(date) => {getDisabledDays(date.month - 1, date.year, inactiveDays);}}

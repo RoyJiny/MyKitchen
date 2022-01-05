@@ -7,7 +7,7 @@ import Colors from '../globals/Colors';
 const ChatPreview = ({username,last_message,navigateToChat}) => {
   
   return (
-    <TouchableOpacity onPress={navigateToChat}>
+    <TouchableOpacity onPress={navigateToChat} style={{marginBottom: 8}}>
       <View style={styles.row}>
         <View>
           <Text style={styles.title}>{username}</Text>
