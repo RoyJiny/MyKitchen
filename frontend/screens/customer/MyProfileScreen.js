@@ -265,7 +265,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
             : <Text style={{fontSize: 18}}>Phone Number:  {user.phone}</Text>
           }
           <TouchableOpacity style={{marginLeft: 8}} onPress={() => {setWaitingCode(false);setPhoneState(user.phone);setShowPhone(true);}}>
-            <Icons.Feather name={user.phone == ''? 'plus':'edit'} size={20} color={addresses.length <= 2 ? 'black' : 'gray'}/>
+            <Icons.Feather name={user.phone == '' ? 'plus' : 'edit'} size={20} color={addresses.length <= 2 ? 'black' : 'gray'}/>
           </TouchableOpacity>
         </View>
         <BlankDivider height={16}/>
@@ -356,7 +356,13 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
       {sliderState.show && <OrderSlider
         order={sliderState.data}
         close={() => setSliderState({show:false,data:{}})}
-        navigateToChat={() => navigation.navigate('Chat',{customer_id: user._id,customer_name:user.name, kitchen_id: sliderState.data.kitchen._id,kitchen_name:sliderState.data.kitchen.bio.name, isCustomer: true})}
+        navigateToChat={() => navigation.navigate('Chat',{
+          customer_id: user._id,
+          customer_name:user.name,
+          kitchen_id: sliderState.data.kitchen._id,
+          kitchen_name:sliderState.data.kitchen.bio.name,
+          isCustomer: true
+        })}
       />}
     </View>
   )
