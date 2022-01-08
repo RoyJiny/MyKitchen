@@ -25,7 +25,7 @@ const Chat = ({customer_id,kitchen_id,isCustomer,notify_on_message}) => {
     setDoc(room_ref,{
       kitchen: kitchen_id,
       customer: customer_id,
-      last_message: {text: messages[0].text, isFromCustomer: isCustomer}
+      last_message: {text: messages[0].text, createdAt:  messages[0].createdAt, isFromCustomer: isCustomer}
     },{merged: true})
       .then(() => {})
       .catch(() => console.log(err));

@@ -44,6 +44,7 @@ const OpenURLButton = ({ url, text, img}) => {
 
 const OrderSlider = ({order, close,navigateToChat}) => {
   const ref = useRef();
+  const [rating, setRating] = useState(3);
   const [showRating, setShowRating] = useState(!order.rated && order.status == "Done" );
   const [showLinks, setShowLinks] = useState(false);
   const [didRate,setDidRate] = useState(false);
@@ -213,15 +214,19 @@ const OrderSlider = ({order, close,navigateToChat}) => {
             {showRating &&
               (didRate
               ? <Text style={[styles.text, {alignSelf: 'center', paddingBottom: 50}]}>Your rating was submitted</Text>
-              : <View>
+              : <View >
                 <Text style={styles.text}>Rate {order.kitchen.bio.name}:</Text>
                 <BlankDivider height={8} />
-                <AirbnbRating
-                  size={30}
-                  showRating={false}
-                  defaultRating={3}
-                  onFinishRating={(value) => sendRating(order._id,value)}
-                />
+                <View style={[styles.row, {justifyContent: 'space-around'}]}>
+                  <AirbnbRating
+                    showRating={false}
+                    defaultRating={3}
+                    onFinishRating={(value) => setRating(value)}
+                  />
+                  <TouchableOpacity style={{alignItems: 'center', backgroundColor:'#BDC3C7', borderRadius: 8, paddingVertical: 4, paddingHorizontal: 8}} onPress={() => {sendRating(order._id,rating)}}>
+                    <Text style={{fontSize: 14, color: "black"}}>Rate</Text>
+                  </TouchableOpacity>
+                </View>
                 <BlankDivider height={8} />
               </View>)
             }
