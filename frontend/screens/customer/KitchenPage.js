@@ -188,7 +188,7 @@ const KitchenPageScreen = ({route,navigation}) => {
           </TouchableOpacity>
           <View style={styles.rowView}>
             <Icons.Entypo name="map" size={16} color="black"/>
-            <Text style={styles.details}>{kitchen.bio.city}    {kitchen.distance.toFixed(1)} km</Text>
+            <Text style={styles.details}>{kitchen.bio.city}    {kitchen.distance > 99 ? '+99' : kitchen.distance.toFixed(1)} km</Text>
           </View>
         </ShadowCard>
       </View>

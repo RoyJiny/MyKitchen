@@ -1,10 +1,11 @@
 import React,{useState,useRef,useContext,useEffect } from 'react'
-import {View,StyleSheet,TextInput,Text,Image,TouchableOpacity,RefreshControl,ScrollView} from 'react-native'
+import {View,StyleSheet,TextInput,Text,Image,TouchableOpacity,RefreshControl,ScrollView,Dimensions} from 'react-native'
 import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
 import * as Icons from '@expo/vector-icons'
 
 import { UserContext } from "../../contexts/UserContext";
+import { generalContext } from "../../contexts/generalContext";
 import Colors from '../../globals/Colors';
 
 import {OrderSlider,Backdrop,BlankDivider,ShadowCard,ExpantionArrow,Button,OrderCustomer} from '../../components';
@@ -45,6 +46,7 @@ const AddressCard = (key,address,onEdit,onDelete) => {
 
 const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const {user, setUser} = useContext(UserContext);
+  const {generalData, setGeneralData} = useContext(generalContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,name: "", address: ""})
@@ -60,12 +62,14 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const [orderList, setOrderList] = useState([])
   const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
   const [sliderState, setSliderState] = useState({show:false, data: {}});
+  const [showUnpaid, setShowUnpaid] = useState(false);
 
   const fetchData = () => {
     send_get_request("orders/customer/get_orders")
       .then(data => {
         setOrderList(data);
         setFetchOrdersDone(true);
+        setShowUnpaid(data.filter(t => t.status == 'Waiting For Payment').length > 0 && !generalData.unpaidShown) // && the field in general context
       })
       .catch(err => {console.log(err);});
   };
@@ -242,6 +246,30 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
             <Text style={{color: Colors.blueLink, fontWeight: 'bold'}}>Submit Code</Text>
           </TouchableOpacity>
           : null}
+        </View>
+      </Modal>
+
+      <Modal isVisible={showUnpaid} onBackdropPress={() => {setShowUnpaid(false);setGeneralData({...generalData, unpaidShown: true});}}>
+        <View style={{alignSelf:'center', width: Dimensions.get('window').width*0.8, backgroundColor: 'white', borderRadius: 10}}>
+          <Icons.SimpleLineIcons
+            name='check'
+            color='green'
+            style={{alignSelf: 'center', marginVertical: 12}}
+            size={60}
+          />
+          <Text style={{fontSize: 20, alignSelf: 'center', width: Dimensions.get('window').width*0.7}}>
+            {'Your order has been approved and is waiting for payment!'}
+          </Text>
+          <View style={{flexDirection: 'row', marginVertical: 16}}>
+            <Icons.SimpleLineIcons
+              name='info'
+              style={{marginHorizontal: 8}}
+              size={20}
+            />
+            <Text style={{fontSize: 14, alignSelf: 'center', color: 'gray', width: Dimensions.get('window').width*0.7}}>
+              {"You can press on the order with status 'Waiting For Payment' to open a slider there you can find the 'pay' button which will show the different payment methods you can use."}
+            </Text>
+          </View>
         </View>
       </Modal>
 
