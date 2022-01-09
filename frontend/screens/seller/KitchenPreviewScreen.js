@@ -176,7 +176,7 @@ const KitchenPreviewScreen = ({navigation}) => {
           </TouchableOpacity>
           <View style={styles.rowView}>
             <Icons.Entypo name="map" size={16} color="black"/>
-            <Text style={styles.details}>{seller.kitchen.bio.city}    {distance? distance.toFixed(1) : 0} km</Text>
+            <Text style={styles.details}>{seller.kitchen.bio.city}    {distance? distance > 99 ? '+99' : distance.toFixed(1) : 0} km</Text>
           </View>
         </ShadowCard>
       </View>
