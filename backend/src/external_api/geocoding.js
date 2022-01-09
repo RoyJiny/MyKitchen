@@ -15,8 +15,9 @@ const get_coordinates = async (address) => {
   } catch (err) {
     console.log('Failed to get coordinates:',err);
     return {
-      longitude: 0,
-      latitude: 0
+      // Tel Aviv University as default coordinates
+      longitude: 34.804385,
+      latitude: 32.113328
     };
   }
 }
