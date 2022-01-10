@@ -73,11 +73,12 @@ export default APP = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [generalData, setGeneralData] = useState({
     location: {
-      longitude: 34.798571,
-      latitude: 32.059999
+      longitude: 34.804385,
+      latitude: 32.113328
     },
     notification_data: undefined,
-    networkError: false
+    networkError: false,
+    unpaidShown: false
   });
 
   axios.interceptors.response.use((response) => {
@@ -200,6 +201,7 @@ export default APP = () => {
     await deleteAuthToken();      
     setState({isLoggedIn: false, isCustomer: true});
     init_user_contexts();
+    setGeneralData({...generalData, unpaidShown: false});
   };
 
   const AppTheme = {
