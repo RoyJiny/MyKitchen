@@ -21,7 +21,7 @@ const SellerChatsScreen = ({navigation}) => {
     const rooms_collection = collection(firestore,'chats');
     const q = query(rooms_collection, where("kitchen","==",seller.kitchen._id));
     const unsbscribe = onSnapshot(q,snapshot => {
-      const users = snapshot.docs.map((doc) => {return {user_id: doc.data().customer, last_message: {...doc.data().last_message, createdAt: doc.data().last_message.createdAt.toDate()}}});
+      const users = snapshot.docs.map((doc) => {return {user_id: doc.data().customer, last_message: {...doc.data().last_message, createdAt: doc.data().last_message?.createdAt?.toDate()}}});
       setIsLoading(true);
       send_post_request("seller/populate_usernames", {users})
         .then(res => {setChats(res.users.sort((a, b) => (b.last_message.createdAt === undefined || a.last_message.createdAt === undefined) ? 0 : Date.parse(b.last_message.createdAt) - Date.parse(a.last_message.createdAt))); setIsLoading(false);setHasLoaded(true);})

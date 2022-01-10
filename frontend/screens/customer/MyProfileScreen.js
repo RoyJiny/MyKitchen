@@ -250,26 +250,33 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
       </Modal>
 
       <Modal isVisible={showUnpaid} onBackdropPress={() => {setShowUnpaid(false);setGeneralData({...generalData, unpaidShown: true});}}>
-        <View style={{alignSelf:'center', width: Dimensions.get('window').width*0.8, backgroundColor: 'white', borderRadius: 10}}>
+        <View style={{alignSelf:'center', backgroundColor: 'white', borderRadius: 10, padding: 4}}>
           <Icons.SimpleLineIcons
             name='check'
             color='green'
             style={{alignSelf: 'center', marginVertical: 12}}
             size={60}
           />
-          <Text style={{fontSize: 20, alignSelf: 'center', width: Dimensions.get('window').width*0.7}}>
-            {'Your order has been approved and is waiting for payment!'}
+          <Text style={{fontSize: 20, alignSelf: 'center', textAlign:'center', width: Dimensions.get('window').width*0.7}}>
+            {'One or more of your orders has been approved and is waiting for payment'}
           </Text>
           <View style={{flexDirection: 'row', marginVertical: 16}}>
             <Icons.SimpleLineIcons
               name='info'
-              style={{marginHorizontal: 8}}
+              style={{marginHorizontal: 8, alignSelf: 'center'}}
               size={20}
             />
             <Text style={{fontSize: 14, alignSelf: 'center', color: 'gray', width: Dimensions.get('window').width*0.7}}>
-              {"You can press on the order with status 'Waiting For Payment' to open a slider there you can find the 'pay' button which will show the different payment methods you can use."}
+              {"You can tap an order to see its details. there, you will also find the 'pay' button with the supported payment options"}
             </Text>
           </View>
+          <TouchableOpacity onPress={() => {setShowUnpaid(false);setGeneralData({...generalData, unpaidShown: true});}}>
+            <Text
+              style={{color: 'white',borderRadius: 5, backgroundColor: Colors.black,marginBottom: 8, alignSelf: 'center', paddingVertical: 8, paddingHorizontal: 20, fontWeight: 'bold'}}
+            >
+              Got It !
+            </Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 

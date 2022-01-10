@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   smallTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 24,
+    marginLeft: 20,
     marginBottom: 16
   },
   rowView: {

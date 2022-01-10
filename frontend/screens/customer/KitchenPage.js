@@ -193,17 +193,17 @@ const KitchenPageScreen = ({route,navigation}) => {
         </ShadowCard>
       </View>
 
-      <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16}]}>
+      <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16,marginHorizontal: 20}]}>
         <Text style={styles.smallTitle}>Menu</Text>
-          <Button
-            onClick={() => {if (hasItemsInOrder()){navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})} else {setShowAlert(true)}}}
-            borderColor="black"
-            fillColor="white"
-            text="Order"
-            textColor={Colors.lightGray}
-            height={30}
-            width={100}
-          />
+        <Button
+          onClick={() => {if (hasItemsInOrder()){navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})} else {setShowAlert(true)}}}
+          borderColor="black"
+          fillColor="white"
+          text="Order"
+          textColor={Colors.lightGray}
+          height={30}
+          width={100}
+        />
       </View>
 
       {
@@ -244,12 +244,10 @@ const styles = StyleSheet.create({
   },
   smallTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 16
+    fontWeight: 'bold'
   },
   rowView: {
     flexDirection: 'row',
-    marginLeft: 8,
     alignItems: 'center',
     marginVertical: 8,
     marginHorizontal: 8
