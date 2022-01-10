@@ -1,5 +1,5 @@
 const calculate_distance = (point1,point2) => {
-    const toRadians = degrees => degrees * Math.PI / 100;
+    const toRadians = degrees => degrees * Math.PI / 180;
     
     const EARTH_RADIUS = 6371;
     const dLat = toRadians(point2.latitude - point1.latitude);

@@ -166,12 +166,6 @@ export default APP = () => {
         }
       })
       .catch(err => console.log(err))
-      
-    const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
-    TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error, executionInfo }) => {
-      handleNotificationData(data)
-    });
-    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
   },[]);
@@ -180,6 +174,13 @@ export default APP = () => {
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       handleNotificationData(response.notification.request.content.data)
     });
+
+    const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
+    TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error, executionInfo }) => {
+      handleNotificationData(data)
+    });
+    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+
     return () => {
       Notifications.removeNotificationSubscription(responseListener.current);
     };
