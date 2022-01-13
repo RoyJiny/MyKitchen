@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import {View} from 'react-native';
 
 import { GiftedChat,Bubble } from 'react-native-gifted-chat';
@@ -6,12 +6,14 @@ import {collection,setDoc,doc,onSnapshot} from 'firebase/firestore';
 import { firestore } from '../api/firebase_db';
 
 import Colors from '../globals/Colors';
+import { chatContext } from '../contexts/chatContext';
 
 
 const Chat = ({customer_id,kitchen_id,isCustomer,notify_on_message}) => {
   const chat_room = `room_${kitchen_id}_${customer_id}`;
 
   const [messages, setMessages] = useState([]);
+  const {activeChat, setActiveChat} = useContext(chatContext);
 
   const onSend = (messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
@@ -32,6 +34,12 @@ const Chat = ({customer_id,kitchen_id,isCustomer,notify_on_message}) => {
 
     notify_on_message(messages[0].text); // tell the server to send notification to the other side
   };
+
+  useEffect(() => {
+    setActiveChat(!isCustomer ? customer_id : kitchen_id); // who are we chatting with
+    const unsubscribe = () => {setActiveChat(undefined)};
+    return unsubscribe;
+  })
 
   useEffect(() => {
     const messages_collection = collection(firestore,'chats',chat_room,'messages');

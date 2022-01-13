@@ -12,6 +12,7 @@ import axios from 'axios';
 import { UserContext } from "./contexts/UserContext";
 import { SellerContext } from "./contexts/SellerContext";
 import { generalContext } from "./contexts/generalContext";
+import { chatContext } from "./contexts/chatContext";
 
 import Colors from './globals/Colors';
 import {LoginStack,CustomerTabsNavigator,SellerTabsNavigator} from './screens/stacks'
@@ -24,14 +25,7 @@ I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 console.reportErrorsAsExceptions = false;
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true
-  }),
-  handleError: err => console.log(`notification handling error: ${err}`)
-});
+// maybe move that to a useEffect, set a new context for active chat, and set condition for the values
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -71,6 +65,7 @@ export default APP = () => {
   const [seller, setSeller] = useState({});
   const [state, setState] = useState({isLoggedIn: false, isCustomer: false});
   const [isLoading, setIsLoading] = useState(true);
+  const [activeChat, setActiveChat] = useState(undefined);
   const [generalData, setGeneralData] = useState({
     location: {
       longitude: 34.804385,
@@ -147,6 +142,28 @@ export default APP = () => {
       setGeneralData({...generalData, notification_data: data});
     }
   }
+
+  const isNotificationFromActiveChat = (notification,activeChat) => {
+    if (notification.request.content.data.type !== 'Chat') return false;
+    if (activeChat == undefined || notification.request.content.data.chatData == undefined) return false;
+    const isCustomer = notification.request.content.data.chatData.isCustomer;
+    const chat = !isCustomer ? notification.request.content.data.chatData.customer_id : notification.request.content.data.chatData.kitchen_id;
+    return chat === activeChat;
+  }
+
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async (notification) => {
+        const shouldNotify = !isNotificationFromActiveChat(notification,activeChat);
+        return {
+          shouldShowAlert: shouldNotify,
+          shouldPlaySound: shouldNotify,
+          shouldSetBadge: shouldNotify
+        }
+      },
+      handleError: err => console.log(`notification handling error: ${err}`)
+    });
+  },[activeChat]);
 
   useEffect(() => {
     init_user_contexts();
@@ -250,12 +267,14 @@ export default APP = () => {
       <UserContext.Provider value={{user, setUser}}>
       <SellerContext.Provider value={{seller, setSeller}}>
       <generalContext.Provider value={{generalData, setGeneralData}}>
+      <chatContext.Provider value={{activeChat, setActiveChat}}>
         <NavigationContainer theme={AppTheme} ref={navigationRef}>
           {state.isLoggedIn
             ? (state.isCustomer ? CustomerTabsNavigator(signoutCB) : SellerTabsNavigator(signoutCB))
             : LoginStack(loginCB)
           }
         </NavigationContainer>
+      </chatContext.Provider>
       </generalContext.Provider>
       </SellerContext.Provider>
       </UserContext.Provider>
