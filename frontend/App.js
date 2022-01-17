@@ -25,8 +25,6 @@ I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 console.reportErrorsAsExceptions = false;
 
-// maybe move that to a useEffect, set a new context for active chat, and set condition for the values
-
 const registerForPushNotificationsAsync = async () => {
   let token;
   
@@ -185,7 +183,7 @@ export default APP = () => {
       })
       .catch(err => console.log(err))
 
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(err => console.log(err));
   },[]);
   
   useEffect(() => {
