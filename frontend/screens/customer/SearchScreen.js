@@ -8,18 +8,18 @@ import { ServerBase } from '../../globals/globals';
 import {Input,SearchCard,Button, BlankDivider} from '../../components';
 
 import {send_post_request} from '../../utils/requests';
-import { UserContext } from '../../contexts/UserContext';
 import { generalContext } from '../../contexts/generalContext';
 
 const SearchScreen = ({ route, navigation }) => {
-  const {user,SetUser} = useContext(UserContext);
   const {generalData:{location}} = useContext(generalContext);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryText, setCategoryText] = useState(undefined);
 
   const search_by_text = (text_query) => {
     setIsLoading(true);
+    setCategoryText(undefined);
     setSearchTerm(text_query)
     if (text_query === '') {
       setResults([]);
@@ -36,6 +36,7 @@ const SearchScreen = ({ route, navigation }) => {
 
   const search_nearby = () => {
     setIsLoading(true);
+    setCategoryText(undefined);
     send_post_request('search/kitchen/text',{
       location: location,
       text_query: ''
@@ -46,6 +47,7 @@ const SearchScreen = ({ route, navigation }) => {
 
   const search_by_tag = (tag) => {
     setIsLoading(true);
+    setCategoryText(tag);
     send_post_request('search/kitchen/tag',{
       location: location,
       tag: tag
@@ -56,7 +58,7 @@ const SearchScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (route.params!==undefined && route.params.category!==undefined) {
+      if (route.params !== undefined && route.params.category !== undefined) {
         search_by_tag(route.params.category);
         route.params.category = undefined;
       }
@@ -89,8 +91,12 @@ const SearchScreen = ({ route, navigation }) => {
             onSubmit={event => search_by_text(event.nativeEvent.text)}
           />
         </View>
-        
-        <BlankDivider height={30} />
+
+        <BlankDivider height={24} />
+        {categoryText !== undefined
+          ? <Text style={{color: Colors.lightGray, fontSize: 16, marginLeft: 8, marginBottom: 24}}>Showing results for: {categoryText}</Text>
+          : null
+        }
 
         <View style={{flex:1}}>
           <ScrollView
@@ -99,7 +105,7 @@ const SearchScreen = ({ route, navigation }) => {
               automaticallyAdjustContentInsets = {true}
               style={{marginBottom: 16, marginLeft: 8}}
           >
-            <BlankDivider height={12} />            
+            <BlankDivider height={12} />
             {
               isLoading
               ? <ActivityIndicator size={30} color='black'/>

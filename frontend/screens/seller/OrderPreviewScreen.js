@@ -18,7 +18,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     
     if (i == j) {
       return <Button
-        onClick={() => { updateStatus() }}
+        onClick={updateStatus}
         textColor="#3CB371"
         text={text}
         fillColor="white"
@@ -33,7 +33,7 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
   const changeStatus = (data) => {
     data.forEach(order => {
-      if(order._id == item._id){
+      if(order._id === item._id){
         setStatus(order.status);
       }
     });

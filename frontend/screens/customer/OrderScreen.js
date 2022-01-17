@@ -268,11 +268,11 @@ const OrderScreen = ({navigation, route}) => {
               onPress= {() => setSelectedDateOption('ASAP')}
               disabled={route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery}
             />
-            <Text style={{marginRight: 10, color: (route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? Colors.lightGray : 'black'}}>{kitchen.logistics.isOnlyFutureDelivery? "ASAP - can't place ASAP order, only future orders" : route.params.params.isClosed? "ASAP - can't place ASAP order, kitchen is closed" : 'ASAP'}</Text>
+            <Text style={{marginRight: 10, color: (route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? Colors.lightGray : 'black'}}>{kitchen.logistics.isOnlyFutureDelivery? "ASAP - can't order ASAP, only future orders" : route.params.params.isClosed? "ASAP - can't order ASAP, kitchen is closed" : 'ASAP'}</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton
-              status={ selectedDateOption == 'Future Delivery' ? 'checked' : 'unchecked' }
+              status={ selectedDateOption === 'Future Delivery' ? 'checked' : 'unchecked' }
               color="black"
               onPress= {() => setSelectedDateOption('Future Delivery')}
             />

@@ -57,7 +57,7 @@ const EditLogisticsScreen = ({navigation}) => {
     <>
     <Modal isVisible={showModal} onBackdropPress={() => {setShowModal(false);}}>
       <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
-        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Set links so that customers will have an easy time paying to you.</Text>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Add payment options for your kitchens (links to Paybox or Bit)</Text>
       </View>
     </Modal>
     <KeyboardAwareScrollView>
