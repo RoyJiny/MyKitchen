@@ -28,6 +28,7 @@ router.get("/verify/request_verification/", auth, async (req,res) => {
 
       res.sendStatus(200);
     } catch (err) {
+      // maybe add here 401 status for invalid phone input? (err.isAxiosError?)
       console.log(err);
       res.status(500).send({error: 'Server Error'});
     }
