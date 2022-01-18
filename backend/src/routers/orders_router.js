@@ -37,7 +37,7 @@ router.post("/order/submit", auth, async (req,res) => {
 router.post("/orders/seller/update_status", [auth], async (req,res) => {
   try {
     const updated_status = req.body.status;
-    if (!["Pending Approval","Waiting For Payment","In the Making","Ready for Customer","Done"].includes(updated_status)) {
+    if (!["Pending Approval","Waiting For Payment","In the Making","Ready for Customer","Done","Canceled"].includes(updated_status)) {
       throw new Error("Bad status");
     }
     
@@ -59,6 +59,9 @@ router.post("/orders/seller/update_status", [auth], async (req,res) => {
           break;
         case "Done":
           description = `Your order from ${order.kitchen.bio.name} was delivered successfuly`;
+          break;
+        case "Canceled":
+          description = `Your order from ${order.kitchen.bio.name} was declined`;
           break;
       } 
       send_notification_to_user(order.customer,"Order Update",description,extra_data={order,type: 'Order'});

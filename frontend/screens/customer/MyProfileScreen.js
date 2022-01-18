@@ -48,6 +48,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const {generalData, setGeneralData} = useContext(generalContext);
   const [expandRecentOrders, setExpandRecentOrders] = useState(false);
+  const [expandCanceledOrders, setExpandCanceledOrders] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({id: 0,name: "", address: ""})
 
@@ -330,12 +331,12 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
         <Text style={styles.subtitle}>Active Orders</Text>
         
         {
-          orderList.slice().reverse().filter(t => t.status !== 'Done').length == 0 ? 
+          orderList.slice().reverse().filter(t => (t.status !== 'Done' && t.status !== 'Canceled')).length == 0 ? 
             fetchOrdersDone? <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>You don't have any active orders at the moment</Text> 
             :
             <Text style={{marginTop: 16,alignSelf: 'center', color: Colors.lightGray}}>Loading your orders...</Text> 
           :
-            orderList.slice().reverse().filter(t => t.status !== 'Done').map((item, index) => {
+            orderList.slice().reverse().filter(t => (t.status !== 'Done' && t.status !== 'Canceled')).map((item, index) => {
               return (
                 <TouchableOpacity key={index} onPress={() => {setSliderState({show:false,data:{}}); setSliderState({show:true, data:item})}}>
                   <OrderCustomer order={item}/>
@@ -363,6 +364,35 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
           <View>
             {
               orderList.slice().reverse().filter(t => ((t.status == 'Done') && expandRecentOrders)).map((item, index) => {
+                return (
+                  <TouchableOpacity key={index} onPress={() => {setSliderState({show:false,data:{}});setSliderState({show:true, data:item})}}>
+                    <OrderCustomer order={item}/>
+                  </TouchableOpacity>  
+              )})
+            }
+          </View></>) : null
+        }
+
+        <BlankDivider height={32}/>
+
+        { orderList.slice().reverse().filter(t => t.status == 'Canceled').length > 0 ?
+          (<><View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={styles.subtitle}>Canceled Orders</Text>
+            <ExpantionArrow
+              onClick={() => {
+                if (!expandCanceledOrders){
+                  // 88 for each order we want to scroll + 16 of extra padding
+                  ScrollViewRef.current?.scrollTo({y: scroll_position + 2*88 + 16,animated: true,});
+                }
+                setExpandCanceledOrders(!expandCanceledOrders);
+              }}
+              isInitaialyExpanded={false}
+            />
+          </View>
+          
+          <View>
+            {
+              orderList.slice().reverse().filter(t => ((t.status == 'Canceled') && expandCanceledOrders)).map((item, index) => {
                 return (
                   <TouchableOpacity key={index} onPress={() => {setSliderState({show:false,data:{}});setSliderState({show:true, data:item})}}>
                     <OrderCustomer order={item}/>

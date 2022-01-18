@@ -56,6 +56,11 @@ const OrderPreviewScreen = ({ navigation, route }) => {
     get_data_from_server();
   }
 
+  const declineOrder = () => {
+    setStatus("Canceled");
+    updateStatusDB("Canceled");
+  }
+
   const updateStatus = () => {
     switch (st) {
       case "Pending Approval":
@@ -149,65 +154,72 @@ const OrderPreviewScreen = ({ navigation, route }) => {
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 
           <Text style={styles.title}>Status:</Text>
-          
-          <BlankDivider height={8} />
-          
-          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
-            <View style={{ flex: 1, }}>
-              <Entypo name="stopwatch" size={28} style={getIconStatus(st, 0)} />
-            </View>
+
+          {st == "Canceled"?
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <MaterialIcons name="cancel" size={28} style={{color: "red", flex: 1, height: 28}} />
+            <Text style={{color: "red", textAlign: 'left', fontSize: 18, flex: 4}}>Order Canceled</Text>
+            <View style={{ flex: 2, }}></View>
+          </View>
+          : 
+          <>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <Entypo name="stopwatch" size={28} style={getIconStatus(st, 0)} />
             <Text style={getStatusStyle(st, 0)}>Pending Approval</Text>
-            <View style={{ flex: 2, height: 36, }}>
+            <View style={{ flex: 2, }}>
               {
                 getButton(0)
               }
+              <BlankDivider height={4} />
+              {getJ(st) == 0 && 
+              <Button
+                style={{ marginTop: 4, }}
+                onClick={declineOrder}
+                textColor="red"
+                text={"Decline"}
+                fillColor="white"
+                height={30}
+                width={90}
+              />}
             </View>
           </View>
           
-          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
-            <View style={{ flex: 1, }}>
-              <MaterialIcons name="payment" size={28} style={getIconStatus(st, 1)} />
-            </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <MaterialIcons name="payment" size={28} style={getIconStatus(st, 1)} />
             <Text style={getStatusStyle(st, 1)}>Waiting For Payment</Text>
-            <View style={{ flex: 2, height: 36, }}>
+            <View style={{ flex: 2, }}>
               {
                 getButton(1)
               }
             </View>
           </View>
           
-          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
-            <View style={{ flex: 1, }}>
-              <MaterialCommunityIcons name="chef-hat" size={28} style={getIconStatus(st, 2)} />
-            </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <MaterialCommunityIcons name="chef-hat" size={28} style={getIconStatus(st, 2)} />
             <Text style={getStatusStyle(st, 2)}>In the Making</Text>
-            <View style={{ flex: 2, height: 36, }}>
+            <View style={{ flex: 2, }}>
               {
                 getButton(2)
               }
             </View>
           </View>
           
-          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
-            <View style={{ flex: 1, }}>
-              <MaterialCommunityIcons name="bike-fast" size={28} style={getIconStatus(st, 3)} />
-            </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <MaterialCommunityIcons name="bike-fast" size={28} style={getIconStatus(st, 3)} />
             <Text style={getStatusStyle(st, 3)}>Ready for Customer</Text>
-            <View style={{ flex: 2, height: 36, }}>
+            <View style={{ flex: 2, }}>
               {
                 getButton(3)
               }
             </View>
           </View>
           
-          <View style={{ flexDirection: 'row', paddingVertical: 8, }}>
-            <View style={{ flex: 1, }}>
-              <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 3)} />
-            </View>
+          <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center'}}>
+            <FontAwesome name="flag-checkered" size={28} style={getIconStatus(st, 3)} />
             <Text style={getStatusStyle(st, 3)}>Done</Text>
-            <View style={{ flex: 2, height: 36, }}></View>
+            <View style={{ flex: 2, }}></View>
           </View>
-
+          </>}
         </View>
         
         <BlankDivider height={12} />
