@@ -34,6 +34,7 @@ const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => 
 
   const getDisabledDays = (month, year, daysIndexes) => {
     let pivot = moment().month(month).year(year).startOf('month');
+    pivot.add(-7, 'days'); // fixes first week update bug
     const end = moment().month(month).year(year).endOf('month');
     end.add(7, 'days'); // fixes last week update bug
     let dates = {

@@ -5,7 +5,7 @@ import PickerT from './PickerT';
 
 import Colors from '../globals/Colors';
 
-const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, endTime, setEndTime}) => {
+const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, endTime, setEndTime, timeActive=true}) => {
     
     return (
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 5,}}>
@@ -27,11 +27,13 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                 </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <PickerT textColor={isSelected ? "black" : Colors.lightGray} isActive={isSelected} time={startTime} setTime={setStartTime}/>
+                {timeActive && (
+                <>
+                <PickerT textColor={isSelected&&timeActive ? "black" : Colors.lightGray} isActive={isSelected&&timeActive} time={startTime} setTime={setStartTime}/>
                 <Text 
                     style={{
                         textAlign:'center',
-                        color: isSelected ? "black" : Colors.lightGray,
+                        color: isSelected&&timeActive ? "black" : Colors.lightGray,
                         fontSize: 18,
                         fontWeight: 'bold',
                         marginHorizontal: 5
@@ -39,7 +41,10 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                 >
                         {"-"}
                 </Text>
-                <PickerT textColor={isSelected ? "black" : Colors.lightGray} isActive={isSelected} time={endTime} setTime={setEndTime}/>
+                <PickerT textColor={isSelected&&timeActive ? "black" : Colors.lightGray} isActive={isSelected&&timeActive} time={endTime} setTime={setEndTime}/>   
+                </>
+                )}
+
             </View>
         </View>
         

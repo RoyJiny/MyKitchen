@@ -98,6 +98,7 @@ const SellerOrdersScreen = ({ navigation }) => {
           <Tag text="In the Making" textColor="black" add={addTag} remove={removeTag} />
           <Tag text="Ready for Customer" textColor="black" add={addTag} remove={removeTag} />
           <Tag text="Done" textColor="black" add={addTag} remove={removeTag} />
+          <Tag text="Canceled" textColor="black" add={addTag} remove={removeTag} />
         </ScrollView>
         
         <View style={{marginLeft: 12, flexDirection: 'row', alignItems: 'center', marginVertical: 8}}>
