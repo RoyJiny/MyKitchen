@@ -27,6 +27,8 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                 </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {timeActive && (
+                <>
                 <PickerT textColor={isSelected&&timeActive ? "black" : Colors.lightGray} isActive={isSelected&&timeActive} time={startTime} setTime={setStartTime}/>
                 <Text 
                     style={{
@@ -39,7 +41,10 @@ const ToggleText = ({text, isSelected, setIsSelected, startTime, setStartTime, e
                 >
                         {"-"}
                 </Text>
-                <PickerT textColor={isSelected&&timeActive ? "black" : Colors.lightGray} isActive={isSelected&&timeActive} time={endTime} setTime={setEndTime}/>
+                <PickerT textColor={isSelected&&timeActive ? "black" : Colors.lightGray} isActive={isSelected&&timeActive} time={endTime} setTime={setEndTime}/>   
+                </>
+                )}
+
             </View>
         </View>
         
