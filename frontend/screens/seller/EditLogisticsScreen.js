@@ -26,10 +26,10 @@ const EditLogisticsScreen = ({navigation}) => {
   const [distance, setDistance] = useState(String(seller.kitchen.logistics.maxDeliveryDistance));
   const [payLinks, setPayLinks] = useState(seller.kitchen.logistics.paymentLinks);
   const [firstTime, setfirstTime] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [showModalPay, setShowModalPay] = useState(false);
+  const [showModalLog, setShowModalLog] = useState(false);
   
   const setDayState = (index,value) => {
-    if (isOnlyFutureDelivery) {return}
     let copy = [...operationDays]
     copy[index] = {...copy[index], isActive: value}
     setOperationDays(copy)
@@ -55,9 +55,14 @@ const EditLogisticsScreen = ({navigation}) => {
 
   return (
     <>
-    <Modal isVisible={showModal} onBackdropPress={() => {setShowModal(false);}}>
+    <Modal isVisible={showModalLog} onBackdropPress={() => {setShowModalLog(false);}}>
       <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
-        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Add payment options for your kitchens (links to Paybox or Bit)</Text>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>{"Set the days when customers will be able to order for.\nIf 'Preorders only' is inactive they will be able to sumbit an 'ASAP' order."}</Text>
+      </View>
+    </Modal>
+    <Modal isVisible={showModalPay} onBackdropPress={() => {setShowModalPay(false);}}>
+      <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Add payment options for your kitchens (links to bit or PayBox)</Text>
       </View>
     </Modal>
     <KeyboardAwareScrollView>
@@ -85,7 +90,7 @@ const EditLogisticsScreen = ({navigation}) => {
               fillColor = "white"
               text ="Save"
               textColor = "black"
-              disable = { (isSupportDelivery && !(parseInt(distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') ||  !(isOnlyFutureDelivery || operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive)}
+              disable = { (isSupportDelivery && !(parseInt(distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') ||  !(operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive)}
             />
             </TouchableOpacity>
           </View>
@@ -94,7 +99,16 @@ const EditLogisticsScreen = ({navigation}) => {
           <BlankDivider height={8}/>
 
           <ShadowCard2>
-            <Text style={{fontSize: 18, marginLeft: 8}}>Operating days:</Text>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Text style={{fontSize: 18, marginLeft: 8}}>Operating days:</Text>
+              <Icons.SimpleLineIcons
+                name='info'
+                style={{marginRight: 6}}
+                size={24}
+                onPress={() => {setShowModalLog(true)}}
+              />
+            </View>
+            <BlankDivider height={8}/>
             <View style={{flexDirection:'row', justifyContent: 'space-between', alignItems:'center', marginVertical:4}}>
               <Text style={{fontSize: 16, marginLeft: 16}}>Preorders only:</Text>
               <ToggleSwitch style={{marginRight: 16}}
@@ -105,16 +119,16 @@ const EditLogisticsScreen = ({navigation}) => {
                 onToggle={setIsOnlyFutureDelivery}
               />
             </View>
-            <ToggleText text ="Sunday" isSelected={operationDays[0].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(0,value)} startTime ={operationDays[0].startTime} setStartTime={(value) => setDayStartTime(0,value)} endTime ={operationDays[0].endTime} setEndTime={(value) => setDayEndTime(0,value)}/>
-            <ToggleText text ="Monday" isSelected={operationDays[1].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(1,value)} startTime ={operationDays[1].startTime} setStartTime={(value) => setDayStartTime(1,value)} endTime ={operationDays[1].endTime} setEndTime={(value) => setDayEndTime(1,value)}/>
-            <ToggleText text ="Thuesday" isSelected={operationDays[2].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(2,value)} startTime ={operationDays[2].startTime} setStartTime={(value) => setDayStartTime(2,value)} endTime ={operationDays[2].endTime} setEndTime={(value) => setDayEndTime(2,value)}/>
-            <ToggleText text ="Wednesday" isSelected={operationDays[3].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(3,value)} startTime ={operationDays[3].startTime} setStartTime={(value) => setDayStartTime(3,value)} endTime ={operationDays[3].endTime} setEndTime={(value) => setDayEndTime(3,value)}/>
-            <ToggleText text ="Thursday" isSelected={operationDays[4].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(4,value)} startTime ={operationDays[4].startTime} setStartTime={(value) => setDayStartTime(4,value)} endTime ={operationDays[4].endTime} setEndTime={(value) => setDayEndTime(4,value)}/>
-            <ToggleText text ="Friday" isSelected={operationDays[5].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(5,value)} startTime ={operationDays[5].startTime} setStartTime={(value) => setDayStartTime(5,value)} endTime ={operationDays[5].endTime} setEndTime={(value) => setDayEndTime(5,value)}/>
-            <ToggleText text ="Saturday" isSelected={operationDays[6].isActive && !isOnlyFutureDelivery} setIsSelected={(value) => setDayState(6,value)} startTime ={operationDays[6].startTime} setStartTime={(value) => setDayStartTime(6,value)} endTime ={operationDays[6].endTime} setEndTime={(value) => setDayEndTime(6,value)}/>
-            { firstTime==true || isOnlyFutureDelivery || operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive ? null :
+            <ToggleText text ="Sunday" isSelected={operationDays[0].isActive} setIsSelected={(value) => setDayState(0,value)} startTime ={operationDays[0].startTime} setStartTime={(value) => setDayStartTime(0,value)} endTime ={operationDays[0].endTime} setEndTime={(value) => setDayEndTime(0,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Monday" isSelected={operationDays[1].isActive} setIsSelected={(value) => setDayState(1,value)} startTime ={operationDays[1].startTime} setStartTime={(value) => setDayStartTime(1,value)} endTime ={operationDays[1].endTime} setEndTime={(value) => setDayEndTime(1,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Thuesday" isSelected={operationDays[2].isActive} setIsSelected={(value) => setDayState(2,value)} startTime ={operationDays[2].startTime} setStartTime={(value) => setDayStartTime(2,value)} endTime ={operationDays[2].endTime} setEndTime={(value) => setDayEndTime(2,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Wednesday" isSelected={operationDays[3].isActive} setIsSelected={(value) => setDayState(3,value)} startTime ={operationDays[3].startTime} setStartTime={(value) => setDayStartTime(3,value)} endTime ={operationDays[3].endTime} setEndTime={(value) => setDayEndTime(3,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Thursday" isSelected={operationDays[4].isActive} setIsSelected={(value) => setDayState(4,value)} startTime ={operationDays[4].startTime} setStartTime={(value) => setDayStartTime(4,value)} endTime ={operationDays[4].endTime} setEndTime={(value) => setDayEndTime(4,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Friday" isSelected={operationDays[5].isActive} setIsSelected={(value) => setDayState(5,value)} startTime ={operationDays[5].startTime} setStartTime={(value) => setDayStartTime(5,value)} endTime ={operationDays[5].endTime} setEndTime={(value) => setDayEndTime(5,value)} timeActive={!isOnlyFutureDelivery}/>
+            <ToggleText text ="Saturday" isSelected={operationDays[6].isActive} setIsSelected={(value) => setDayState(6,value)} startTime ={operationDays[6].startTime} setStartTime={(value) => setDayStartTime(6,value)} endTime ={operationDays[6].endTime} setEndTime={(value) => setDayEndTime(6,value)} timeActive={!isOnlyFutureDelivery}/>
+            { firstTime==true || operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>
-                <Text style={styles.validation}>Please select at least one active day or activate 'Preorders only'</Text>
+                <Text style={styles.validation}>Please select at least one active day</Text>
               </Animatable.View>
             }
             <BlankDivider height={8}/>
@@ -140,7 +154,7 @@ const EditLogisticsScreen = ({navigation}) => {
                 name='info'
                 style={{marginRight: 6}}
                 size={24}
-                onPress={() => {setShowModal(true)}}
+                onPress={() => {setShowModalPay(true)}}
               />
             </View>
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>

@@ -79,7 +79,7 @@ const OrderScreen = ({navigation, route}) => {
     });
     return arr;
   };
-  const inactiveDays = kitchen.logistics.isOnlyFutureDelivery? [] : getInactiveDays();
+  const inactiveDays = getInactiveDays();
   const current_date = new Date();
   const getFirstValidDate = () => {
     let date = current_date;

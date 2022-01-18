@@ -196,7 +196,7 @@ const OrderSlider = ({order, close,navigateToChat}) => {
                 <Icons.Entypo name='chat' size={24} color='white' />
                 <Text style={[styles.subtext, {marginLeft: 0}]}>Message</Text>
               </TouchableOpacity>
-              {order.status !== 'Pending Approval' &&
+              {(order.status !== 'Pending Approval' && order.status !== 'Canceled') &&
                 <TouchableOpacity style={{alignItems: 'center'}} onPress={() => Linking.openURL(`https://waze.com/ul?q=${order.kitchen.bio.street}, ${order.kitchen.bio.city}`)}>
                   <Icons.Ionicons name='md-navigate' size={24} color='white' />
                   <Text style={[styles.subtext, {marginLeft: 0}]}>Navigate</Text>
