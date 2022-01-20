@@ -5,7 +5,6 @@ const router = new express.Router();
 const User = require('../models/User');
 
 const auth = require('../middleware/auth');
-const { response } = require('express');
 
 router.get("/verify/request_verification/", auth, async (req,res) => {
     try {
