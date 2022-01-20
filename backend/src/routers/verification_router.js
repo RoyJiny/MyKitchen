@@ -28,9 +28,12 @@ router.get("/verify/request_verification/", auth, async (req,res) => {
 
       res.sendStatus(200);
     } catch (err) {
-      // maybe add here 401 status for invalid phone input? (err.isAxiosError?)
-      console.log(err);
-      res.status(500).send({error: 'Server Error'});
+      if (err.isAxiosError) {
+        res.status(err.response.status).send({err: err.response.data.message});
+      } else {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+      }
     }
 });
 
@@ -95,8 +98,12 @@ router.get("/verify/request_verification/bio/", async (req,res) => {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err);
-    res.status(500).send({error: 'Server Error'});
+    if (err.isAxiosError) {
+      res.status(err.response.status).send({err: err.response.data.message});
+    } else {
+      console.log(err);
+      res.status(500).send({error: 'Server Error'});
+    }
   }
 });
 
@@ -159,8 +166,12 @@ router.get("/verify/request_verification/edit/", auth, async (req,res) => {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err);
-    res.status(500).send({error: 'Server Error'});
+    if (err.isAxiosError) {
+      res.status(err.response.status).send({err: err.response.data.message});
+    } else {
+      console.log(err);
+      res.status(500).send({error: 'Server Error'});
+    }
   }
 });
 
