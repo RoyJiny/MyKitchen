@@ -25,6 +25,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
   const [codeState, setCodeState] = useState('');
   const [wrongCode, setWrongCode] = useState(false);
   const [wrongPhone, setWrongPhone] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState('');
 
   const get_tags = () => {
     send_get_request('tags/list',false)
@@ -59,6 +60,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         setWrongCode(false);
         setWrongPhone(false);
         setShowPhone(false);
+        setPhoneVerified(phone);
         setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");
       })
       .catch(err => {console.log(err);setWrongCode(true);});
@@ -90,7 +92,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
           />
           { wrongPhone==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Invalid phone number</Text>
+              <Text style={styles.validation}>Could not verify phone number</Text>
             </Animatable.View>
           }
           </>
@@ -116,7 +118,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
           />
           { wrongCode==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Wrong code, try again</Text>
+              <Text style={styles.validation}>Could not verify code, try again</Text>
             </Animatable.View>
           }
           </>
@@ -187,7 +189,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
               placeholder="Phone"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={phone}
-              setState={(text) => setPhone(text)}
+              setState={(text) => {setPhone(text);}}
             />
             { firstTime==true || phone.length > 0 ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>
@@ -243,7 +245,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
         <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
         <Button2
           treatAsAsync={false}
-          onClick={() => {setShowPhone(true);}}
+          onClick={() => {if (phoneVerified === phone && phoneVerified !== ''){setSeller({...seller, kitchen: {...seller.kitchen, bio: {name: name,street: street,city: city,phone: phone,description: description,tags: tagList,coverImage:image}}}); navigation.navigate("AddDishes");}else{setShowPhone(true);}}}
           borderColor = "black"
           fillColor = "white"
           text ="Next"
