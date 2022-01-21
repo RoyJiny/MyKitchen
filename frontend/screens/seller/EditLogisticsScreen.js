@@ -57,7 +57,7 @@ const EditLogisticsScreen = ({navigation}) => {
     <>
     <Modal isVisible={showModalLog} onBackdropPress={() => {setShowModalLog(false);}}>
       <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
-        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>{"Set the days when customers will be able to order for.\nIf 'Preorders only' is inactive they will be able to sumbit an 'ASAP' order."}</Text>
+        <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>{"Set the times when customers will be able to order from you. Select 'Preorders only' if you want all orders to be made in advance (no ASAP orders)."}</Text>
       </View>
     </Modal>
     <Modal isVisible={showModalPay} onBackdropPress={() => {setShowModalPay(false);}}>
