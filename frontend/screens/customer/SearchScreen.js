@@ -117,7 +117,7 @@ const SearchScreen = ({ route, navigation }) => {
                       OrderName={kitchen.bio.name}
                       description={kitchen.bio.description}
                       imgLink={kitchen.bio.coverImg ? `${ServerBase}/images/${kitchen.bio.coverImg}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
-                      distance={kitchen.distance.toFixed(1) < 99 ? kitchen.distance.toFixed(1) : "99+"}
+                      distance={kitchen.distance ? (kitchen.distance.toFixed(1) < 99 ? kitchen.distance.toFixed(1) : "99+") : ""}
                     />)
             }
             <BlankDivider height={24} />            

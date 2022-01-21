@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard, TouchableOpacity,TextInput} from 'react-native';
+import {View,ScrollView,StyleSheet,Text,KeyboardAvoidingView, TouchableOpacity,TextInput} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import Modal from 'react-native-modal';
 import Colors from '../../globals/Colors';
@@ -274,6 +274,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 2,
   },
-  })
+})
 
 export default KitchenBioScreen;

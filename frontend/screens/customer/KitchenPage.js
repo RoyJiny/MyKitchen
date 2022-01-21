@@ -33,7 +33,7 @@ const KitchenPageScreen = ({route,navigation}) => {
   let isClosed = false;
 
   if (isLoading) {
-    if (kitchen.distance === undefined) {
+    if (kitchen.distance === undefined && location !== undefined) {
       send_post_request('users/customer/getDistance',{
         id: kitchen._id,
         location: location
@@ -186,10 +186,12 @@ const KitchenPageScreen = ({route,navigation}) => {
               <Text style={styles.details}>{kitchen.bio.phone}</Text>
             </View>
           </TouchableOpacity>
-          <View style={styles.rowView}>
-            <Icons.Entypo name="map" size={16} color="black"/>
-            <Text style={styles.details}>{kitchen.bio.city}    {kitchen.distance > 99 ? '+99' : kitchen.distance.toFixed(1)} km</Text>
-          </View>
+          { location !== undefined ? // dont show distance if we dont have location permissions
+            <View style={styles.rowView}>
+              <Icons.Entypo name="map" size={16} color="black"/>
+              <Text style={styles.details}>{kitchen.bio.city}    {kitchen.distance > 99 ? '+99' : kitchen.distance.toFixed(1)} km</Text>
+            </View> : null
+          }
         </ShadowCard>
       </View>
 

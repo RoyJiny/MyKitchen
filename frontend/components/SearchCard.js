@@ -22,9 +22,11 @@ const SearchCard = ({onClick,OrderName,description,imgLink,distance}) => {
               <Text numberOfLines={2} style={styles.subtitle}>{description}</Text>
             </View>
           </View>
-          <View style={{alignSelf: 'center'}}>
-            <Text style={styles.distance}>{distance+ " km"}</Text>
-          </View>
+          {distance !== "" ?
+            <View style={{alignSelf: 'center'}}>
+              <Text style={styles.distance}>{distance+ " km"}</Text>
+            </View>: null
+          }
         </View>
       </ShadowCard>
     </TouchableOpacity>

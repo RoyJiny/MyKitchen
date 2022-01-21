@@ -18,9 +18,11 @@ router.post("/search/kitchen/text", auth, async (req,res) => {
                 { "bio.description": new RegExp(text_query, 'gi') }
             ]
         });
-        
-        kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
-        kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
+
+        if (user_location != undefined) {
+            kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
+            kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
+        }
 
         res.send(kitchens.slice(0,20)); // limit to max of 20 result from search 
     } catch (err) {
@@ -38,8 +40,10 @@ router.post("/search/kitchen/tag", auth, async (req,res) => {
             "bio.tags": tag
         });
         
-        kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
-        kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
+        if (user_location != undefined) {
+            kitchens = kitchens.map(kitchen => { return { ...kitchen.toObject(), distance: calculate_distance(user_location,kitchen.bio.coordinates)} });
+            kitchens.sort((kitchen1,kitchen2) => kitchen1.distance - kitchen2.distance);
+        }
 
         res.send(kitchens.slice(0,20)); // limit to max of 20 result from search
     } catch (err) {

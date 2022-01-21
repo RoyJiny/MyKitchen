@@ -65,10 +65,7 @@ export default APP = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeChat, setActiveChat] = useState(undefined);
   const [generalData, setGeneralData] = useState({
-    location: {
-      longitude: 34.804385,
-      latitude: 32.113328
-    },
+    location: undefined,
     notification_data: undefined,
     networkError: false,
     unpaidShown: false
@@ -177,7 +174,8 @@ export default APP = () => {
               ,location: {
                 latitude: loc.coords.latitude,
                 longitude: loc.coords.longitude
-            }}))
+              }
+            }))
             .catch(err => console.log(err))
         }
       })

@@ -21,7 +21,7 @@ const LogoButton = ({logoConf,onClick, fillColor, text, textColor, isLoading=fal
               width: 350,
               alignSelf: 'center',
               flexDirection: 'row',
-              paddingHorizontal: 20,
+              paddingHorizontal: 12,
               justifyContent: 'center'
             }}
         >
@@ -59,7 +59,7 @@ const LogoButton = ({logoConf,onClick, fillColor, text, textColor, isLoading=fal
                                 fontWeight: 'bold',
                             }}
                         >
-                                {text}
+                            {text}
                         </Text>
                     </View>
                 </>
