@@ -42,11 +42,11 @@ const OrderScreen = ({navigation, route}) => {
     setTotalPrice(sum);
   }, [route]);
   
-  useEffect(() => 
+  useEffect(() => {
     send_post_request('users/customer/addressesWithCanDeliver', {kitchenID: kitchen._id})
       .then(answer => setAddresses(answer["adderessesWithCanDeliver"]))
       .catch(error => console.log(error))
-  , []);
+  }, []);
 
   const {user,setUser} = useContext(UserContext);
   const [comments, setComments] = useState("");

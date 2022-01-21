@@ -36,7 +36,7 @@ const KitchenPreviewScreen = ({navigation}) => {
         }
         setItemCounts(initial_item_counts);
   
-        if (distance == -1) {
+        if (distance == -1 && location != undefined) {
           send_post_request('users/customer/getDistance',{
             id: seller.kitchen._id,
             location: location
@@ -174,10 +174,12 @@ const KitchenPreviewScreen = ({navigation}) => {
               <Text style={styles.details}>{seller.kitchen.bio.phone}</Text>
             </View>
           </TouchableOpacity>
-          <View style={styles.rowView}>
-            <Icons.Entypo name="map" size={16} color="black"/>
-            <Text style={styles.details}>{seller.kitchen.bio.city}    {distance? distance > 99 ? '+99' : distance.toFixed(1) : 0} km</Text>
-          </View>
+          { location != undefined ?
+            <View style={styles.rowView}>
+              <Icons.Entypo name="map" size={16} color="black"/>
+              <Text style={styles.details}>{seller.kitchen.bio.city}    {distance? distance > 99 ? '+99' : distance.toFixed(1) : 0} km</Text>
+            </View> : null
+          }
         </ShadowCard>
       </View>
 
