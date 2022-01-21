@@ -16,6 +16,12 @@ router.post("/users/customer/register", async (req,res) => {
     try {
         user_data = req.body;
 
+        if (await User.find({googleId: user_data.googleId})) {
+            console.log('user exists')
+            res.status(401).send({error: 'user already exists'});
+            return;
+        }
+
         const user = new User(user_data);
         await user.save();
         
@@ -32,6 +38,12 @@ router.post("/users/seller/register", async (req,res) => {
     try {
         user_data = req.body.user;
         kitchen_data = req.body.kitchen;
+
+        if (await User.find({googleId: user_data.googleId})) {
+            console.log('user exists')
+            res.status(401).send({error: 'user already exists'});
+            return;
+        }
 
         const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
         kitchen_data.bio = { ...kitchen_data.bio, coordinates };
