@@ -202,7 +202,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
           />
           { wrongPhone==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Invalid phone number</Text>
+              <Text style={styles.validation}>Could not verify phone number</Text>
             </Animatable.View>
           }
           </>
@@ -228,7 +228,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
           />
           { wrongCode==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Wrong code, try again</Text>
+              <Text style={styles.validation}>Could not verify code, try again</Text>
             </Animatable.View>
           }
           </>

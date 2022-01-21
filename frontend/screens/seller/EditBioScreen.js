@@ -30,7 +30,6 @@ const EditBioScreen = ({navigation}) => {
   const [categories, setCategories] = useState([]);
 
   const [didImageChange,setDidImageChange] = useState(false);
-  const [didPhoneChange,setDidPhoneChange] = useState(false);
 
   const [showPhone, setShowPhone] = useState(false);
   const [waitingCode, setWaitingCode] = useState(false);
@@ -114,7 +113,7 @@ const EditBioScreen = ({navigation}) => {
           />
           { wrongPhone==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Invalid phone number</Text>
+              <Text style={styles.validation}>Could not verify phone number</Text>
             </Animatable.View>
           }
           </>
@@ -140,7 +139,7 @@ const EditBioScreen = ({navigation}) => {
           />
           { wrongCode==false ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Wrong code, try again</Text>
+              <Text style={styles.validation}>Could not verify code, try again</Text>
             </Animatable.View>
           }
           </>
@@ -167,7 +166,7 @@ const EditBioScreen = ({navigation}) => {
         <View style={{ flexDirection:'row', justifyContent: 'space-between', alignContent: 'center', paddingRight: 16 }}>
           <BackButton onClick={navigation.goBack}/>
           <TouchableOpacity onPress={()=>{setfirstTime(false)}}>
-            {didPhoneChange? 
+            {phone !== seller.kitchen.bio.phone? 
             <Button2
               onClick={() => {setShowPhone(true);}}  
               borderColor = "black"
@@ -248,7 +247,7 @@ const EditBioScreen = ({navigation}) => {
               placeholder="Phone"
               additionalStyle={{marginLeft: 8, marginRight: 48}}
               textInit={phone}
-              setState={(text) => {setDidPhoneChange(true);setPhone(text);}}
+              setState={(text) => {setPhone(text);}}
             />
             { firstTime==true || phone.length > 0 ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>

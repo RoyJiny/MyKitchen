@@ -74,7 +74,7 @@ export default APP = () => {
   axios.interceptors.response.use((response) => {
     return response;
   }, (err) => {
-    if(err.response.status !== 401) setGeneralData({...generalData, networkError: true})
+    if(err.response.status !== 401 && err.response.data.err !== 'Phone number is invalid') setGeneralData({...generalData, networkError: true})
     return Promise.reject(err);
   });
 
