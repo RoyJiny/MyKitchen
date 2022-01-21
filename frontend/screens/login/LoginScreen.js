@@ -65,7 +65,7 @@ const LoginScreen = ({navigation, loginCB}) => {
           }}
           borderColor='black'
           fillColor='white'
-          text='Create a Cusutomer Account'
+          text='Create a Customer Account'
           textColor='black'
         />
         {failedRegisterMessage !== "" &&
