@@ -20,6 +20,25 @@ const LogisticsScreen = ({navigation,loginCB}) => {
   const [firstTime, setfirstTime] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
+  const timeValid = (startTime, endTime) => {
+    let sHour = Number(startTime.slice(0,2))
+    let sMin = Number(startTime.slice(-2))
+    let eHour = Number(endTime.slice(0,2))
+    let eMin = Number(endTime.slice(-2))
+    return (sHour < eHour || (sHour === eHour && sMin < eMin))
+  }
+
+  const timesValid = () => {
+    return ((!operatingDays.Sunday.isActive || timeValid(operatingDays.Sunday.startTime, operatingDays.Sunday.endTime)) && 
+            (!operatingDays.Monday.isActive || timeValid(operatingDays.Monday.startTime, operatingDays.Monday.endTime)) &&
+            (!operatingDays.Thuesday.isActive || timeValid(operatingDays.Thuesday.startTime, operatingDays.Thuesday.endTime)) &&
+            (!operatingDays.Wednesday.isActive || timeValid(operatingDays.Wednesday.startTime, operatingDays.Wednesday.endTime)) &&
+            (!operatingDays.Thursday.isActive || timeValid(operatingDays.Thursday.startTime, operatingDays.Thursday.endTime)) &&
+            (!operatingDays.Friday.isActive || timeValid(operatingDays.Friday.startTime, operatingDays.Friday.endTime)) &&
+            (!operatingDays.Saturday.isActive || timeValid(operatingDays.Saturday.startTime, operatingDays.Saturday.endTime))
+    )
+  }
+
   const submit_data = async (newSellerData) => {
     // upload information
     const data = await send_post_request("users/seller/register",newSellerData,false);
@@ -113,7 +132,12 @@ const LogisticsScreen = ({navigation,loginCB}) => {
             <ToggleText text ="Saturday" isSelected={operatingDays.Saturday.isActive} setIsSelected={(value) => setDayState('Saturday',value)} startTime ={operatingDays.Saturday.startTime} setStartTime={(value) => setDayStartTime('Saturday',value)} endTime ={operatingDays.Saturday.endTime} setEndTime={(value) => setDayEndTime('Saturday',value)} timeActive={!operatingDays.preorderOnly}/>
             { firstTime==true || operatingDays.Sunday.isActive || operatingDays.Monday.isActive || operatingDays.Thuesday.isActive || operatingDays.Wednesday.isActive || operatingDays.Thursday.isActive || operatingDays.Friday.isActive || operatingDays.Saturday.isActive ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>
-                <Text style={styles.validation}>Please select at least one active day or activate 'Preorders only'</Text>
+                <Text style={styles.validation}>Please select at least one active day</Text>
+              </Animatable.View>
+            }
+            { firstTime==true || operatingDays.preorderOnly || timesValid() ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please set valid open and close times</Text>
               </Animatable.View>
             }
             <BlankDivider height={8}/>
@@ -183,7 +207,7 @@ const LogisticsScreen = ({navigation,loginCB}) => {
             fillColor = "white"
             text ="Finish"
             textColor = "black"
-            disable = { (delivery.support && !(parseInt(delivery.distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') || !(operatingDays.preorderOnly || operatingDays.Sunday.isActive || operatingDays.Monday.isActive || operatingDays.Thuesday.isActive || operatingDays.Wednesday.isActive || operatingDays.Thursday.isActive || operatingDays.Friday.isActive || operatingDays.Saturday.isActive) }
+            disable = { (delivery.support && !(parseInt(delivery.distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') || !(timesValid() || operatingDays.preorderOnly) || !(operatingDays.preorderOnly || operatingDays.Sunday.isActive || operatingDays.Monday.isActive || operatingDays.Thuesday.isActive || operatingDays.Wednesday.isActive || operatingDays.Thursday.isActive || operatingDays.Friday.isActive || operatingDays.Saturday.isActive) }
           />
           </TouchableOpacity>
           <BlankDivider height={32}/>
