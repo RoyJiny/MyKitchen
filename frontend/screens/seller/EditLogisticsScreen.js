@@ -29,6 +29,25 @@ const EditLogisticsScreen = ({navigation}) => {
   const [showModalPay, setShowModalPay] = useState(false);
   const [showModalLog, setShowModalLog] = useState(false);
   
+  const timeValid = (startTime, endTime) => {
+    let sHour = Number(startTime.slice(0,2))
+    let sMin = Number(startTime.slice(-2))
+    let eHour = Number(endTime.slice(0,2))
+    let eMin = Number(endTime.slice(-2))
+    return (sHour < eHour || (sHour === eHour && sMin < eMin))
+  }
+
+  const timesValid = () => {
+    return ((!operationDays[0].isActive || timeValid(operationDays[0].startTime, operationDays[0].endTime)) && 
+            (!operationDays[1].isActive || timeValid(operationDays[1].startTime, operationDays[1].endTime)) &&
+            (!operationDays[2].isActive || timeValid(operationDays[2].startTime, operationDays[2].endTime)) &&
+            (!operationDays[3].isActive || timeValid(operationDays[3].startTime, operationDays[3].endTime)) &&
+            (!operationDays[4].isActive || timeValid(operationDays[4].startTime, operationDays[4].endTime)) &&
+            (!operationDays[5].isActive || timeValid(operationDays[5].startTime, operationDays[5].endTime)) &&
+            (!operationDays[6].isActive || timeValid(operationDays[6].startTime, operationDays[6].endTime))
+    )
+  }
+
   const setDayState = (index,value) => {
     let copy = [...operationDays]
     copy[index] = {...copy[index], isActive: value}
@@ -90,7 +109,7 @@ const EditLogisticsScreen = ({navigation}) => {
               fillColor = "white"
               text ="Save"
               textColor = "black"
-              disable = { (isSupportDelivery && !(parseInt(distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') ||  !(operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive)}
+              disable = { (isSupportDelivery && !(parseInt(distance) >= 0)) || (payLinks[0] == '' && payLinks[1] == '') || !(timesValid() || isOnlyFutureDelivery) || !(operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive)}
             />
             </TouchableOpacity>
           </View>
@@ -129,6 +148,11 @@ const EditLogisticsScreen = ({navigation}) => {
             { firstTime==true || operationDays[0].isActive || operationDays[1].isActive || operationDays[2].isActive || operationDays[3].isActive || operationDays[4].isActive || operationDays[5].isActive || operationDays[6].isActive ? null :
               <Animatable.View animation="fadeInLeft" duration={500}>
                 <Text style={styles.validation}>Please select at least one active day</Text>
+              </Animatable.View>
+            }
+            { firstTime==true || isOnlyFutureDelivery || timesValid() ? null :
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.validation}>Please set valid open and close times</Text>
               </Animatable.View>
             }
             <BlankDivider height={8}/>
