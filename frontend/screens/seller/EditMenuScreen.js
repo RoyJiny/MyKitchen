@@ -83,7 +83,7 @@ const EditMenuScreen = ({navigation}) => {
     let itemsCopy = [...dishItems];
     for (let i = 0; i < itemsCopy.length; i++) {
       item = itemsCopy[i]
-      if(item.name == '' || item.price == ''){
+      if(item.name == '' || item.price == '' || item.img == 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'){
         return false
       }
     }
@@ -170,7 +170,7 @@ const EditMenuScreen = ({navigation}) => {
           }
           { firstTime==true || checkValid==false || checkEmptyDish()==true ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Please add name and price for each dish</Text>
+              <Text style={styles.validation}>Please add name,price and image for each dish</Text>
             </Animatable.View>
           }
           <BlankDivider height={8}/>
