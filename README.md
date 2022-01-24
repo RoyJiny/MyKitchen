@@ -1,4 +1,4 @@
-# GoogleWorkshop
+# Google Workshop - MyKitchen
 Google Workshop Project - TAU 2021-2022
 
 An application designed to connect between private individuals that want to sell special home-made food and potential customers.
