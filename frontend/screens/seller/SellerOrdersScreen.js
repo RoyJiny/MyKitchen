@@ -132,40 +132,42 @@ const SellerOrdersScreen = ({ navigation }) => {
       </View>
       { isLoading
         ? <ActivityIndicator size={40} color="black" style={{alignSelf: 'center'}}/>
-        : <ScrollView
-            style={{}}
-            vertical={true}
-            showsHorizontalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}
-          >
-            <View style={styles.scroll}>
-              {
-                Items.slice().reverse().map((item, index) => {
-                  if (!useDateFilter
-                    || (item.dueDate === 'ASAP' && parseDate(item.date) <= parseDate(dateFilter))
-                    || (parseDate(item.dueDate) <= parseDate(dateFilter))
-                  ){
-                    if (tagList.includes(item.status) || tagList.length == 0) {
-                      return (
-                        <View key={index}>
-                          <OrderCard
-                            onClick={() => navigation.navigate("OrderPreview", {item, display_id: Items.length-index})}
-                            orderNumber={Items.length-index}
-                            orderStatus={item.status}
-                            orderDate={item.dueDate}
-                            customer={item.customer.name}
-                            price={item.price}
-                          />
-                          <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
-                        </View>
-                      )
+        : Items.length === 0
+          ? <Text style={styles.noOrders}>You don't have any orders</Text>
+          : <ScrollView
+              style={{}}
+              vertical={true}
+              showsHorizontalScrollIndicator={false}
+              refreshControl={<RefreshControl refreshing={Refreshing} onRefresh={onRefresh} />}
+            >
+              <View style={styles.scroll}>
+                {
+                  Items.slice().reverse().map((item, index) => {
+                    if (!useDateFilter
+                      || (item.dueDate === 'ASAP' && parseDate(item.date) <= parseDate(dateFilter))
+                      || (parseDate(item.dueDate) <= parseDate(dateFilter))
+                    ){
+                      if (tagList.includes(item.status) || tagList.length == 0) {
+                        return (
+                          <View key={index}>
+                            <OrderCard
+                              onClick={() => navigation.navigate("OrderPreview", {item, display_id: Items.length-index})}
+                              orderNumber={Items.length-index}
+                              orderStatus={item.status}
+                              orderDate={item.dueDate}
+                              customer={item.customer.name}
+                              price={item.price}
+                            />
+                            <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
+                          </View>
+                        )
+                      }
                     }
-                  }
-                })
-              }
-              <BlankDivider height={5}/>
-            </View>
-          </ScrollView>
+                  })
+                }
+                <BlankDivider height={5}/>
+              </View>
+            </ScrollView>
       }
     </View>
   )
@@ -186,6 +188,11 @@ const styles = StyleSheet.create({
   scroll: {
     paddingTop: 4,
     paddingHorizontal: 8,
+  },
+  noOrders: {
+    alignSelf: 'center',
+    color: Colors.lightGray,
+    marginTop: 40
   }
 
 });
