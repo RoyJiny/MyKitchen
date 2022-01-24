@@ -55,6 +55,7 @@ const AddDishesScreen = ({navigation}) => {
   }
 
   const changeDishPrice = (index,text) => {
+    text = text.replace(/\D/g,'').slice(0,3);
     let itemsCopy = [...dishItems];
     itemsCopy[index].price=text;
     setDishItems(itemsCopy)
@@ -71,7 +72,7 @@ const AddDishesScreen = ({navigation}) => {
     let itemsCopy = [...dishItems];
     for (let i = 0; i < itemsCopy.length; i++) {
       item = itemsCopy[i]
-      if(item.name == '' || item.price == ''){
+      if(item.name == '' || item.price == '' || item.imgLink == 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'){
         return false
       }
     }
@@ -126,7 +127,7 @@ const AddDishesScreen = ({navigation}) => {
           }
           { firstTime==true || checkValid==false || checkEmptyDish()==true ? null :
             <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.validation}>Please add name and price for each dish</Text>
+              <Text style={styles.validation}>Please add name,price and image for each dish</Text>
             </Animatable.View>
           }
           <BlankDivider height={8}/>
