@@ -239,6 +239,11 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
             <ImChange isActive={true} image={image} setImage={setImage}/>
           </View>
         </ShadowCard2>
+        { firstTime==true || image !== "https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png" ? null :
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.validation}>Please add cover image to your kitchen</Text>
+          </Animatable.View>
+        }
         
 
         <BlankDivider height={16}/>
@@ -250,7 +255,7 @@ const KitchenBioScreen = ({navigation, loginCB}) => {
           fillColor = "white"
           text ="Next"
           textColor = "black"
-          disable = { name.length > 0 && street.length > 0 && city.length > 0 && phone.length > 0 && description.length > 0 ? false : true }
+          disable = { image !== "https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png" && name.length > 0 && street.length > 0 && city.length > 0 && phone.length > 0 && description.length > 0 ? false : true }
         />
         </TouchableOpacity>
         

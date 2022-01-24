@@ -11,13 +11,15 @@ const {get_coordinates} = require('../external_api/geocoding');
 
 const calculate_distance = require("../utils/distance");
 
+const DEFAULT_COVER_IMAGE_ID = "61eac47694cd68ceaca675d3"
+const DEFAULT_DISH_IMAGE_ID = "61ed568e040611a76a9443ec"
+
 // Users Registration, info and editing - START
 router.post("/users/customer/register", async (req,res) => {
     try {
         user_data = req.body;
 
-        if (await User.find({googleId: user_data.googleId})) {
-            console.log('user exists')
+        if (await User.findOne({googleId: user_data.googleId})) {
             res.status(401).send({error: 'user already exists'});
             return;
         }
@@ -39,14 +41,16 @@ router.post("/users/seller/register", async (req,res) => {
         user_data = req.body.user;
         kitchen_data = req.body.kitchen;
 
-        if (await User.find({googleId: user_data.googleId})) {
-            console.log('user exists')
+        if (await User.findOne({googleId: user_data.googleId})) {
             res.status(401).send({error: 'user already exists'});
             return;
         }
-
+        
         const coordinates = await get_coordinates(`${kitchen_data.bio.street}, ${kitchen_data.bio.city}`)
-        kitchen_data.bio = { ...kitchen_data.bio, coordinates };
+        kitchen_data.bio = { ...kitchen_data.bio, coordinates, coverImg:DEFAULT_COVER_IMAGE_ID };
+        kitchen_data.menu.forEach(dish => {
+            dish.img = DEFAULT_DISH_IMAGE_ID
+        });
 
         const user = new User(user_data);
         
