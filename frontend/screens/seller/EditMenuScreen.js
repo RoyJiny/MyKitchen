@@ -66,6 +66,7 @@ const EditMenuScreen = ({navigation}) => {
   }
 
   const changeDishPrice = (index,text) => {
+    text = text.replace(/\D/g,'').slice(0,3);
     let itemsCopy = [...dishItems];
     itemsCopy[index].price=text;
     setDishItems(itemsCopy)
