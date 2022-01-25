@@ -24,7 +24,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
 
         <ImageWithIndicator imageStyle={{width: 70, height:  70, borderRadius: 10}} imgLink={imgLink}/>
 
-        <View style={{marginLeft: 4}}>
+        <View style={{marginLeft: 8}}>
           <Text numberOfLines={1} style={styles.title}>{itemName}</Text>
           <Text numberOfLines={expand ? 0 : 2} onTextLayout={handleTextLayout} style={styles.description}>
             {description}

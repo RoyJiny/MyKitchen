@@ -200,6 +200,14 @@ export default APP = () => {
     };
   },[state]);
 
+  useEffect(() => {
+    if (state.isLoggedIn && expoPushToken !== '') {
+      send_post_request('users/notification_token',{expo_token: expoPushToken})
+        .then(()=>{})
+        .catch(err => console.log("Failed to send notification token:",err));
+    }
+  },[expoPushToken]);
+
   const loginCB = (isSeller) => {
     if (expoPushToken !== '') {
       send_post_request('users/notification_token',{expo_token: expoPushToken})
