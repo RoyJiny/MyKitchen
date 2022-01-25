@@ -60,6 +60,14 @@ const SellerOrdersScreen = ({ navigation }) => {
   },[]);
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setIsLoading(true);
+      get_data_from_server();
+    });
+    return unsubscribe;
+  },[navigation]);
+
+  useEffect(() => {
     send_get_request("users/me/seller")
       .then(data => {setSeller(data);})
       .catch(err => {console.log(err);});
