@@ -136,9 +136,11 @@ const KitchenPreviewScreen = ({navigation}) => {
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
             {
-              seller.kitchen.logistics.isOnlyFutureDelivery
-               ? <Text style={styles.details}>Future Devileries Only</Text>
-               : <View style={{flexDirection: 'row',alignItems:'center'}}>
+              seller.kitchen.isTemporarilyClose
+              ? <Text style={styles.details}>Temporarily Close</Text>
+              : seller.kitchen.logistics.isOnlyFutureDelivery
+                ? <Text style={styles.details}>Future Deliveries Only</Text>
+                : <View style={{flexDirection: 'row',alignItems:'center'}}>
                   <ExpantionArrow
                     text={getCloseTimeDesc()}
                     isInitaialyExpanded={expandTimes}

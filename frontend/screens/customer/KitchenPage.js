@@ -24,10 +24,9 @@ const KitchenPageScreen = ({route,navigation}) => {
     initial_item_counts[item._id] = {count: 0, price: item.price};
   }
   const [itemCounts, setItemCounts] = useState(initial_item_counts);
-  const [showBanner, setShowBanner] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState({name: "", price: 0,description: "",img: ""});
-  const [showAlert, setShowAlert] = useState(false);
+  const [alert, setAlert] = useState({show: false, text: ""});
 
   const [isLoading, setIsLoading] = useState(true);
   let isClosed = false;
@@ -108,9 +107,9 @@ const KitchenPageScreen = ({route,navigation}) => {
         </View>
       </Modal>
       
-      <Modal isVisible={showAlert} onBackdropPress={() => {setShowAlert(false);}}>
+      <Modal isVisible={alert.show} onBackdropPress={() => {setAlert({show: false, text: ""});}}>
         <View style={{marginHorizontal: 16, backgroundColor: 'white', borderRadius: 10}}>
-          <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>Please add items to your orders.</Text>
+          <Text style={{margin: 8, fontSize: 18, textAlign: 'center'}}>{alert.text}</Text>
         </View>
       </Modal>
     
@@ -161,15 +160,17 @@ const KitchenPageScreen = ({route,navigation}) => {
           <View style={styles.rowView}>
             <Icons.FontAwesome5 name="clock" size={16} color="black"/>
             {
-              kitchen.logistics.isOnlyFutureDelivery
-               ? <Text style={styles.details}>Future Deliveries Only</Text>
-               : <View style={{flexDirection: 'row',alignItems:'center'}}>
-                  <ExpantionArrow
-                    text={getCloseTimeDesc()}
-                    isInitaialyExpanded={expandTimes}
-                    onClick={() => setExpandTimes(!expandTimes)}
-                  />
-                </View>
+              kitchen.isTemporarilyClose
+                ? <Text style={styles.details}>Temporarily Close</Text>
+                : kitchen.logistics.isOnlyFutureDelivery
+                  ? <Text style={styles.details}>Future Deliveries Only</Text>
+                  : <View style={{flexDirection: 'row',alignItems:'center'}}>
+                    <ExpantionArrow
+                      text={getCloseTimeDesc()}
+                      isInitaialyExpanded={expandTimes}
+                      onClick={() => setExpandTimes(!expandTimes)}
+                    />
+                  </View>        
             }
           </View>
           {expandTimes ?
@@ -198,7 +199,18 @@ const KitchenPageScreen = ({route,navigation}) => {
       <View style={[styles.rowView,{justifyContent:'space-between',marginBottom:16,marginHorizontal: 20}]}>
         <Text style={styles.smallTitle}>Menu</Text>
         <Button
-          onClick={() => {if (hasItemsInOrder()){navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}})} else {setShowAlert(true)}}}
+          onClick={() => {
+            // double !! so that of field doesnt exist - treat as false
+            if (!!kitchen.isTemporarilyClose) {
+              setAlert({show: true, text: `${kitchen.bio.name} is temporarily close, you will be able to order when its back online.`});
+              return;
+            }
+            if (hasItemsInOrder()){
+              navigation.navigate("Order",{params: {"itemCounts":itemCounts,"kitchen": kitchen,"isClosed": isClosed}});
+            } else {
+              setAlert({show: true, text: "Please add items to your orders."})};
+            }
+          }
           borderColor="black"
           fillColor="white"
           text="Order"

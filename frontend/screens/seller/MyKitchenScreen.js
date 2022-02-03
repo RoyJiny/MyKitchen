@@ -1,21 +1,32 @@
-import React,{useContext,useEffect} from 'react';
-import {View,StyleSheet,Dimensions} from 'react-native'
+import React,{useContext,useEffect,useState} from 'react';
+import {View,StyleSheet,Dimensions,Text} from 'react-native'
+import ToggleSwitch from 'toggle-switch-react-native'
 import {MaterialIcons, Ionicons, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons'
 import { SellerContext } from "../../contexts/SellerContext";
 
-import { send_get_request } from '../../utils/requests';
+import { send_get_request,send_post_request } from '../../utils/requests';
 
 import {Backdrop,KitchenCard,Button} from '../../components';
  
 const MyKitchenScreen = ({navigation,signoutCB}) => {
-
+  const [isTemporarilyClose, setIsTemporarilyClose] = useState(false);
   const {seller, setSeller} = useContext(SellerContext);
 
   useEffect(() => {
     send_get_request("users/me/seller")
-      .then(data => {setSeller(data);})
+      .then(data => {
+        setSeller(data);
+        setIsTemporarilyClose(data.kitchen.isTemporarilyClose)
+      })
       .catch(err => {console.log(err);});
   },[]);
+
+  const changeTemporarilyClose = (val) => {
+    setIsTemporarilyClose(val);
+    send_post_request('users/seller/edit/set_temp_close',{close: val, id: seller.kitchen._id})
+      .then(() => {})
+      .catch(err => console.log(err));
+  };
 
   const widthPhone = Dimensions.get('window').width
   const tableSpaces = widthPhone*0.03
@@ -51,6 +62,16 @@ const MyKitchenScreen = ({navigation,signoutCB}) => {
               description="Kitchen Preview"
             />
           </View>
+          <View style={{flexDirection:'row', justifyContent: 'space-between', alignItems:'center', marginTop: 24}}>
+              <Text style={{fontSize: 16}}>Temporarily Close: </Text>
+              <ToggleSwitch style={{marginRight: 16}}
+                isOn={isTemporarilyClose}
+                onColor='#7CC0FA'
+                offColor="lightgray"
+                size="small"
+                onToggle={(isOn) => changeTemporarilyClose(isOn)}
+              />
+            </View>
         </View>
 
         <Button
