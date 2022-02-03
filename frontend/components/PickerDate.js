@@ -29,7 +29,7 @@ const PickerDate = ({date, setDate, textColor, isActive, inactiveDays = []}) => 
     return dateInfo[2]+"-"+("0"+dateInfo[1]).slice(-2)+"-"+("0"+dateInfo[0]).slice(-2);
   };
   const transformDate = (date) => {
-    return date.getFullYear()+"-"+("0"+date.getMonth()+1).slice(-2)+"-"+("0"+date.getDate()).slice(-2);
+    return date.getFullYear()+"-"+("0"+(date.getMonth()+1)).slice(-2)+"-"+("0"+date.getDate()).slice(-2);
   };
 
   const getDisabledDays = (month, year, daysIndexes) => {

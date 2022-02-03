@@ -9,7 +9,7 @@ import { send_post_request, send_get_request } from '../../utils/requests';
 import { SellerContext } from "../../contexts/SellerContext";
 
 import Modal from 'react-native-modal';
-import {Button,BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider,ImageWithIndicator} from '../../components';
+import {BackButton,ShadowCard,ExpantionArrow,OrderMenuItem,BlankDivider,ImageWithIndicator} from '../../components';
 
 const KitchenPreviewScreen = ({navigation}) => {
 
@@ -17,7 +17,6 @@ const KitchenPreviewScreen = ({navigation}) => {
 
   const {generalData:{location}} = useContext(generalContext);
   const [expandTimes, setExpandTimes] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   
   const [itemCounts, setItemCounts] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -126,18 +125,6 @@ const KitchenPreviewScreen = ({navigation}) => {
           <BackButton onClick={navigation.goBack}/>
           <Text style={styles.title}>{seller.kitchen.bio.name}</Text>
         </View>
-        <Icons.FontAwesome 
-          name={isFavorite ? 'star' : 'star-o'}
-          style={{marginRight: 16}}
-          size={32}
-          color={isFavorite ? 'gold' : 'black'} 
-          onPress={() => {
-            if (!isFavorite) {
-              setIsFavorite(true);
-            } else {
-              setIsFavorite(false);
-            }
-          }} />
       </View>
 
       <View style={{marginHorizontal: 16}}>

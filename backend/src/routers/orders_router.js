@@ -25,7 +25,6 @@ router.post("/order/submit", auth, async (req,res) => {
     if (!populated_order_data) { throw new Error(); }
 
     send_notification_to_user(kitchen.seller,'New Order','You have received a new order', extra_data={order: populated_order_data, type: 'Order'});
-    
     res.status(200).send("Processed Successfuly");
   } catch (err) {
     console.log(err);
@@ -34,7 +33,7 @@ router.post("/order/submit", auth, async (req,res) => {
 });
 
 
-router.post("/orders/seller/update_status", [auth], async (req,res) => {
+router.post("/orders/seller/update_status", auth, async (req,res) => {
   try {
     const updated_status = req.body.status;
     if (!["Pending Approval","Waiting For Payment","In the Making","Ready for Customer","Done","Canceled"].includes(updated_status)) {
