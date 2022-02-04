@@ -28,6 +28,7 @@ I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 console.reportErrorsAsExceptions = false;
 
+// for debug only
 if (SEND_REMOTE_LOGS) {
   var native_log = console.log;
   console.log = (...texts) => {
