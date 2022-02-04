@@ -135,14 +135,14 @@ const OrderScreen = ({navigation, route}) => {
     await send_post_request('order/submit',new_order);
   };
 
-  const checkCanDeliver = async () => {
+  const checkCanDeliver = () => {
     const address = {
       address: selectedCustomAddress,
       kitchenID: kitchen._id
     }
 
     send_post_request('users/customer/addressCanDeliver', address)
-      .then(answer => setDeliveryDistance(answer))
+      .then(answer => {setDeliveryDistance(answer);})
       .catch(error => console.log(error));
   };
 
@@ -196,7 +196,7 @@ const OrderScreen = ({navigation, route}) => {
                   <RadioButton
                     status={ selectedDelivery == delivery.name ? 'checked' : 'unchecked' }
                     color="black"
-                    onPress= {() => {setCheckValid(false); if(delivery.name !== "Custom Address"){setSelectedDelivery(delivery.name); setSelectedCustomAddress("");setDeliveryDistance(true)} else {setSelectedDelivery(delivery.name);}}}
+                    onPress= {() => {setCheckValid(false); if(delivery.name !== "Custom Address"){setSelectedDelivery(delivery.name);} else {setSelectedDelivery(delivery.name);}}}
                     disabled={!delivery.canDeliver}
                   />
                   <Text style={{color: delivery.canDeliver? 'black' : Colors.lightGray}}>{delivery.name}</Text>
@@ -212,7 +212,7 @@ const OrderScreen = ({navigation, route}) => {
                         onChangeText={() => {}}
                         placeholder={"e.g. 1 Hashalom, Tel Aviv"}
                         color={Colors.black}
-                        onChangeText={(address) => setSelectedCustomAddress(address)}
+                        onChangeText={(address) => {setSelectedCustomAddress(address);}}
                         onEndEditing={() => {
                           checkCanDeliver();
                         }}
@@ -221,11 +221,7 @@ const OrderScreen = ({navigation, route}) => {
                     : null
                   }
                 </View>
-                {delivery.canDeliver || selectedDelivery === "Custom Address"
-                  ? null
-                  : <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
-                }
-                {!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address" && selectedCustomAddress.length > 0
+                {!delivery.canDeliver || (!deliveryDistance && delivery.name === "Custom Address" && selectedDelivery === "Custom Address" && selectedCustomAddress.length > 0)
                   ? <Text style={{color: Colors.lightGray, marginLeft: 36}}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
                   : null
                 }
@@ -292,18 +288,15 @@ const OrderScreen = ({navigation, route}) => {
         </Animatable.View>
         : null
       }
-      { (checkValid == true && selectedDelivery === "Custom Address" && !deliveryDistance && selectedCustomAddress.length > 0) ? 
-        <Animatable.View animation="fadeInLeft" duration={500}>
-        <Text style={styles.validation}>This address is beyond {kitchen.bio.name}'s delivery distance</Text>
-        </Animatable.View>
-        : null
-      }
       <TouchableOpacity>
         <Button
           onClick={async () => {
+            checkCanDeliver();
+            setCheckValid(true);
             if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))) {
               await send_order();
-              setCheckValid(true);
+            } else {
+              throw new Error('Bad custom address');
             }
           }}
           treatAsAsync={true}
@@ -314,7 +307,7 @@ const OrderScreen = ({navigation, route}) => {
           textColor={Colors.lightGray}
           height={35}
           width={120}
-          disabled = {selectedDelivery === "Custom Address" &&  (selectedCustomAddress == "" || !deliveryDistance) ? true : false}
+          disabled = {selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance) ? true : false}
         />
       </TouchableOpacity>
       <BlankDivider height={24}/>

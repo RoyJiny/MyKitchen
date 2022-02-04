@@ -21,11 +21,11 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
         justifyContent:'space-between',
         marginHorizontal:16
       }}>
-
-        <ImageWithIndicator imageStyle={{width: 70, height:  70, borderRadius: 10}} imgLink={imgLink}/>
+        <ImageWithIndicator imageStyle={{width: 80, height:  80, borderRadius: 10}} imgLink={imgLink}/>
 
         <View style={{marginLeft: 8}}>
           <Text numberOfLines={1} style={styles.title}>{itemName}</Text>
+          <Text style={styles.price}>₪{price}</Text>
           <Text numberOfLines={expand ? 0 : 2} onTextLayout={handleTextLayout} style={styles.description}>
             {description}
           </Text>
@@ -38,9 +38,7 @@ const OrderMenuItem = ({itemName,price,description,count,setCount,imgLink}) => {
           }
         </View>
 
-        <View style={{alignItems:'center', flexDirection: 'row', height: 50, marginTop: 10}}>
-          <Text style={styles.price}>₪{price}</Text>
-
+        <View style={{alignItems:'center', flexDirection: 'row', height: 50, marginTop: 15}}>
           <ShadowCard>
             <View style={{flexDirection: 'row',alignItems:'center'}}>
               <TouchableOpacity onPress={() => setCount(-1)}>
@@ -87,7 +85,8 @@ const styles = StyleSheet.create({
     width: 170
   },
   price: {
-    fontSize: 14
+    fontSize: 14,
+    color: 'black'
   },
   description: {
     fontSize: 12,

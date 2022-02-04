@@ -59,7 +59,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
   const [wrongCode, setWrongCode] = useState(false);
   const [wrongPhone, setWrongPhone] = useState(false);
 
-  const [addresses, setAddresses] = useState([...user.addresses]);
+  const [addresses, setAddresses] = useState(user.addresses.map((addr,idx) => ({...addr, id: idx})));
   const [orderList, setOrderList] = useState([])
   const [fetchOrdersDone, setFetchOrdersDone] = useState(false)
   const [sliderState, setSliderState] = useState({show:false, data: {}});
@@ -171,7 +171,7 @@ const MyProfileScreen = ({signoutCB,route,navigation}) => {
             <Text>Done</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setShowModal(false)}
+            onPress={() => {setModalState({id: 0,name: "", address: ""});setShowModal(false)}}
             style={{alignItems: 'center', paddingVertical: 12}}
           >
             <Text>Cancel</Text>
