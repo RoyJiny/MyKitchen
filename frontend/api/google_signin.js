@@ -4,6 +4,7 @@ import { saveAuthToken } from './async_storage';
 
 const config = {
   androidClientId: '225045444277-o7k85cn5613jru2vm2qnlgfa74gpbe8a.apps.googleusercontent.coma',
+  androidStandaloneAppClientId: '225045444277-gv1psl300pug4set71c46lnebtj3jpes.apps.googleusercontent.com',
   scopes: ['profile','email']
 };
 

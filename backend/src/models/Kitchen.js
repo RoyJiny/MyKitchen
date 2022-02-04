@@ -125,6 +125,11 @@ const kitchenSchema = new mongoose.Schema(
         required: true,
         default: 0
       }
+    },
+    isTemporarilyClose: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 );
