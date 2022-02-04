@@ -20,10 +20,23 @@ import {NetworkErrorAlert} from './components';
 
 import { getAuthToken, deleteAuthToken } from './api/async_storage';
 import { send_get_request,send_post_request } from './utils/requests';
+import { remote_log} from './utils/debug_log';
+
+const SEND_REMOTE_LOGS = false;
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 console.reportErrorsAsExceptions = false;
+
+// for debug only
+if (SEND_REMOTE_LOGS) {
+  var native_log = console.log;
+  console.log = (...texts) => {
+    const text = ''.concat(texts);
+    if (text.indexOf('Running "main" with') === -1) remote_log(text,'<log-server-address>');
+    native_log(text);
+  }
+}
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -181,7 +194,7 @@ export default APP = () => {
       })
       .catch(err => console.log(err))
 
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(err => console.log(err));
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(err => console.log('Failed to register for push notifications,',err));
   },[]);
   
   useEffect(() => {
@@ -204,7 +217,7 @@ export default APP = () => {
     if (state.isLoggedIn && expoPushToken !== '') {
       send_post_request('users/notification_token',{expo_token: expoPushToken})
         .then(()=>{})
-        .catch(err => console.log("Failed to send notification token:",err));
+        .catch(err => console.log(`Failed to send notification token: ${err}`));
     }
   },[expoPushToken]);
 
@@ -212,7 +225,7 @@ export default APP = () => {
     if (expoPushToken !== '') {
       send_post_request('users/notification_token',{expo_token: expoPushToken})
         .then(()=>{})
-        .catch(err => console.log("Failed to send notification token:",err));
+        .catch(err => console.log(`Failed to send notification token: ${err}`));
     }
     setState({isLoggedIn: true, isCustomer: !isSeller});
   };

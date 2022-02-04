@@ -168,6 +168,19 @@ router.post("/users/seller/edit/logistics", [auth, matchUserKitchen],  async (re
     }
 });
 
+router.post("/users/seller/edit/set_temp_close", [auth, matchUserKitchen],  async (req,res) => {
+    try {
+        is_close = req.body.close;
+
+        await Kitchen.findByIdAndUpdate(req.body.id, {isTemporarilyClose: is_close})
+
+        res.send("Processed Successfuly");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({error: 'Server Error'});
+    }
+});
+
 router.get("/users/me", auth, async (req,res) => {
     const user = await User.findById(req.user._id).populate('favorites');
     res.send(user);
