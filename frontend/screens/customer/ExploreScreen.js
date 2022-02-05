@@ -66,7 +66,7 @@ const ExploreScreen = ({navigation}) => {
           ? <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
-              style={{marginBottom: 16, marginLeft: 8}}
+              style={{marginBottom: 20, marginLeft: 8}}
             >
               {
                 categories.map(category => 
@@ -91,7 +91,7 @@ const ExploreScreen = ({navigation}) => {
             : <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
-              style={{marginBottom: 16, marginLeft: 8}}
+              style={{marginBottom: 20, marginLeft: 8}}
             >
               {pastKitchens.map(kitchen => 
                   <KitchenExploreCard
@@ -113,7 +113,7 @@ const ExploreScreen = ({navigation}) => {
           : <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            style={{marginBottom: 16, marginLeft: 8}}
+            style={{marginBottom: 20, marginLeft: 8}}
           >
             {user.favorites.map((kitchen, index) => {
               return (

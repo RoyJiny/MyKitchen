@@ -17,6 +17,23 @@ const dishSchema = new mongoose.Schema(
     description: {
       type: String,
       required: false
+    },
+    allergies: {
+      nuts: {
+        type: Boolean,
+        required: true,
+        default: false
+      },
+      dairy: {
+        type: Boolean,
+        required: true,
+        default: false
+      },
+      gluten: {
+        type: Boolean,
+        required: true,
+        default: false
+      },
     }
   }
 );

@@ -150,6 +150,10 @@ const OrderPreviewScreen = ({ navigation, route }) => {
 
           <Text style={styles.title}>Delivery Date:</Text>
           <Text style={styles.textStyle}>{item.dueDate}</Text>
+          {item.dueTime !== ''
+            ? <Text style={{fontSize: 14, color: Colors.lightGray}}>(Requested to be ready by {item.dueTime})</Text>
+            : null
+          }
 
           <View style={{ height: 1, borderWidth: 0.5, borderColor: Colors.lightGray, marginVertical: 16 }} />
 

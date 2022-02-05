@@ -1,9 +1,12 @@
 import React from 'react'
 import { View, StyleSheet, TextInput, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as Icons from '@expo/vector-icons'
 import ImChange from './ImChange';
 
-const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown}) => {
+import Colors from '../globals/Colors';
+
+const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc, imgLink, onChangeImage, deleteFunc, moveUp, moveDown, setAllergy, allergy}) => {
   
   return (
     <View
@@ -107,6 +110,30 @@ const Dish = ({name, onChangeName, pricing, onChangePricing, desc, onChangeDesc,
           onChangeText={onChangeDesc}
           value= {desc}
           maxLength={100}
+        />
+      </View>
+      
+      <View style={{ flexDirection:'row', justifyContent: 'space-between', marginBottom: 4, alignSelf: 'center' }}>
+        <Icons.MaterialCommunityIcons
+          color={allergy.gluten ? Colors.black : "#E2E2E2"}
+          size={20}
+          name="bread-slice-outline"
+          style={{marginHorizontal: 8, padding: 2}}
+          onPress={() => {setAllergy("gluten", !allergy.gluten)}}
+        />
+        <Icons.MaterialCommunityIcons
+          color={allergy.dairy ? Colors.black : "#E2E2E2"}
+          size={20}
+          name="baby-bottle-outline"
+          style={{marginHorizontal: 8, padding: 2}}
+          onPress={() => {setAllergy("dairy", !allergy.dairy)}}
+        />
+        <Icons.MaterialCommunityIcons
+          color={allergy.nuts ? Colors.black : "#E2E2E2"}
+          size={20}
+          name="peanut-outline"
+          style={{marginHorizontal: 8, padding: 2}}
+          onPress={() => {setAllergy("nuts", !allergy.nuts)}}
         />
       </View>
     </View>
