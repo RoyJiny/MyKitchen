@@ -2,10 +2,11 @@ import React,{useState,useContext, useEffect} from 'react'
 import {View,StyleSheet,Text, ScrollView, TextInput, TouchableOpacity} from 'react-native'
 import { RadioButton } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
+import CheckBox from 'expo-checkbox';
 
 import Colors from '../../globals/Colors';
 
-import {BackButton,ShadowCard,MultilineInput,ExpantionArrow,Button,BlankDivider,PickerDate} from '../../components';
+import {BackButton,ShadowCard,MultilineInput,ExpantionArrow,Button,BlankDivider,PickerDate,PickerT} from '../../components';
 import {send_post_request} from '../../utils/requests';
 import { UserContext } from '../../contexts/UserContext';
 
@@ -57,6 +58,7 @@ const OrderScreen = ({navigation, route}) => {
   const [selectedDateOption, setSelectedDateOption] = useState((route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? "Future Delivery":"ASAP");
   const [checkValid, setCheckValid] = useState(false);
   const [deliveryDistance, setDeliveryDistance] = useState(true);
+  const [timeRequest, setTimeRequest] = useState({use: false, time: "10:00"});
 
   const [showDelivery, setShowDelivery] = useState(false);
   const [showDate, setShowDate] = useState(false);
@@ -130,8 +132,9 @@ const OrderScreen = ({navigation, route}) => {
       status: "Pending Approval",
       items: get_items(),
       date: (new Date()).getDate()+"/"+((new Date()).getMonth()+1)+"/"+(new Date()).getFullYear(),
-      dueDate: selectedDateOption == "ASAP" ? "ASAP" : date
-    }
+      dueDate: selectedDateOption == "ASAP" ? "ASAP" : date,
+      dueTime: timeRequest.use ? timeRequest.time : ''
+    };
     await send_post_request('order/submit',new_order);
   };
 
@@ -259,9 +262,9 @@ const OrderScreen = ({navigation, route}) => {
         ? <>
           <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
             <RadioButton
-              status={ selectedDateOption == 'ASAP' ? 'checked' : 'unchecked' }
+              status={ selectedDateOption === 'ASAP' ? 'checked' : 'unchecked' }
               color="black"
-              onPress= {() => setSelectedDateOption('ASAP')}
+              onPress= {() => {setSelectedDateOption('ASAP'); setTimeRequest({...timeRequest, use:false});}}
               disabled={route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery}
             />
             <Text style={{marginRight: 10, color: (route.params.params.isClosed || kitchen.logistics.isOnlyFutureDelivery)? Colors.lightGray : 'black'}}>{kitchen.logistics.isOnlyFutureDelivery? "ASAP - can't order ASAP, only future orders" : route.params.params.isClosed? "ASAP - can't order ASAP, kitchen is closed" : 'ASAP'}</Text>
@@ -273,9 +276,18 @@ const OrderScreen = ({navigation, route}) => {
               onPress= {() => setSelectedDateOption('Future Delivery')}
             />
             <Text style={{marginRight: 10}}>{'Future Delivery'}</Text>
-            <View>
-              <PickerDate date={date} setDate={setDate} textColor="black" isActive={true} inactiveDays={inactiveDays}/>
-            </View>
+            <PickerDate date={date} setDate={setDate} textColor="black" isActive={true} inactiveDays={inactiveDays}/>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 28}}>
+            <CheckBox
+              disabled={selectedDateOption === 'ASAP'}
+              value={timeRequest.use}
+              onValueChange={(use) => setTimeRequest({...timeRequest, use})}
+              color={timeRequest.use ? Colors.black : Colors.lightGray}
+              style={{height: 16,  width: 16, marginRight: 8, marginLeft: 24}}
+            />
+            <Text style={{marginRight: 10, color: timeRequest.use ? "black" : Colors.lightGray}}>Request to be ready by</Text>
+            <PickerT textColor={timeRequest.use ? "black" : Colors.lightGray} isActive={timeRequest.use} time={timeRequest.time} setTime={(time) => setTimeRequest({...timeRequest, time})}/>
           </View>
           </>
         : null
@@ -291,7 +303,9 @@ const OrderScreen = ({navigation, route}) => {
       <TouchableOpacity>
         <Button
           onClick={async () => {
-            checkCanDeliver();
+            if (selectedDelivery === "Custom Address") {
+              checkCanDeliver();
+            }
             setCheckValid(true);
             if(!(selectedDelivery === "Custom Address" && (selectedCustomAddress == "" || !deliveryDistance))) {
               await send_order();

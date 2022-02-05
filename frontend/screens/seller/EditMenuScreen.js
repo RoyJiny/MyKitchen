@@ -71,6 +71,12 @@ const EditMenuScreen = ({navigation}) => {
     itemsCopy[index].price=text;
     setDishItems(itemsCopy)
   }
+  
+  const changeAllegry = (index,allergy,value) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].allergies[allergy] = value;
+    setDishItems(itemsCopy)
+  }
 
   const changeDishImage = (index,url) => {
     let itemsCopy = [...dishItems];
@@ -189,6 +195,8 @@ const EditMenuScreen = ({navigation}) => {
                   onChangeDesc= {(text) => changeDishDesc(index,text)}
                   pricing= {String(item.price)}
                   onChangePricing= {(text) => changeDishPrice(index,text)}
+                  allergy= {item.allergies}
+                  setAllergy={(allergy,value) => changeAllegry(index,allergy,value)}
                 />
             )
             })

@@ -227,6 +227,7 @@ const KitchenPageScreen = ({route,navigation}) => {
             itemName={dish.name}
             price={dish.price}
             description={dish.description}
+            allergies={dish.allergies}
             count={itemCounts[dish._id].count}
             setCount={diff => {setItemCounts({...itemCounts, [dish._id]: {count: Math.min(Math.max(itemCounts[dish._id].count+diff,0),9), price: itemCounts[dish._id].price}})}}
             imgLink={dish.img ? `${ServerBase}/images/${dish.img}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'}
