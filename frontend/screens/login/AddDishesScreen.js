@@ -61,6 +61,12 @@ const AddDishesScreen = ({navigation}) => {
     setDishItems(itemsCopy)
   }
 
+  const changeAllegry = (index,allergy,value) => {
+    let itemsCopy = [...dishItems];
+    itemsCopy[index].allergies[allergy] = value;
+    setDishItems(itemsCopy)
+  }
+
   const changeDishImage = (index,url) => {
     let itemsCopy = [...dishItems];
     itemsCopy[index].imgLink=url;
@@ -146,6 +152,8 @@ const AddDishesScreen = ({navigation}) => {
                   onChangeDesc= {(text) => changeDishDesc(index,text)}
                   pricing= {item.price}
                   onChangePricing= {(text) => changeDishPrice(index,text)}
+                  allergy= {item.allergies}
+                  setAllergy={(allergy,value) => changeAllegry(index,allergy,value)}
                 />
             )
             })

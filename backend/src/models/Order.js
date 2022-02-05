@@ -58,6 +58,10 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 'ASAP'
     },
+    dueTime: {
+      type: String,
+      default: ''
+    },
     date: {
       type: String,
       required: true,

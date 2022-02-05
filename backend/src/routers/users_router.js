@@ -377,7 +377,11 @@ router.post("/users/customer/addressCanDeliver", auth, async (req,res) => {
 
         const coordinates = await get_coordinates(address);
 
-        canDeliver = kitchen.logistics.isSupportDelivery && kitchen.logistics.maxDeliveryDistance >= calculate_distance(kitchen.bio.coordinates, {latitude: coordinates.latitude, longitude: coordinates.longitude})
+        if (coordinates.error) {
+            canDeliver = false;
+        } else {
+            canDeliver = kitchen.logistics.isSupportDelivery && kitchen.logistics.maxDeliveryDistance >= calculate_distance(kitchen.bio.coordinates, {latitude: coordinates.latitude, longitude: coordinates.longitude})
+        }
         res.status(200).send(canDeliver);
     } catch (err) {
         console.log(err);
