@@ -1,6 +1,7 @@
 require('./db/mongoose');
 
 const express = require('express');
+const path = require('path');
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use(searchRouter);
 app.use(imagesRouter);
 app.use(verificationRouter);
 app.use(chatsRouter);
+
+app.use('/public',express.static(path.join(__dirname, 'public')));
 
 app.disable('etag');
 

@@ -3,6 +3,7 @@ import {StatusBar, View, I18nManager, ActivityIndicator} from 'react-native';
 
 import { NavigationContainer,DefaultTheme  } from '@react-navigation/native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import {Restart} from 'fiction-expo-restart';
 
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
@@ -24,8 +25,9 @@ import { remote_log} from './utils/debug_log';
 
 const SEND_REMOTE_LOGS = false;
 
-I18nManager.allowRTL(false);
-I18nManager.forceRTL(false);
+I18nManager.allowRTL(false);  
+I18nManager.forceRTL(false); 
+
 console.reportErrorsAsExceptions = false;
 
 // for debug only
@@ -65,8 +67,6 @@ const registerForPushNotificationsAsync = async () => {
 }
 
 export default APP = () => {
-  I18nManager.allowRTL(false);
-  I18nManager.forceRTL(false);
   console.reportErrorsAsExceptions = false;
   
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -90,6 +90,15 @@ export default APP = () => {
     if(err.response.status !== 401 && err.response.data.err !== 'Phone number is invalid') setGeneralData({...generalData, networkError: true})
     return Promise.reject(err);
   });
+
+  useEffect(() => {
+    if(I18nManager.isRTL) 
+    {
+      I18nManager.allowRTL(false);  
+      I18nManager.forceRTL(false); 
+      Restart();
+    }
+  },[]);
 
 
   const init_user_contexts = () => {
