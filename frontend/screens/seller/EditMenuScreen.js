@@ -30,7 +30,7 @@ const EditMenuScreen = ({navigation}) => {
         for (let j = 0; j < dishItems.length; j++) {
             if(dishItems[j].key==i){isIn=true}
         }
-        if(!isIn) {setDishItems([{key: i, name: '', description: '', price: '', img: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png'}, ...dishItems]); break;}
+        if(!isIn) {setDishItems([{key: i, name: '', description: '', price: '', img: 'https://pixsector.com/cache/d69e58d4/avbfe351f753bcaa24ae2.png', allergies: {nuts: false, dairy: false, gluten: false}}, ...dishItems]); break;}
     }
     if(dishItems.length >= 19 && !alerted) { Alert.alert(`Max amount of dishes reached, please delete older ones to add`); setAlerted(true);}
   }
